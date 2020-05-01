@@ -1,0 +1,49 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint",
+        "import"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/errors",
+        "plugin:import/warnings"
+    ],
+    "ignorePatterns": [
+        "node_modules",
+        "build"
+    ],
+    "settings": {
+        "import/resolver": {
+            "typescript": {}
+        }
+    },
+    "env": {
+        "node": true
+    },
+    "rules": {
+        "semi": "error",
+        "quotes": [
+            2,
+            "double"
+        ],
+        "no-extra-semi": "error",
+        "no-var": "error",
+        "no-alert": "error",
+        "no-console": "off",
+        "@typescript-eslint/no-unused-vars": "error",
+        "no-unused-vars": "off", // turning off duplicate, prefer ts eslint rules
+        "comma-dangle": [
+            "error",
+            "never"
+        ],
+        "require-await": "error",
+        "no-restricted-syntax": "error",
+        "@typescript-eslint/no-use-before-define": [
+            "error",
+            { "functions": false, "classes": false, "variables": true }
+        ]
+    }
+}
