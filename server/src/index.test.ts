@@ -8,7 +8,6 @@ const defaultOpts = {
 };
 
 function client(
-    serverItems: ServerItems,
     nsp?: object,
     opts: SocketIOClient.ConnectOpts = defaultOpts
 ): SocketIOClient.Socket {
@@ -33,6 +32,14 @@ describe("index", () => {
 
     it("can be tested", (done) => {
         const c = client(serverItems);
+        c.on("connect", () => {
+            done();
+        });
+        expect(1 + 1).toBe(2);
+    });
+
+    it("can be tested2", (done) => {
+        const c = client();
         c.on("connect", () => {
             done();
         });
