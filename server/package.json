@@ -1,7 +1,9 @@
 {
   "scripts": {
-    "test": "jest src/ --verbose=true",
-    "lint": "eslint src/ --ext .ts"
+    "test": "jest src/ --verbose",
+    "test:coverage": "jest src/ --coverage",
+    "lint": "eslint src/ --ext .ts",
+    "build": "tsc"
   },
   "dependencies": {
     "express": "^4.17.1",

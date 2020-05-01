@@ -25,22 +25,15 @@ describe("index", () => {
         serverItems = await setUpServer();
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         if (serverItems != null)
-            tearDownServerItems(serverItems);
+            await tearDownServerItems(serverItems);
     });
 
-    it("can be tested", (done) => {
+    it("can connect", (done) => {
         const c = client(serverItems);
         c.on("connect", () => {
-            done();
-        });
-        expect(1 + 1).toBe(2);
-    });
-
-    it("can be tested2", (done) => {
-        const c = client();
-        c.on("connect", () => {
+            c.disconnect();
             done();
         });
         expect(1 + 1).toBe(2);

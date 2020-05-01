@@ -13,7 +13,7 @@ export async function setUpServer(): Promise<ServerItems> {
     const server = http.createServer(app);
     const io = socketIO(server);
 
-    app.get("/", (req, res) => {
+    app.get("/healthy", (req, res) => {
         res.sendStatus(200);
     });
 
@@ -31,7 +31,18 @@ export async function setUpServer(): Promise<ServerItems> {
     return { app, server, io };
 }
 
-export function tearDownServerItems({ server, io }: ServerItems): void {
-    io.close();
-    server.close();
+export async function tearDownServerItems({ server, io }: ServerItems): Promise<void> {
+    await new Promise((resolve) => {
+        server.close((err) => {
+            if (err != null)
+                console.error(err);
+            resolve();
+        });
+    });
+
+    await new Promise((resolve) => {
+        io.close(() => {
+            resolve();
+        });
+    });
 }
