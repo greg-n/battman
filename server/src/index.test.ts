@@ -1,4 +1,4 @@
-import * as ioc from "socket.io-client";
+import ioc from "socket.io-client";
 import { ServerItems, setUpServer, tearDownServerItems } from ".";
 
 const defaultOpts = {
@@ -30,7 +30,7 @@ describe("index", () => {
             await tearDownServerItems(serverItems);
     });
 
-    it("can connect", (done) => {
+    it("Can connect", (done) => {
         const c = client(serverItems);
         c.on("connect", () => {
             c.disconnect();

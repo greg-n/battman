@@ -1,6 +1,6 @@
-import * as express from "express";
+import express from "express";
 import * as http from "http";
-import * as socketIO from "socket.io";
+import socketIO from "socket.io";
 
 export interface ServerItems {
     app: Express.Application;
