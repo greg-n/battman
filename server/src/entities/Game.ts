@@ -27,7 +27,7 @@ interface GuessOutput {
     streamInfo: string;
 }
 
-interface GameStartOutput extends GameUpdateOutput {
+interface GameStateOutput extends GameUpdateOutput {
     players: { [key: string]: PlayerSerializable };
 }
 
@@ -90,7 +90,7 @@ export default class Game {
      * Will disconnect a player, setting player state and updating or removing
      * player from the player list depending on game state
      * */
-    disconnectPlayer(name: string): PlayerUpdateOutput {
+    disconnectPlayer(name: string): GameStateOutput {
         if (this.state === GameState.ended) {
             throw new Error("Game has ended.");
         }
@@ -108,10 +108,14 @@ export default class Game {
             this.players.set(name, player);
         }
 
+        const players: { [key: string]: PlayerSerializable } = {};
+        for (const [name, val] of this.players.entries()) {
+            players[name] = val.getSanitizedCopy().getSafeToSerialize();
+        }
+
         return {
-            forEffected: player.getSafeToSerialize(),
-            forOthers: player.getSafeToSerialize(),
-            gameInfo: this.buildGameUpdateOutput()
+            players,
+            ...this.buildGameUpdateOutput()
         };
     }
 
@@ -291,7 +295,7 @@ export default class Game {
         };
     }
 
-    start(): GameStartOutput {
+    start(): GameStateOutput {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state doesn't allow for game start. Must be 'waitingRoom'.");
         }
@@ -324,7 +328,7 @@ export default class Game {
 
         const players: { [key: string]: PlayerSerializable } = {};
         for (const [name, val] of this.players.entries()) {
-            players[name] = val.getSafeToSerialize();
+            players[name] = val.getSanitizedCopy().getSafeToSerialize();
         }
 
         return {
