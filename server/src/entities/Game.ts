@@ -2,7 +2,7 @@ import fillInChars from "../utils/fillInChars";
 import shuffle from "../utils/shuffle";
 import Player, { PlayerSerializable, PlayerState } from "./Player";
 
-enum GameState {
+export enum GameState {
     waitingRoom,
     running,
     ended
@@ -32,7 +32,6 @@ interface GameStartOutput extends GameUpdateOutput {
 }
 
 export default class Game {
-    id: string;
     // Simple word bounds, enforced with others in setWord
     minChars: number;
     maxChars: number;
@@ -40,8 +39,13 @@ export default class Game {
     players: Map<string, Player> = new Map();
     currentPlayer: string | undefined;
 
-    constructor(id: string, minChars = 1, maxChars = 24) {
-        this.id = id;
+    /**
+     * Word constraints should exist upon creation.
+     * Perhaps a creator flag could be set and they
+     * could have permissions to change constraints,
+     * or a voting system
+     */
+    constructor(minChars = 1, maxChars = 24) {
         this.minChars = minChars;
         this.maxChars = maxChars;
     }
@@ -55,8 +59,8 @@ export default class Game {
     }
 
     addPlayer(name: string): PlayerUpdateOutput {
-        if (this.state !== GameState.running) {
-            throw new Error("Game already in session.");
+        if (this.state !== GameState.waitingRoom) {
+            throw new Error("Players cannot be added given game state.");
         }
         if (this.players.has(name)) {
             throw new Error("Player " + name + " already in game.");
@@ -106,7 +110,7 @@ export default class Game {
 
         return {
             forEffected: player.getSafeToSerialize(),
-            forOthers: player.getSanitizedCopy().getSafeToSerialize(),
+            forOthers: player.getSafeToSerialize(),
             gameInfo: this.buildGameUpdateOutput()
         };
     }
@@ -121,7 +125,7 @@ export default class Game {
         return retVal;
     }
 
-    guess(guess: string, actor: string, subject: string): GuessOutput {
+    guess(actor: string, subject: string, guess: string): GuessOutput {
         if (this.state !== GameState.running) {
             throw new Error("Game state doesn't allow for guessing.");
         }
@@ -197,6 +201,8 @@ export default class Game {
         if (nowRemaining.length < 2) {
             this.state = GameState.ended;
             gameEnded = true;
+            actorItem.state = PlayerState.victor;
+            this.players.set(actor, actorItem);
         } else {
             this.currentPlayer = this.nextPlayer();
         }
@@ -289,6 +295,9 @@ export default class Game {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state doesn't allow for game start. Must be 'waitingRoom'.");
         }
+        if (this.players.size < 2) {
+            throw new Error("Game requires more than one player.");
+        }
 
         const playersNotReadied: string[] = [];
         for (const value of this.players.values()) {
@@ -306,7 +315,9 @@ export default class Game {
         const shuffledPlayersList = shuffle([...this.players.keys()]);
         const newShuffledPlayers: Map<string, Player> = new Map();
         for (const name of shuffledPlayersList) {
-            newShuffledPlayers.set(name, this.players.get(name) as Player);
+            const playerItem = this.players.get(name) as Player;
+            playerItem.state = PlayerState.playing;
+            newShuffledPlayers.set(name, playerItem);
         }
         this.players = newShuffledPlayers;
         this.currentPlayer = shuffledPlayersList[0];
