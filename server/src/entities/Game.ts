@@ -11,7 +11,10 @@ export enum GameState {
 interface GameUpdateOutput {
     gameState: GameState;
     currentPlayer?: string;
+    waitingRoomMarshall: string;
     remainingPlayers: string[];
+    minChars: number;
+    maxChars: number;
 }
 
 interface PlayerUpdateOutput {
@@ -32,20 +35,35 @@ interface GameStateOutput extends GameUpdateOutput {
 }
 
 export default class Game {
+    static checkWordConstraints(minChars: number, maxChars: number): void {
+        if (minChars < 1) {
+            throw new Error("Min char limit is not a valid bound.");
+        }
+        if (maxChars > 24) { 
+            throw new Error("Max char limit is not a valid bound.");
+        }
+        if (minChars > maxChars) {
+            throw new Error("Min char must be smaller or equal to max char bound.");
+        }
+    }
+
     // Simple word bounds, enforced with others in setWord
     minChars: number;
     maxChars: number;
     state = GameState.waitingRoom;
     players: Map<string, Player> = new Map();
     currentPlayer: string | undefined;
+    waitingRoomMarshall: string;
 
     /**
      * Word constraints should exist upon creation.
-     * Perhaps a creator flag could be set and they
-     * could have permissions to change constraints,
-     * or a voting system
+     * Creator becomes the waitingRoomMarshall
      */
-    constructor(minChars = 1, maxChars = 24) {
+    constructor(creator: string, minChars = 1, maxChars = 24) {
+        Game.checkWordConstraints(minChars, maxChars);
+
+        this.addPlayer(creator);
+        this.waitingRoomMarshall = creator;
         this.minChars = minChars;
         this.maxChars = maxChars;
     }
@@ -54,7 +72,10 @@ export default class Game {
         return {
             gameState: this.state,
             currentPlayer: this.currentPlayer,
-            remainingPlayers: this.getRemainingPlayers()
+            waitingRoomMarshall: this.waitingRoomMarshall,
+            remainingPlayers: this.getRemainingPlayers(),
+            minChars: this.minChars,
+            maxChars: this.maxChars
         };
     }
 
@@ -76,14 +97,29 @@ export default class Game {
         };
     }
 
-    nextPlayer(): string {
-        if (this.currentPlayer == null) {
-            throw new Error("No current player.");
+    changeWordConstraints(actor: string, minChars = 1, maxChars = 24): GameStateOutput {
+        if (actor !== this.waitingRoomMarshall) {
+            throw new Error("Only the waiting room marshall can modify word constraints.");
+        }
+        if (this.state !== GameState.waitingRoom) {
+            throw new Error("Game must be in waiting room to change word constraints.");
+        }
+        Game.checkWordConstraints(minChars, maxChars);
+
+        for (const [name, playerItem] of this.players) {
+            const word = playerItem.word || ""; // If not available then spoof is fine to force reset
+            if (
+                (word.length < minChars || word.length > maxChars) 
+                && [PlayerState.joined, PlayerState.ready].includes(playerItem.state)
+            ) {
+                playerItem.word = null;
+                playerItem.guessedWordPortion = null;
+                playerItem.state = PlayerState.joined;
+                this.players.set(name, playerItem);
+            }
         }
 
-        const remaining = this.getRemainingPlayers();
-        const indexOfCurrent = remaining.indexOf(this.currentPlayer);
-        return remaining[(indexOfCurrent + 1) % remaining.length];
+        return this.getGameState();
     }
 
     /**
@@ -91,10 +127,6 @@ export default class Game {
      * player from the player list depending on game state
      * */
     disconnectPlayer(name: string): GameStateOutput {
-        if (this.state === GameState.ended) {
-            throw new Error("Game has ended.");
-        }
-
         const player = this.players.get(name);
         if (player == null) {
             throw new Error("Could not find player values for actor.");
@@ -108,6 +140,10 @@ export default class Game {
             this.players.set(name, player);
         }
 
+        return this.getGameState();
+    }
+
+    getGameState(): GameStateOutput {
         const players: { [key: string]: PlayerSerializable } = {};
         for (const [name, val] of this.players.entries()) {
             players[name] = val.getSanitizedCopy().getSafeToSerialize();
@@ -148,9 +184,15 @@ export default class Game {
         const subjectItem = this.players.get(subject) as Player;
 
         // Game rule that you can't guess the same person 3 times in a row unless <= 3 remaining players
+        let sameLastThree = 0;
+        for (const elem of actorItem.lastGuessedAgainst.slice(0, 3)) {
+            if (elem === subject) {
+                sameLastThree++;
+            }
+        }
         if (
-            remainingPlayers.length <= 3
-            && actorItem.lastGuessedAgainst.slice(0, 3).includes(subject)
+            remainingPlayers.length > 3
+            && sameLastThree === 3
         ) {
             throw new Error("Can't guess the same person 3 times in a row unless <= 3 remaining players.");
         }
@@ -178,7 +220,7 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                streamInfo = actor + " elminated " + subject + " with guessed letter " + guessFixed + ".";
+                streamInfo = actor + " eliminated " + subject + " with guessed letter " + guessFixed + ".";
             } else {
                 subjectItem.guessedWordPortion = updatedPortion;
                 streamInfo = actor + " guessed letter " + guessFixed + " on " + subject + "'s word.";
@@ -191,7 +233,7 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                streamInfo = actor + " elminated " + subject + " with correct word guess " + guessFixed + ".";
+                streamInfo = actor + " eliminated " + subject + " with correct word guess " + guessFixed + ".";
             } else {
                 streamInfo = actor + " guessed word " + guessFixed + " on " + subject + "'s word.";
             }
@@ -205,8 +247,10 @@ export default class Game {
         if (nowRemaining.length < 2) {
             this.state = GameState.ended;
             gameEnded = true;
-            actorItem.state = PlayerState.victor;
-            this.players.set(actor, actorItem);
+            // Explicity allow self elimination by inspecting nowRemaining to find victor
+            const victorItem = this.players.get(nowRemaining[0]) as Player;
+            victorItem.state = PlayerState.victor;
+            this.players.set(nowRemaining[0], victorItem);
         } else {
             this.currentPlayer = this.nextPlayer();
         }
@@ -229,12 +273,22 @@ export default class Game {
         };
     }
 
-    readyUpToggle(name: string): PlayerUpdateOutput {
+    nextPlayer(): string {
+        if (this.currentPlayer == null) {
+            throw new Error("No current player.");
+        }
+
+        const remaining = this.getRemainingPlayers();
+        const indexOfCurrent = remaining.indexOf(this.currentPlayer);
+        return remaining[(indexOfCurrent + 1) % remaining.length];
+    }
+
+    readyUpToggle(actor: string): PlayerUpdateOutput {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state doesn't allow for ready toggling.");
         }
 
-        const player = this.players.get(name);
+        const player = this.players.get(actor);
         if (player == null) {
             throw new Error("Could not find player values for actor.");
         }
@@ -250,7 +304,7 @@ export default class Game {
         player.state = player.state === PlayerState.joined
             ? PlayerState.ready
             : PlayerState.joined;
-        this.players.set(name, player);
+        this.players.set(actor, player);
 
         return {
             forEffected: player.getSafeToSerialize(),
@@ -284,6 +338,7 @@ export default class Game {
             );
         }
 
+        actorItem.state = PlayerState.joined; // Unready
         actorItem.word = wordFixed;
         actorItem.guessedWordPortion = "_".repeat(wordFixed.length);
         this.players.set(actor, actorItem);
@@ -295,9 +350,12 @@ export default class Game {
         };
     }
 
-    start(): GameStateOutput {
+    start(actor: string): GameStateOutput {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state doesn't allow for game start. Must be 'waitingRoom'.");
+        }
+        if (actor !== this.waitingRoomMarshall) {
+            throw new Error("Must be waiting room marshall to begin the game.");
         }
         if (this.players.size < 2) {
             throw new Error("Game requires more than one player.");
@@ -326,14 +384,22 @@ export default class Game {
         this.players = newShuffledPlayers;
         this.currentPlayer = shuffledPlayersList[0];
 
-        const players: { [key: string]: PlayerSerializable } = {};
-        for (const [name, val] of this.players.entries()) {
-            players[name] = val.getSanitizedCopy().getSafeToSerialize();
+        return this.getGameState();
+    }
+
+    transferMarshallShip(actor: string, subject: string): GameUpdateOutput {
+        if (this.state !== GameState.waitingRoom) {
+            throw new Error("Game state prevents the transfer marshalship.");
+        }
+        if (actor !== this.waitingRoomMarshall) {
+            throw new Error("Only the current marshall can transfer the marshalship.");
+        }
+        if (!this.players.has(subject)) {
+            throw new Error("Can only transfer marshalship to current player.");
         }
 
-        return {
-            players,
-            ...this.buildGameUpdateOutput()
-        };
+        this.waitingRoomMarshall = subject;
+
+        return this.buildGameUpdateOutput();
     }
 }
