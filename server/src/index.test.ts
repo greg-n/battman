@@ -33,8 +33,10 @@ describe("index", () => {
     it("Can connect", (done) => {
         const c = client(serverItems);
         c.on("connect", () => {
-            c.disconnect();
-            done();
+            c.on("hello", () => {
+                c.disconnect();
+                done();
+            });
         });
         expect(1 + 1).toBe(2);
     });
