@@ -1,4 +1,4 @@
-export default function landing(socket: import("socket.io").Socket): void {
-    console.log("a user connected", socket.id);
-    socket.emit("hello");
+export default function landing(socket: import("ws")): void {
+    console.log("a user connected");
+    socket.send("hello");
 }
