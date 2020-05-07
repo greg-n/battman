@@ -39,7 +39,7 @@ export default class Game {
         if (minChars < 1) {
             throw new Error("Min char limit is not a valid bound.");
         }
-        if (maxChars > 24) { 
+        if (maxChars > 24) {
             throw new Error("Max char limit is not a valid bound.");
         }
         if (minChars > maxChars) {
@@ -109,7 +109,7 @@ export default class Game {
         for (const [name, playerItem] of this.players) {
             const word = playerItem.word || ""; // If not available then spoof is fine to force reset
             if (
-                (word.length < minChars || word.length > maxChars) 
+                (word.length < minChars || word.length > maxChars)
                 && [PlayerState.joined, PlayerState.ready].includes(playerItem.state)
             ) {
                 playerItem.word = null;
@@ -126,17 +126,18 @@ export default class Game {
      * Will disconnect a player, setting player state and updating or removing
      * player from the player list depending on game state
      * */
-    disconnectPlayer(name: string): GameStateOutput {
+    disconnectPlayer(name: string, reason?: string): GameStateOutput {
         const player = this.players.get(name);
         if (player == null) {
             throw new Error("Could not find player values for actor.");
         }
 
         if (this.state === GameState.waitingRoom) {
-            this.players.delete(name);
+            this.players.delete(name); // Don't track reason or player existence
         } else {
             player.state = PlayerState.disconnected;
             player.guessedWordPortion = player.word;
+            player.disconnectionReason = reason;
             this.players.set(name, player);
         }
 

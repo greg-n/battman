@@ -30,6 +30,7 @@ export default class Player {
     lastGuessedAgainst: string[];
     // Will store last 5 names of those who guessed this player
     lastGuessedBy: string[];
+    disconnectionReason?: string;
 
     constructor(name: string) {
         this.name = name;

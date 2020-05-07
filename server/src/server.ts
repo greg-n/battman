@@ -1,7 +1,7 @@
 import * as http from "http";
 import WebSocket from "ws";
 
-import landing from "./controllers";
+import buildWSLogic from "./controllers";
 
 export interface ServerItems {
     server: http.Server;
@@ -20,7 +20,7 @@ export async function setUpServer(): Promise<ServerItems> {
     });
     wss = new WebSocket.Server({ server });
 
-    wss.on("connection", landing);
+    buildWSLogic(wss);
 
     await new Promise((resolve) => {
         server?.listen(3000, () => {
