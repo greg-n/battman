@@ -48,12 +48,15 @@ export default class Game {
     }
 
     // Simple word bounds, enforced with others in setWord
-    minChars: number;
-    maxChars: number;
-    state = GameState.waitingRoom;
-    players: Map<string, Player> = new Map();
-    currentPlayer: string | undefined;
-    waitingRoomMarshall: string;
+    private minChars: number;
+    private maxChars: number;
+    private state = GameState.waitingRoom;
+    private players: Map<string, Player> = new Map();
+    private currentPlayer: string | undefined;
+    private waitingRoomMarshall: string;
+    createdAt: number;
+    lastModifiedAt: number;
+    endedAt: number | undefined;
 
     /**
      * Word constraints should exist upon creation.
@@ -66,6 +69,8 @@ export default class Game {
         this.waitingRoomMarshall = creator;
         this.minChars = minChars;
         this.maxChars = maxChars;
+        this.createdAt = Date.now();
+        this.lastModifiedAt = Date.now();
     }
 
     private buildGameUpdateOutput(): GameUpdateOutput {
@@ -90,6 +95,7 @@ export default class Game {
         const player: Player = new Player(name);
         this.players.set(name, player);
 
+        this.lastModifiedAt = Date.now();
         return {
             forEffected: player.getSafeToSerialize(),
             forOthers: player.getSanitizedCopy().getSafeToSerialize(),
@@ -119,6 +125,7 @@ export default class Game {
             }
         }
 
+        this.lastModifiedAt = Date.now();
         return this.getGameState();
     }
 
@@ -141,6 +148,7 @@ export default class Game {
             this.players.set(name, player);
         }
 
+        this.lastModifiedAt = Date.now();
         return this.getGameState();
     }
 
@@ -252,10 +260,13 @@ export default class Game {
             const victorItem = this.players.get(nowRemaining[0]) as Player;
             victorItem.state = PlayerState.victor;
             this.players.set(nowRemaining[0], victorItem);
+
+            this.endedAt = Date.now();
         } else {
             this.currentPlayer = this.nextPlayer();
         }
 
+        this.lastModifiedAt = Date.now();
         return {
             actorUpdate: {
                 forEffected: actorItem.getSafeToSerialize(),
@@ -307,6 +318,7 @@ export default class Game {
             : PlayerState.joined;
         this.players.set(actor, player);
 
+        this.lastModifiedAt = Date.now();
         return {
             forEffected: player.getSafeToSerialize(),
             forOthers: player.getSanitizedCopy().getSafeToSerialize(),
@@ -344,6 +356,7 @@ export default class Game {
         actorItem.guessedWordPortion = "_".repeat(wordFixed.length);
         this.players.set(actor, actorItem);
 
+        this.lastModifiedAt = Date.now();
         return {
             forEffected: actorItem.getSafeToSerialize(),
             forOthers: actorItem.getSanitizedCopy().getSafeToSerialize(),
@@ -385,6 +398,7 @@ export default class Game {
         this.players = newShuffledPlayers;
         this.currentPlayer = shuffledPlayersList[0];
 
+        this.lastModifiedAt = Date.now();
         return this.getGameState();
     }
 
@@ -401,6 +415,7 @@ export default class Game {
 
         this.waitingRoomMarshall = subject;
 
+        this.lastModifiedAt = Date.now();
         return this.buildGameUpdateOutput();
     }
 }

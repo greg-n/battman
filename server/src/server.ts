@@ -1,7 +1,7 @@
 import * as http from "http";
 import WebSocket from "ws";
 
-import buildWSLogic from "./controllers";
+import buildWSRouting from "./routes/ws";
 
 export interface ServerItems {
     server: http.Server;
@@ -13,6 +13,7 @@ let wss: WebSocket.Server | undefined;
 
 export { server, wss };
 
+// TODO design with either pure ws or mix of ws and express for joining rooms/making tokens
 export async function setUpServer(): Promise<ServerItems> {
     server = http.createServer((request, response) => {
         response.writeHead(200, { "Content-Type": "text/plain" });
@@ -20,7 +21,7 @@ export async function setUpServer(): Promise<ServerItems> {
     });
     wss = new WebSocket.Server({ server });
 
-    buildWSLogic(wss);
+    buildWSRouting(wss);
 
     await new Promise((resolve) => {
         server?.listen(3000, () => {

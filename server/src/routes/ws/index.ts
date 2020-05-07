@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import WebSocket from "ws";
 
-export default function buildWSLogic(wss: WebSocket.Server): void {
+export default function buildWSRouting(wss: WebSocket.Server): void {
     console.log("a user connected");
 
     wss.on("connection", (ws) => {
