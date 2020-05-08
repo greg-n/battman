@@ -1,6 +1,11 @@
+import Player, { PlayerSerializable, PlayerState } from "./Player";
 import fillInChars from "../utils/fillInChars";
 import shuffle from "../utils/shuffle";
-import Player, { PlayerSerializable, PlayerState } from "./Player";
+
+export interface GameExternalInfo {
+    gameState: GameState;
+    playerCount: number;
+}
 
 export enum GameState {
     waitingRoom,
@@ -8,19 +13,17 @@ export enum GameState {
     ended
 }
 
+interface GameStateOutput extends GameUpdateOutput {
+    players: { [key: string]: PlayerSerializable };
+}
+
 interface GameUpdateOutput {
     gameState: GameState;
     currentPlayer?: string;
-    waitingRoomMarshall: string;
+    waitingRoomMarshall?: string;
     remainingPlayers: string[];
     minChars: number;
     maxChars: number;
-}
-
-interface PlayerUpdateOutput {
-    forEffected: PlayerSerializable;
-    forOthers: PlayerSerializable;
-    gameInfo: GameUpdateOutput;
 }
 
 interface GuessOutput {
@@ -30,8 +33,10 @@ interface GuessOutput {
     streamInfo: string;
 }
 
-interface GameStateOutput extends GameUpdateOutput {
-    players: { [key: string]: PlayerSerializable };
+interface PlayerUpdateOutput {
+    forEffected: PlayerSerializable;
+    forOthers: PlayerSerializable;
+    gameInfo: GameUpdateOutput;
 }
 
 export default class Game {
@@ -48,12 +53,12 @@ export default class Game {
     }
 
     // Simple word bounds, enforced with others in setWord
-    private minChars: number;
-    private maxChars: number;
-    private state = GameState.waitingRoom;
-    private players: Map<string, Player> = new Map();
-    private currentPlayer: string | undefined;
-    private waitingRoomMarshall: string;
+    minChars: number;
+    maxChars: number;
+    state = GameState.waitingRoom;
+    players: Map<string, Player> = new Map();
+    currentPlayer: string | undefined;
+    waitingRoomMarshall: string | undefined;
     createdAt: number;
     lastModifiedAt: number;
     endedAt: number | undefined;
@@ -62,11 +67,9 @@ export default class Game {
      * Word constraints should exist upon creation.
      * Creator becomes the waitingRoomMarshall
      */
-    constructor(creator: string, minChars = 1, maxChars = 24) {
+    constructor(minChars = 1, maxChars = 24) {
         Game.checkWordConstraints(minChars, maxChars);
 
-        this.addPlayer(creator);
-        this.waitingRoomMarshall = creator;
         this.minChars = minChars;
         this.maxChars = maxChars;
         this.createdAt = Date.now();
@@ -95,11 +98,23 @@ export default class Game {
         const player: Player = new Player(name);
         this.players.set(name, player);
 
+        if (this.players.size === 1) {
+            // if first player they are assigned as marshall
+            this.waitingRoomMarshall = name;
+        }
+
         this.lastModifiedAt = Date.now();
         return {
             forEffected: player.getSafeToSerialize(),
             forOthers: player.getSanitizedCopy().getSafeToSerialize(),
             gameInfo: this.buildGameUpdateOutput()
+        };
+    }
+
+    buildGameExternalInfo(): GameExternalInfo {
+        return {
+            gameState: this.state,
+            playerCount: this.players.size
         };
     }
 
@@ -141,6 +156,10 @@ export default class Game {
 
         if (this.state === GameState.waitingRoom) {
             this.players.delete(name); // Don't track reason or player existence
+            if (this.waitingRoomMarshall === name) {
+                // try to set new marshall if old marshall is being removed
+                this.waitingRoomMarshall = this.players.size > 0 ? [...this.players.keys()][0] : undefined;
+            }
         } else {
             player.state = PlayerState.disconnected;
             player.guessedWordPortion = player.word;

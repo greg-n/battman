@@ -1,5 +1,6 @@
-import WebSocket from "ws";
 import { ServerItems, setUpServer, tearDownServerItems } from "./server";
+import WebSocket from "ws";
+import request from "supertest";
 
 function client(
 ): WebSocket {
@@ -23,12 +24,17 @@ describe("index", () => {
         const c = client();
         c.on("open", () => {
             c.on("message", (msg: string) => {
-                console.log("Got ack");
                 expect(msg).toBe("hello");
                 c.close();
                 done();
             });
         });
         expect(1 + 1).toBe(2);
+    });
+
+    it("Can be health checked", (done) => {
+        request(serverItems.app)
+            .get("/healthCheck")
+            .expect(200, done);
     });
 });

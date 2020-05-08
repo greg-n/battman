@@ -1,5 +1,5 @@
-import cloneDeep from "lodash.clonedeep";
 import Player, { PlayerState } from "./Player";
+import cloneDeep from "lodash.clonedeep";
 
 describe("Player", () => {
     it("Creates as expected", () => {

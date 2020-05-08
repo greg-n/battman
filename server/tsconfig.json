@@ -1,13 +1,17 @@
 {
     "compilerOptions": {
         "esModuleInterop": true,
-        "target": "es6",
+        "target": "ES2019",
         "module": "commonjs",
-        "lib": ["ESNext"],
+        "lib": [
+            "ESNext"
+        ],
         "outDir": "dist",
         "strict": true
     },
-    "include": ["src"],
+    "include": [
+        "src"
+    ],
     "exclude": [
         "node_modules",
         "dist",

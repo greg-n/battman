@@ -4,10 +4,11 @@ import Player, { PlayerState } from "./Player";
 describe("Game", () => {
     // TODO ensure that return values are as expected, usefull
     it("Can operate a game through properly", () => {
-        const game = new Game("Steve");
+        const game = new Game();
         expect(game.state).toBe(GameState.waitingRoom);
 
         // Add "Steve", set word, ready up
+        game.addPlayer("Steve");
         game.setWord("Steve", "book");
         expect(game.players.get("Steve")).toMatchObject({
             eliminatedPlayers: new Set(),
@@ -92,10 +93,11 @@ describe("Game", () => {
     });
 
     it("Allows guess out on partial", () => {
-        const game = new Game("Steve");
+        const game = new Game();
         expect(game.state).toBe(GameState.waitingRoom);
 
         // Add "Steve", set word, ready up
+        game.addPlayer("Steve");
         game.setWord("Steve", "bbbbb");
         game.readyUpToggle("Steve");
 
@@ -122,10 +124,11 @@ describe("Game", () => {
     });
 
     it("Allows a player to disconnect", () => {
-        const game = new Game("Steve");
+        const game = new Game();
         expect(game.state).toBe(GameState.waitingRoom);
 
         // Add "Steve", set word, ready up
+        game.addPlayer("Steve");
         game.setWord("Steve", "book");
         game.readyUpToggle("Steve");
 
@@ -158,10 +161,11 @@ describe("Game", () => {
     it("Allows marshall change constraints/transfer, requiring ready", () => {
         expect.assertions(8);
 
-        const game = new Game("Steve");
+        const game = new Game();
         expect(game.state).toBe(GameState.waitingRoom);
 
         // Add "Steve", set word, ready up
+        game.addPlayer("Steve");
         game.setWord("Steve", "book");
         game.readyUpToggle("Steve");
 
@@ -204,10 +208,11 @@ describe("Game", () => {
         test("Can't guess that same person three times in a row", () => {
             expect.assertions(3);
 
-            const game = new Game("Steve");
+            const game = new Game();
             expect(game.state).toBe(GameState.waitingRoom);
 
             // Add "Steve", set word, ready up
+            game.addPlayer("Steve");
             game.setWord("Steve", "book");
             game.readyUpToggle("Steve");
 

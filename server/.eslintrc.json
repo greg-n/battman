@@ -43,7 +43,14 @@
         "no-restricted-syntax": "error",
         "@typescript-eslint/no-use-before-define": [
             "error",
-            { "functions": false, "classes": false, "variables": true }
-        ]
+            {
+                "functions": false,
+                "classes": false,
+                "variables": true
+            }
+        ],
+        "sort-imports": "error",
+        "@typescript-eslint/no-namespace": "off",
+        "no-inner-declarations": "off" // version is higher than es5
     }
 }

@@ -2,9 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import WebSocket from "ws";
 
-export default function buildWSRouting(wss: WebSocket.Server): void {
-    console.log("a user connected");
-
+export default function buildWsRouting(wss: WebSocket.Server): void {
     wss.on("connection", (ws) => {
         // @ts-ignore for connection detection tracking within the interval
         ws.isAlive = true;
