@@ -50,7 +50,7 @@
             }
         ],
         "sort-imports": "error",
-        "@typescript-eslint/no-namespace": "off",
-        "no-inner-declarations": "off" // version is higher than es5
+        "no-inner-declarations": "off", // version is higher than es5
+        "@typescript-eslint/no-namespace": "off"
     }
 }
