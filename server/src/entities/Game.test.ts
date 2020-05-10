@@ -2,7 +2,7 @@ import Game, { GameState } from "./Game";
 import Player, { PlayerState } from "./Player";
 
 describe("Game", () => {
-    // TODO ensure that return values are as expected, usefull
+    // TODO ensure that return values are as expected, useful
     it("Can operate a game through properly", () => {
         const game = new Game();
         expect(game.state).toBe(GameState.waitingRoom);

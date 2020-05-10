@@ -24,12 +24,33 @@ describe("http rooms portion", () => {
     describe("post", () => {
         it("Can create room/game", async () => {
             let resp = await request(serverItems.app)
-                .post("/rooms/testRoomName")
+                .post("/rooms/testRoomName?creatorName=Steve")
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
                     result: {
-                        created: true
+                        created: true,
+                        playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJTdGV2ZSJ9.KCMJ6uXNEpGAgv3-AIOUQyZQ_Wp682yB4nGm9udNzaQ",
+                        playerUpdate: {
+                            forEffected: {
+                                eliminatedPlayers: [],
+                                guessedLetters: [],
+                                guessedWordPortion: null,
+                                guessedWords: [],
+                                lastGuessedAgainst: [],
+                                lastGuessedBy: [],
+                                name: "Steve",
+                                state: 0,
+                                word: null
+                            },
+                            gameInfo: {
+                                gameState: 0,
+                                maxChars: 24,
+                                minChars: 1,
+                                remainingPlayers: [],
+                                waitingRoomMarshall: "Steve"
+                            }
+                        }
                     }
                 });
 
@@ -40,7 +61,7 @@ describe("http rooms portion", () => {
                 .toStrictEqual({
                     result: {
                         gameState: GameState.waitingRoom,
-                        playerCount: 0
+                        playerCount: 1
                     }
                 });
         });

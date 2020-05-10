@@ -33,7 +33,7 @@ interface GuessOutput {
     streamInfo: string;
 }
 
-interface PlayerUpdateOutput {
+export interface PlayerUpdateOutput {
     forEffected: PlayerSerializable;
     forOthers: PlayerSerializable;
     gameInfo: GameUpdateOutput;
@@ -99,7 +99,7 @@ export default class Game {
         this.players.set(name, player);
 
         if (this.players.size === 1) {
-            // if first player they are assigned as marshall
+            // if first player they are assigned as marshall (or joining empty lobby)
             this.waitingRoomMarshall = name;
         }
 

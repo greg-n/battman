@@ -1,4 +1,4 @@
-import * as controller from "../../controllers/http/rooms";
+import * as controller from "../../controllers/rooms/http";
 import express from "express";
 
 export const router = express.Router();

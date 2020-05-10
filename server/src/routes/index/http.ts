@@ -1,5 +1,5 @@
 import express from "express";
-import { router as roomsRouter } from "./rooms";
+import { router as roomsRouter } from "../rooms/http";
 
 export const router = express.Router();
 
