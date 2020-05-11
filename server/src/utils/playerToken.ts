@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-interface PlayerTokenInfo {
+export interface PlayerTokenInfo {
     roomName: string;
     playerName: string;
 }

@@ -1,5 +1,6 @@
+import { GameAction, GameState } from "../../entities/Game";
 import { ServerItems, setUpServer, tearDownServerItems } from "../../server";
-import { GameState } from "../../entities/Game";
+import jwt from "jsonwebtoken";
 import request from "supertest";
 
 describe("http rooms portion", () => {
@@ -44,6 +45,61 @@ describe("http rooms portion", () => {
                                 word: null
                             },
                             gameInfo: {
+                                gameAction: GameAction.join,
+                                gameState: 0,
+                                maxChars: 24,
+                                minChars: 1,
+                                remainingPlayers: [],
+                                waitingRoomMarshall: "Steve"
+                            }
+                        }
+                    }
+                });
+
+            const decoded = jwt.decode(resp.body.result.playerToken);
+            expect(decoded).toStrictEqual({ roomName: "testRoomName", playerName: "Steve" });
+
+            resp = await request(serverItems.app)
+                .get("/rooms/testRoomName")
+                .expect(200);
+            expect(resp.body)
+                .toStrictEqual({
+                    result: {
+                        gameState: GameState.waitingRoom,
+                        playerCount: 1
+                    }
+                });
+        });
+    });
+
+    describe("put", () => {
+        it("Can add a player to a game in waiting", async () => {
+            await request(serverItems.app)
+                .post("/rooms/testRoomName?creatorName=Steve")
+                .expect(200);
+
+            let resp = await request(serverItems.app)
+                .put("/rooms/testRoomName?playerName=Will")
+                .expect(200);
+            expect(resp.body)
+                .toStrictEqual({
+                    result: {
+                        created: true,
+                        playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJXaWxsIn0.fx7jStfvWyNglpn5du5mF5WRC0odKljYnIgU9Ctb5aQ",
+                        playerUpdate: {
+                            forEffected: {
+                                eliminatedPlayers: [],
+                                guessedLetters: [],
+                                guessedWordPortion: null,
+                                guessedWords: [],
+                                lastGuessedAgainst: [],
+                                lastGuessedBy: [],
+                                name: "Will",
+                                state: 0,
+                                word: null
+                            },
+                            gameInfo: {
+                                gameAction: GameAction.join,
                                 gameState: 0,
                                 maxChars: 24,
                                 minChars: 1,
@@ -61,7 +117,7 @@ describe("http rooms portion", () => {
                 .toStrictEqual({
                     result: {
                         gameState: GameState.waitingRoom,
-                        playerCount: 1
+                        playerCount: 2
                     }
                 });
         });

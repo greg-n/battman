@@ -5,3 +5,4 @@ export const router = express.Router();
 
 router.get("/:roomName", controller.get.room);
 router.post("/:roomName", controller.post.room);
+router.put("/:roomName", controller.put.room);

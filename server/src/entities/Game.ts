@@ -1,6 +1,19 @@
 import Player, { PlayerSerializable, PlayerState } from "./Player";
-import fillInChars from "../utils/fillInChars";
-import shuffle from "../utils/shuffle";
+import fillInChars from "./utils/fillInChars";
+import shuffle from "./utils/shuffle";
+
+// Action that will be reported with data for client to determine the purpose of data
+export enum GameAction {
+    join, // Match token to player in game
+    disconnect,
+    changeWordConstraints,
+    transferMarshalship,
+    setWord,
+    readyToggle,
+    startGame,
+    guess,
+    getGameState
+}
 
 export interface GameExternalInfo {
     gameState: GameState;
@@ -13,11 +26,13 @@ export enum GameState {
     ended
 }
 
-interface GameStateOutput extends GameUpdateOutput {
+export interface GameStateOutput {
     players: { [key: string]: PlayerSerializable };
+    gameInfo: GameUpdateOutput;
 }
 
 interface GameUpdateOutput {
+    gameAction: GameAction;
     gameState: GameState;
     currentPlayer?: string;
     waitingRoomMarshall?: string;
@@ -76,8 +91,9 @@ export default class Game {
         this.lastModifiedAt = Date.now();
     }
 
-    private buildGameUpdateOutput(): GameUpdateOutput {
+    private buildGameUpdateOutput(action: GameAction): GameUpdateOutput {
         return {
+            gameAction: action,
             gameState: this.state,
             currentPlayer: this.currentPlayer,
             waitingRoomMarshall: this.waitingRoomMarshall,
@@ -107,7 +123,7 @@ export default class Game {
         return {
             forEffected: player.getSafeToSerialize(),
             forOthers: player.getSanitizedCopy().getSafeToSerialize(),
-            gameInfo: this.buildGameUpdateOutput()
+            gameInfo: this.buildGameUpdateOutput(GameAction.join)
         };
     }
 
@@ -141,7 +157,7 @@ export default class Game {
         }
 
         this.lastModifiedAt = Date.now();
-        return this.getGameState();
+        return this.getGameState(GameAction.changeWordConstraints);
     }
 
     /**
@@ -168,10 +184,10 @@ export default class Game {
         }
 
         this.lastModifiedAt = Date.now();
-        return this.getGameState();
+        return this.getGameState(GameAction.disconnect);
     }
 
-    getGameState(): GameStateOutput {
+    getGameState(action?: GameAction): GameStateOutput {
         const players: { [key: string]: PlayerSerializable } = {};
         for (const [name, val] of this.players.entries()) {
             players[name] = val.getSanitizedCopy().getSafeToSerialize();
@@ -179,7 +195,7 @@ export default class Game {
 
         return {
             players,
-            ...this.buildGameUpdateOutput()
+            gameInfo: this.buildGameUpdateOutput(action ?? GameAction.getGameState)
         };
     }
 
@@ -299,7 +315,7 @@ export default class Game {
                     ? subjectItem.getSafeToSerialize() // Reveal all on elimination
                     : subjectItem.getSanitizedCopy().getSafeToSerialize()
             },
-            gameInfo: this.buildGameUpdateOutput(),
+            gameInfo: this.buildGameUpdateOutput(GameAction.guess),
             streamInfo
         };
     }
@@ -341,7 +357,7 @@ export default class Game {
         return {
             forEffected: player.getSafeToSerialize(),
             forOthers: player.getSanitizedCopy().getSafeToSerialize(),
-            gameInfo: this.buildGameUpdateOutput()
+            gameInfo: this.buildGameUpdateOutput(GameAction.readyToggle)
         };
     }
 
@@ -379,7 +395,7 @@ export default class Game {
         return {
             forEffected: actorItem.getSafeToSerialize(),
             forOthers: actorItem.getSanitizedCopy().getSafeToSerialize(),
-            gameInfo: this.buildGameUpdateOutput()
+            gameInfo: this.buildGameUpdateOutput(GameAction.setWord)
         };
     }
 
@@ -418,7 +434,7 @@ export default class Game {
         this.currentPlayer = shuffledPlayersList[0];
 
         this.lastModifiedAt = Date.now();
-        return this.getGameState();
+        return this.getGameState(GameAction.startGame);
     }
 
     transferMarshallShip(actor: string, subject: string): GameUpdateOutput {
@@ -435,6 +451,6 @@ export default class Game {
         this.waitingRoomMarshall = subject;
 
         this.lastModifiedAt = Date.now();
-        return this.buildGameUpdateOutput();
+        return this.buildGameUpdateOutput(GameAction.transferMarshalship);
     }
 }

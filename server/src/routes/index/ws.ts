@@ -1,9 +1,11 @@
 // This file will need ignoring for broken connection detection
 /* eslint-disable @typescript-eslint/ban-ts-ignore */
 import WebSocket from "ws";
+import buildRoomsRouting from "../rooms/ws";
+import qs from "qs";
 
 export default function buildWsRouting(wss: WebSocket.Server): void {
-    wss.on("connection", (ws) => {
+    wss.on("connection", (ws, req) => {
         // @ts-ignore for connection detection tracking within the interval
         ws.isAlive = true;
         ws.on("pong", () => {
@@ -11,7 +13,20 @@ export default function buildWsRouting(wss: WebSocket.Server): void {
             this.isAlive = true;
         });
 
-        ws.send("hello");
+        const url = req.url;
+        if (url == null)
+            return;
+
+        const queryIndex = url.indexOf("?");
+        const path = url.slice(0, queryIndex);
+        const queryParams = qs.parse(url.slice(queryIndex + 1));
+        switch (path) {
+            case "/rooms":
+                buildRoomsRouting(ws, queryParams);
+                break;
+        }
+
+        ws.send(JSON.stringify({ result: "Connected." }));
     });
 
     const interval = setInterval(function ping() {
