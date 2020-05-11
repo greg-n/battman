@@ -1,16 +1,20 @@
 import Game, { GameExternalInfo, PlayerUpdateOutput } from "../../entities/Game";
 import { NextFunction, Request, Response } from "express";
+import broadcastToRoom from "../../state/utils/broadcastToRoom";
 import { buildToken } from "../../utils/playerToken";
 import { rooms } from "../../state/rooms";
 
-interface RoomCreationOutput {
-    created: boolean;
-    failureReason?: string;
+interface AddPlayerOutput {
     playerUpdate?: Omit<PlayerUpdateOutput, "forOthers">;
     playerToken?: string;
 }
 
-function addNewPlayer(roomName: string, playerName: string): unknown {
+interface RoomCreationOutput extends AddPlayerOutput {
+    roomCreated: boolean;
+    failureReason?: string;
+}
+
+function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
     const room = rooms.get(roomName);
     if (room == null) {
         throw new Error("Requested room does not exist.");
@@ -23,13 +27,18 @@ function addNewPlayer(roomName: string, playerName: string): unknown {
     // have a method to broadcast to a room (maybe wrap single sends too to remove client who can't be sent to from state)
     // store client ws items in map on room state next to game item
     rooms.set(roomName, room);
+    broadcastToRoom(
+        roomName,
+        { forOthers: playerUpdate.forOthers, gameInfo: playerUpdate.gameInfo },
+        playerName
+    );
     delete playerUpdate.forOthers;
-    return { created: true, playerUpdate, playerToken };
+    return { playerUpdate, playerToken };
 }
 
 function createRoom(roomName: string, creatorName: string): RoomCreationOutput {
     if (rooms.has(roomName)) {
-        return { created: false, failureReason: "Room already exists." };
+        return { roomCreated: false, failureReason: "Room already exists." };
     }
 
     const newGame = new Game();
@@ -38,7 +47,7 @@ function createRoom(roomName: string, creatorName: string): RoomCreationOutput {
 
     rooms.set(roomName, { game: newGame, clients: new Map() });
     delete playerUpdate.forOthers;
-    return { created: true, playerUpdate, playerToken };
+    return { roomCreated: true, playerUpdate, playerToken };
 }
 
 function getRoomInfo(roomName: string): null | GameExternalInfo {
@@ -73,7 +82,7 @@ export namespace post {
 
 export namespace put {
     // Add new player to game
-    export function room(req: Request, res: Response, next: NextFunction): void {
+    export function addPlayer(req: Request, res: Response, next: NextFunction): void {
         const playerName = req.query.playerName;
         if (typeof playerName !== "string") {
             return next(new Error("playerName query item not provided or not type string."));

@@ -1,3 +1,4 @@
+import WebSocket from "ws";
 import { rooms } from "../rooms";
 
 export default function broadcastToRoom(room: string, message: object, excludePlayer?: string): void {

@@ -1,6 +1,6 @@
 import { ServerItems, setUpServer, tearDownServerItems } from "../../server";
+import { GameAction } from "../../entities/Game";
 import WebSocket from "ws";
-import jwt from "jsonwebtoken";
 import request from "supertest";
 
 describe("ws rooms portion", () => {
@@ -38,6 +38,26 @@ describe("ws rooms portion", () => {
                     minChars: 1,
                     maxChars: 24
                 }
+            }),
+            JSON.stringify({
+                forOthers: {
+                    name: "Will",
+                    guessedWordPortion: null,
+                    guessedLetters: [],
+                    guessedWords: [],
+                    eliminatedPlayers: [],
+                    state: 0,
+                    lastGuessedAgainst: [],
+                    lastGuessedBy: []
+                },
+                gameInfo: {
+                    gameAction: 0,
+                    gameState: 0,
+                    waitingRoomMarshall: "Steve",
+                    remainingPlayers: [],
+                    minChars: 1,
+                    maxChars: 24
+                }
             })
         ];
         const expectedMsgs = expectedResp.length;
@@ -53,12 +73,25 @@ describe("ws rooms portion", () => {
             wsClient.on("message", (msg: string) => {
                 expect(msg).toBe(expectedResp[respIndex]);
                 respIndex++;
+
                 if (respIndex === expectedMsgs) {
                     wsClient.close();
                     done();
+                } else if (respIndex === 2) {
+                    // Add another player and expect the third message to be a broadcast
+                    request(serverItems.app)
+                        .put("/rooms/testRoomName/players?playerName=Will")
+                        .expect(
+                            200,
+                            (err) => {
+                                if (err)
+                                    console.error(err);
+                            }
+                        );
                 }
             });
-            wsClient.send(JSON.stringify({ action: 0 }));
+
+            wsClient.send(JSON.stringify({ action: GameAction.join }));
         });
-    }, 10_000);
+    });
 });

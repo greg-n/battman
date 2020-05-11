@@ -12,6 +12,9 @@ export default function buildWsRouting(wss: WebSocket.Server): void {
             // @ts-ignore this is defined in type definition for this cb
             this.isAlive = true;
         });
+        ws.on("error", (error) => {
+            console.trace(error);
+        });
 
         const url = req.url;
         if (url == null)

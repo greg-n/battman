@@ -34,8 +34,10 @@ export namespace ws {
 
         room.clients.delete(token.playerName);
         broadcastToRoom(token.roomName, gameState, token.playerName);
+        // TODO maybe delete room if no players are left
     }
 
+    // Adding a client to match the player added to the game via rest
     export function joinGame(ws: WebSocket, token: PlayerTokenInfo): void {
         const room = rooms.get(token.roomName);
         if (room == null) {
@@ -52,6 +54,7 @@ export namespace ws {
         });
 
         room.clients.set(token.playerName, ws);
+        rooms.set(token.roomName, room);
         const gameState = room.game.getGameState(GameAction.join);
         ws.send(JSON.stringify(gameState));
     }

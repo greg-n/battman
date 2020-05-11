@@ -30,7 +30,7 @@ describe("http rooms portion", () => {
             expect(resp.body)
                 .toStrictEqual({
                     result: {
-                        created: true,
+                        roomCreated: true,
                         playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJTdGV2ZSJ9.KCMJ6uXNEpGAgv3-AIOUQyZQ_Wp682yB4nGm9udNzaQ",
                         playerUpdate: {
                             forEffected: {
@@ -79,12 +79,11 @@ describe("http rooms portion", () => {
                 .expect(200);
 
             let resp = await request(serverItems.app)
-                .put("/rooms/testRoomName?playerName=Will")
+                .put("/rooms/testRoomName/players?playerName=Will")
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
                     result: {
-                        created: true,
                         playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJXaWxsIn0.fx7jStfvWyNglpn5du5mF5WRC0odKljYnIgU9Ctb5aQ",
                         playerUpdate: {
                             forEffected: {
