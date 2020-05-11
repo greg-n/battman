@@ -33,6 +33,7 @@ export namespace ws {
         }
 
         room.clients.delete(token.playerName);
+        rooms.set(token.roomName, room);
         broadcastToRoom(token.roomName, gameState, token.playerName);
         // TODO maybe delete room if no players are left
     }
