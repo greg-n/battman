@@ -63,7 +63,7 @@ export namespace get {
     // Retrieve information about room's game if possible
     export function room(req: Request, res: Response): void {
         const result = getRoomInfo(req.params.roomName);
-        res.json({ result });
+        res.json(result);
     }
 }
 
@@ -76,7 +76,7 @@ export namespace post {
         }
 
         const result = createRoom(req.params.roomName, creatorName);
-        res.json({ result });
+        res.json(result);
     }
 }
 
@@ -89,6 +89,6 @@ export namespace put {
         }
 
         const result = addNewPlayer(req.params.roomName, playerName);
-        res.json({ result });
+        res.json(result);
     }
 }

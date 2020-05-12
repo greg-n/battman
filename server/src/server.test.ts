@@ -2,7 +2,7 @@ import { ServerItems, setUpServer, tearDownServerItems } from "./server";
 import WebSocket from "ws";
 import request from "supertest";
 
-describe("index", () => {
+describe("server", () => {
     let serverItems: ServerItems;
     beforeEach(async () => {
         serverItems = await setUpServer();
@@ -17,7 +17,7 @@ describe("index", () => {
         const wsClient = new WebSocket("ws://localhost:3000");
         wsClient.on("open", () => {
             wsClient.on("message", (msg: string) => {
-                expect(msg).toBe(JSON.stringify({ result: "Connected." }));
+                expect(msg).toBe("Connected.");
                 wsClient.close();
                 done();
             });

@@ -3,9 +3,10 @@ import { PlayerTokenInfo, verifyDecodeToken } from "../../utils/playerToken";
 import { GameAction } from "../../entities/Game";
 import { ParsedQs } from "qs";
 import WebSocket from "ws";
+import { rooms } from "../../state/rooms";
 
 // All potential information that could be needed by a controller
-export interface RoomMessageData {
+export interface RoomsMessageData {
     action: GameAction;
     subject?: string;
     guess?: string;
@@ -20,7 +21,7 @@ export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void
         return;
     }
 
-    let token: PlayerTokenInfo | undefined;
+    let token: PlayerTokenInfo;
     try {
         token = verifyDecodeToken(accessToken);
         if (token == null)
@@ -29,6 +30,7 @@ export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void
         ws.send(JSON.stringify({ error: error.message }));
         return;
     }
+    // token type asserted
 
     ws.on("message", (rawData) => {
         if (typeof rawData !== "string") {
@@ -36,26 +38,33 @@ export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void
             return;
         }
 
-        const data = JSON.parse(rawData) as RoomMessageData;
+        const data = JSON.parse(rawData) as RoomsMessageData;
         try {
             checkData(data);
         } catch (error) {
             ws.send(JSON.stringify({ error: error.message }));
             return;
         }
+        // data type asserted
+
+        // Require room exists
+        if (!rooms.has(token.roomName)) {
+            ws.send(JSON.stringify({ error: "Requested room does not exist." }));
+            return;
+        }
 
         switch (data.action) {
             case GameAction.join:
-                controller.ws.joinGame(ws, token as PlayerTokenInfo);
+                controller.ws.joinGame(ws, token);
                 break;
             case GameAction.disconnect:
-                controller.ws.disconnectFromGame(ws, token as PlayerTokenInfo);
+                controller.ws.disconnectFromGame(ws, token);
                 break;
             case GameAction.changeWordConstraints:
-                // TODO controller
+                controller.ws.changeWordConstraints(ws, token, data);
                 break;
             case GameAction.transferMarshalship:
-                // TODO controller
+                controller.ws.transferMarshalship(ws, token, data);
                 break;
             case GameAction.setWord:
                 // TODO controller
@@ -64,13 +73,13 @@ export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void
                 // TODO controller
                 break;
             case GameAction.startGame:
-                // TODO controller
+                controller.ws.startGame(ws, token);
                 break;
             case GameAction.guess:
                 // TODO controller
                 break;
             case GameAction.getGameState:
-                // TODO controller
+                controller.ws.getGameState(ws, token);
                 break;
             default:
                 ws.send(JSON.stringify({ error: "Action could not be matched to a controller." }));
@@ -78,7 +87,7 @@ export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void
     });
 }
 
-function checkData(data: RoomMessageData): void {
+function checkData(data: RoomsMessageData): void {
     if (data.action == null || !(data.action in GameAction))
         throw new Error("Data action must be defined and within acceptable values.");
     if (data.subject != null && typeof data.subject !== "string")

@@ -30,6 +30,7 @@ export async function setUpServer(): Promise<ServerItems> {
     app.use(helmet());
     app.use(router);
     app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+        console.error("Http error:", error);
         if (res.headersSent) {
             return next(error);
         }
@@ -37,6 +38,9 @@ export async function setUpServer(): Promise<ServerItems> {
     });
 
     buildWsRouting(wss);
+    wss.on("error", (error) => {
+        console.error("WebSocket error:", error);
+    });
 
     await new Promise((resolve) => {
         server.listen(3000, () => {

@@ -29,7 +29,7 @@ export default function buildWsRouting(wss: WebSocket.Server): void {
                 break;
         }
 
-        ws.send(JSON.stringify({ result: "Connected." }));
+        ws.send("Connected.");
     });
 
     const interval = setInterval(function ping() {

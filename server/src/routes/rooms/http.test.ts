@@ -18,7 +18,7 @@ describe("http rooms portion", () => {
         it("Can find room/game by name", (done) => {
             request(serverItems.app)
                 .get("/rooms/testRoomName")
-                .expect(200, { result: null }, done);
+                .expect(200, null, done);
         });
     });
 
@@ -29,34 +29,32 @@ describe("http rooms portion", () => {
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
-                    result: {
-                        roomCreated: true,
-                        playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJTdGV2ZSJ9.KCMJ6uXNEpGAgv3-AIOUQyZQ_Wp682yB4nGm9udNzaQ",
-                        playerUpdate: {
-                            forEffected: {
-                                eliminatedPlayers: [],
-                                guessedLetters: [],
-                                guessedWordPortion: null,
-                                guessedWords: [],
-                                lastGuessedAgainst: [],
-                                lastGuessedBy: [],
-                                name: "Steve",
-                                state: 0,
-                                word: null
-                            },
-                            gameInfo: {
-                                gameAction: GameAction.join,
-                                gameState: 0,
-                                maxChars: 24,
-                                minChars: 1,
-                                remainingPlayers: [],
-                                waitingRoomMarshall: "Steve"
-                            }
+                    roomCreated: true,
+                    playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJTdGV2ZSJ9.KCMJ6uXNEpGAgv3-AIOUQyZQ_Wp682yB4nGm9udNzaQ",
+                    playerUpdate: {
+                        forEffected: {
+                            eliminatedPlayers: [],
+                            guessedLetters: [],
+                            guessedWordPortion: null,
+                            guessedWords: [],
+                            lastGuessedAgainst: [],
+                            lastGuessedBy: [],
+                            name: "Steve",
+                            state: 0,
+                            word: null
+                        },
+                        gameInfo: {
+                            gameAction: GameAction.join,
+                            gameState: 0,
+                            maxChars: 24,
+                            minChars: 1,
+                            remainingPlayers: [],
+                            waitingRoomMarshall: "Steve"
                         }
                     }
                 });
 
-            const decoded = jwt.decode(resp.body.result.playerToken);
+            const decoded = jwt.decode(resp.body.playerToken);
             expect(decoded).toStrictEqual({ roomName: "testRoomName", playerName: "Steve" });
 
             resp = await request(serverItems.app)
@@ -64,10 +62,8 @@ describe("http rooms portion", () => {
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
-                    result: {
-                        gameState: GameState.waitingRoom,
-                        playerCount: 1
-                    }
+                    gameState: GameState.waitingRoom,
+                    playerCount: 1
                 });
         });
     });
@@ -83,28 +79,26 @@ describe("http rooms portion", () => {
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
-                    result: {
-                        playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJXaWxsIn0.fx7jStfvWyNglpn5du5mF5WRC0odKljYnIgU9Ctb5aQ",
-                        playerUpdate: {
-                            forEffected: {
-                                eliminatedPlayers: [],
-                                guessedLetters: [],
-                                guessedWordPortion: null,
-                                guessedWords: [],
-                                lastGuessedAgainst: [],
-                                lastGuessedBy: [],
-                                name: "Will",
-                                state: 0,
-                                word: null
-                            },
-                            gameInfo: {
-                                gameAction: GameAction.join,
-                                gameState: 0,
-                                maxChars: 24,
-                                minChars: 1,
-                                remainingPlayers: [],
-                                waitingRoomMarshall: "Steve"
-                            }
+                    playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJXaWxsIn0.fx7jStfvWyNglpn5du5mF5WRC0odKljYnIgU9Ctb5aQ",
+                    playerUpdate: {
+                        forEffected: {
+                            eliminatedPlayers: [],
+                            guessedLetters: [],
+                            guessedWordPortion: null,
+                            guessedWords: [],
+                            lastGuessedAgainst: [],
+                            lastGuessedBy: [],
+                            name: "Will",
+                            state: 0,
+                            word: null
+                        },
+                        gameInfo: {
+                            gameAction: GameAction.join,
+                            gameState: 0,
+                            maxChars: 24,
+                            minChars: 1,
+                            remainingPlayers: [],
+                            waitingRoomMarshall: "Steve"
                         }
                     }
                 });
@@ -114,10 +108,8 @@ describe("http rooms portion", () => {
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
-                    result: {
-                        gameState: GameState.waitingRoom,
-                        playerCount: 2
-                    }
+                    gameState: GameState.waitingRoom,
+                    playerCount: 2
                 });
         });
     });

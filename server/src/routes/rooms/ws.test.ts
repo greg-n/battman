@@ -16,7 +16,7 @@ describe("ws rooms portion", () => {
 
     it("Can create and join game", async (done) => {
         const expectedResp = [
-            JSON.stringify({ result: "Connected." }),
+            "Connected.",
             JSON.stringify({
                 players: {
                     Steve: {
@@ -66,7 +66,7 @@ describe("ws rooms portion", () => {
             .post("/rooms/testRoomName?creatorName=Steve")
             .expect(200);
 
-        const token = resp.body.result.playerToken as string;
+        const token = resp.body.playerToken as string;
         const wsClient = new WebSocket(`ws://localhost:3000/rooms?accessToken=${token}`);
         wsClient.on("open", () => {
             let respIndex = 0;

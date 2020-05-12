@@ -1,16 +1,36 @@
 import { GameAction, GameStateOutput } from "../../entities/Game";
+import { Room, rooms } from "../../state/rooms";
 import { PlayerTokenInfo } from "../../utils/playerToken";
+import { RoomsMessageData } from "../../routes/rooms/ws";
 import WebSocket from "ws";
 import broadcastToRoom from "../../state/utils/broadcastToRoom";
-import { rooms } from "../../state/rooms";
 
+// Will trust that room in token exists
 export namespace ws {
-    export function disconnectFromGame(ws: WebSocket, token: PlayerTokenInfo, closeClient?: boolean): void {
-        const room = rooms.get(token.roomName);
-        if (room == null) {
-            ws.send(JSON.stringify({ error: "Requested room does not exist." }));
-            return;
+    export function changeWordConstraints(
+        ws: WebSocket,
+        token: PlayerTokenInfo,
+        message: RoomsMessageData
+    ): void {
+        const room = rooms.get(token.roomName) as Room;
+        try {
+            const result = room.game.changeWordConstraints(
+                token.playerName,
+                message.minChars,
+                message.maxChars
+            );
+            broadcastToRoom(token.roomName, result);
+        } catch (error) {
+            ws.send(JSON.stringify({ error: error.message }));
         }
+    }
+
+    export function disconnectFromGame(
+        ws: WebSocket,
+        token: PlayerTokenInfo,
+        closeClient?: boolean
+    ): void {
+        const room = rooms.get(token.roomName) as Room;
 
         let gameState: GameStateOutput;
         try {
@@ -33,20 +53,27 @@ export namespace ws {
         }
 
         room.clients.delete(token.playerName);
-        rooms.set(token.roomName, room);
-        broadcastToRoom(token.roomName, gameState, token.playerName);
-        // TODO maybe delete room if no players are left
+        if (room.clients.size > 0) {
+            rooms.set(token.roomName, room);
+            broadcastToRoom(token.roomName, gameState, token.playerName);
+        } else
+            rooms.delete(token.roomName); // Delete room if no clients remain after one leaves
+    }
+
+    export function getGameState(ws: WebSocket, token: PlayerTokenInfo): void {
+        const room = rooms.get(token.roomName) as Room;
+
+        const gameState = room.game.getGameState();
+        ws.send(JSON.stringify(gameState));
     }
 
     // Adding a client to match the player added to the game via rest
     export function joinGame(ws: WebSocket, token: PlayerTokenInfo): void {
-        const room = rooms.get(token.roomName);
-        if (room == null) {
-            ws.send(JSON.stringify({ error: "Requested room does not exist." }));
-            return;
-        }
+        const room = rooms.get(token.roomName) as Room;
         if (room.clients.has(token.playerName)) {
-            ws.send(JSON.stringify({ error: "Client connection has already been established for this room." }));
+            ws.send(JSON.stringify({
+                error: "Client connection has already been established for this room."
+            }));
             return;
         }
 
@@ -58,5 +85,35 @@ export namespace ws {
         rooms.set(token.roomName, room);
         const gameState = room.game.getGameState(GameAction.join);
         ws.send(JSON.stringify(gameState));
+    }
+
+    export function startGame(ws: WebSocket, token: PlayerTokenInfo): void {
+        const room = rooms.get(token.roomName) as Room;
+        try {
+            const result = room.game.start(
+                token.playerName,
+            );
+            broadcastToRoom(token.roomName, result);
+        } catch (error) {
+            // Broadcast game start errors to notify those not ready
+            broadcastToRoom(token.roomName, { error: error.message });
+        }
+    }
+
+    export function transferMarshalship(
+        ws: WebSocket,
+        token: PlayerTokenInfo,
+        message: RoomsMessageData
+    ): void {
+        const room = rooms.get(token.roomName) as Room;
+        try {
+            const result = room.game.transferMarshallShip(
+                token.playerName,
+                message.subject || "", // Is string but will fail to get a valid player
+            );
+            broadcastToRoom(token.roomName, result);
+        } catch (error) {
+            ws.send(JSON.stringify({ error: error.message }));
+        }
     }
 }
