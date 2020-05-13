@@ -26,12 +26,11 @@ export enum GameState {
     ended
 }
 
-export interface GameStateOutput {
+export interface GameStateOutput extends GameOutput {
     players: { [key: string]: PlayerSerializable };
-    gameInfo: GameUpdateOutput;
 }
 
-interface GameUpdateOutput {
+interface GameUpdate {
     gameAction: GameAction;
     gameState: GameState;
     currentPlayer?: string;
@@ -41,17 +40,19 @@ interface GameUpdateOutput {
     maxChars: number;
 }
 
-interface GuessOutput {
+interface GuessOutput extends GameOutput {
     actorUpdate: Omit<PlayerUpdateOutput, "gameInfo">;
     subjectUpdate: Omit<PlayerUpdateOutput, "gameInfo">;
-    gameInfo: GameUpdateOutput;
     streamInfo: string;
 }
 
-export interface PlayerUpdateOutput {
+interface GameOutput {
+    gameInfo: GameUpdate;
+}
+
+export interface PlayerUpdateOutput extends GameOutput {
     forEffected: PlayerSerializable;
     forOthers: PlayerSerializable;
-    gameInfo: GameUpdateOutput;
 }
 
 export default class Game {
@@ -91,7 +92,7 @@ export default class Game {
         this.lastModifiedAt = Date.now();
     }
 
-    private buildGameUpdateOutput(action: GameAction): GameUpdateOutput {
+    private buildGameUpdateOutput(action: GameAction): GameUpdate {
         return {
             gameAction: action,
             gameState: this.state,
@@ -231,6 +232,14 @@ export default class Game {
             throw new Error("Either actor or subject is not a remaining player.");
         }
 
+        const guessFixed = guess.toLowerCase().trim();
+        if (guessFixed.length < 1) {
+            throw new Error("Guess must be at least one char.");
+        }
+        if (!/^[a-z]+$/g.test(guessFixed)) {
+            throw new Error("Guess is not a single/list of a-z chars without spaces.");
+        }
+
         const actorItem = this.players.get(actor) as Player;
         const subjectItem = this.players.get(subject) as Player;
 
@@ -255,7 +264,6 @@ export default class Game {
         subjectItem.lastGuessedBy = subjectItem.lastGuessedBy.slice(0, 5);
 
         let streamInfo: string | undefined;
-        const guessFixed = guess.toLowerCase().trim();
         let subjectEliminated = false;
         if (guessFixed.length === 1) {
             // Guess is letter
@@ -382,7 +390,6 @@ export default class Game {
         }
 
         const wordFixed = word.toLowerCase().trim();
-
         if (!/^[a-z]+$/g.test(wordFixed)) {
             throw new Error("Word is not a list of a-z chars without spaces.");
         }
@@ -444,7 +451,7 @@ export default class Game {
         return this.getGameState(GameAction.startGame);
     }
 
-    transferMarshallShip(actor: string, subject: string): GameUpdateOutput {
+    transferMarshallShip(actor: string, subject: string): GameOutput {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state prevents the transfer marshalship.");
         }
@@ -458,6 +465,8 @@ export default class Game {
         this.waitingRoomMarshall = subject;
 
         this.lastModifiedAt = Date.now();
-        return this.buildGameUpdateOutput(GameAction.transferMarshalship);
+        return {
+            gameInfo: this.buildGameUpdateOutput(GameAction.transferMarshalship)
+        };
     }
 }

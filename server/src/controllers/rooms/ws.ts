@@ -19,6 +19,7 @@ export namespace ws {
                 message.minChars,
                 message.maxChars
             );
+            rooms.set(token.roomName, room);
             broadcastToRoom(token.roomName, result);
         } catch (error) {
             ws.send(JSON.stringify({ error: error.message }));
@@ -67,6 +68,45 @@ export namespace ws {
         ws.send(JSON.stringify(gameState));
     }
 
+    export function guess(ws: WebSocket, token: PlayerTokenInfo, message: RoomsMessageData): void {
+        const room = rooms.get(token.roomName) as Room;
+        // May return null but should be handled by game if problem arises
+        const subjectClient = room.clients.get(message.subject || "");
+        try {
+            const guessOutput = room.game.guess(
+                token.playerName,
+                message.subject || "",
+                message.guess || ""
+            );
+            rooms.set(token.roomName, room);
+
+            broadcastToRoom(
+                token.roomName,
+                {
+                    actorUpdate: { forOthers: guessOutput.actorUpdate.forOthers },
+                    subjectUpdate: { forOthers: guessOutput.subjectUpdate.forOthers },
+                    streamInfo: guessOutput.streamInfo,
+                    gameInfo: guessOutput.gameInfo
+                },
+                [token.playerName, message.subject || ""]
+            );
+            ws.send(JSON.stringify({
+                actorUpdate: { forEffected: guessOutput.actorUpdate.forEffected },
+                subjectUpdate: { forOthers: guessOutput.subjectUpdate.forOthers },
+                streamInfo: guessOutput.streamInfo,
+                gameInfo: guessOutput.gameInfo
+            }));
+            subjectClient?.send(JSON.stringify({
+                actorUpdate: { forOthers: guessOutput.actorUpdate.forOthers },
+                subjectUpdate: { forEffected: guessOutput.subjectUpdate.forEffected },
+                streamInfo: guessOutput.streamInfo,
+                gameInfo: guessOutput.gameInfo
+            }));
+        } catch (error) {
+            ws.send(JSON.stringify({ error: error.message }));
+        }
+    }
+
     // Adding a client to match the player added to the game via rest
     export function joinGame(ws: WebSocket, token: PlayerTokenInfo): void {
         const room = rooms.get(token.roomName) as Room;
@@ -87,12 +127,56 @@ export namespace ws {
         ws.send(JSON.stringify(gameState));
     }
 
+    export function readyToggle(ws: WebSocket, token: PlayerTokenInfo): void {
+        const room = rooms.get(token.roomName) as Room;
+        try {
+            const playerUpdate = room.game.readyUpToggle(
+                token.playerName
+            );
+            rooms.set(token.roomName, room);
+            broadcastToRoom(
+                token.roomName,
+                { forOthers: playerUpdate.forOthers, gameInfo: playerUpdate.gameInfo },
+                token.playerName
+            );
+            delete playerUpdate.forOthers;
+            ws.send(JSON.stringify(playerUpdate));
+        } catch (error) {
+            ws.send(JSON.stringify({ error: error.message }));
+        }
+    }
+
+    export function setWord(
+        ws: WebSocket,
+        token: PlayerTokenInfo,
+        message: RoomsMessageData
+    ): void {
+        const room = rooms.get(token.roomName) as Room;
+        try {
+            const playerUpdate = room.game.setWord(
+                token.playerName,
+                message.word || ""
+            );
+            rooms.set(token.roomName, room);
+            broadcastToRoom(
+                token.roomName,
+                { forOthers: playerUpdate.forOthers, gameInfo: playerUpdate.gameInfo },
+                token.playerName
+            );
+            delete playerUpdate.forOthers;
+            ws.send(JSON.stringify(playerUpdate));
+        } catch (error) {
+            ws.send(JSON.stringify({ error: error.message }));
+        }
+    }
+
     export function startGame(ws: WebSocket, token: PlayerTokenInfo): void {
         const room = rooms.get(token.roomName) as Room;
         try {
             const result = room.game.start(
                 token.playerName,
             );
+            rooms.set(token.roomName, room);
             broadcastToRoom(token.roomName, result);
         } catch (error) {
             // Broadcast game start errors to notify those not ready

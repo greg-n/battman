@@ -9,9 +9,10 @@ import { rooms } from "../../state/rooms";
 export interface RoomsMessageData {
     action: GameAction;
     subject?: string;
-    guess?: string;
     minChars?: number;
     maxChars?: number;
+    word?: string;
+    guess?: string;
 }
 
 export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void {
@@ -67,16 +68,16 @@ export default function buildRouting(ws: WebSocket, queryParams: ParsedQs): void
                 controller.ws.transferMarshalship(ws, token, data);
                 break;
             case GameAction.setWord:
-                // TODO controller
+                controller.ws.setWord(ws, token, data);
                 break;
             case GameAction.readyToggle:
-                // TODO controller
+                controller.ws.readyToggle(ws, token);
                 break;
             case GameAction.startGame:
                 controller.ws.startGame(ws, token);
                 break;
             case GameAction.guess:
-                // TODO controller
+                controller.ws.guess(ws, token, data);
                 break;
             case GameAction.getGameState:
                 controller.ws.getGameState(ws, token);
@@ -92,10 +93,12 @@ function checkData(data: RoomsMessageData): void {
         throw new Error("Data action must be defined and within acceptable values.");
     if (data.subject != null && typeof data.subject !== "string")
         throw new Error("Data subject must be defined and a string.");
-    if (data.guess != null && typeof data.guess !== "string")
-        throw new Error("Data guess must be defined and a string.");
     if (data.minChars != null && typeof data.minChars !== "number")
         throw new Error("Data minChars must be defined and a number.");
     if (data.maxChars != null && typeof data.maxChars !== "number")
         throw new Error("Data maxChars must be defined and a number.");
+    if (data.guess != null && typeof data.guess !== "string")
+        throw new Error("Data guess must be defined and a string.");
+    if (data.word != null && typeof data.word !== "string")
+        throw new Error("Data word must be defined and a string.");
 }
