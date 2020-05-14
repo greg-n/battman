@@ -24,15 +24,22 @@ describe("server", () => {
         });
     });
 
-    it("Will be cutoff if ping isn't returned", (done) => {
+    it("Can do the pings and the pongs", (done) => {
         const wsClient = new WebSocket("ws://localhost:3000");
         wsClient.on("open", () => {
             wsClient.on("message", (msg: string) => {
                 expect(msg).toBe("Connected.");
             });
-            wsClient.on("close", () => {
-                wsClient.close();
-                done();
+            wsClient.on("error", (err) => {
+                console.error(err);
+            });
+            let pings = 0;
+            wsClient.on("ping", () => {
+                pings++;
+                if (pings === 2) {
+                    wsClient.close();
+                    done();
+                }
             });
         });
     });

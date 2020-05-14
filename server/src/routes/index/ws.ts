@@ -10,7 +10,7 @@ export default function buildWsRouting(wss: WebSocket.Server): void {
         ws.isAlive = true;
         ws.on("pong", () => {
             // @ts-ignore this is defined in type definition for this cb
-            this.isAlive = true;
+            ws.isAlive = true;
         });
         ws.on("error", (error) => {
             console.trace(error);
