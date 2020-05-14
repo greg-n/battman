@@ -24,6 +24,19 @@ describe("server", () => {
         });
     });
 
+    it("Will be cutoff if ping isn't returned", (done) => {
+        const wsClient = new WebSocket("ws://localhost:3000");
+        wsClient.on("open", () => {
+            wsClient.on("message", (msg: string) => {
+                expect(msg).toBe("Connected.");
+            });
+            wsClient.on("close", () => {
+                wsClient.close();
+                done();
+            });
+        });
+    });
+
     it("Can be health checked", (done) => {
         request(serverItems.app)
             .get("/healthCheck")

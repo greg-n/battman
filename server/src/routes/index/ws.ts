@@ -36,8 +36,7 @@ export default function buildWsRouting(wss: WebSocket.Server): void {
         wss.clients.forEach((ws) => {
             // @ts-ignore
             if (ws.isAlive === false) {
-                // TODO determine a way to kick a player when connection is cut (possibly by state: map<string (clientId), PlayerTokenInfo>)
-                // store client ws items in map on room state next to game item
+                // Will trigger "close" on ws of player and disconnect them from a game
                 return ws.terminate();
             }
 
@@ -45,7 +44,7 @@ export default function buildWsRouting(wss: WebSocket.Server): void {
             ws.isAlive = false;
             ws.ping();
         });
-    }, 30000);
+    }, Number(process.env.PING_INTERVAL) || 30000);
 
     wss.on("close", () => {
         clearInterval(interval);

@@ -189,6 +189,20 @@ export default class Game {
             player.guessedWordPortion = player.word;
             player.disconnectionReason = reason;
             this.players.set(name, player);
+
+            if (this.state === GameState.running) {
+                const remaining = this.getRemainingPlayers();
+                if (remaining.length < 2 && remaining.length) { // Length should never hit one
+                    this.state = GameState.ended;
+                    const victorItem = this.players.get(remaining[0]) as Player;
+                    victorItem.state = PlayerState.victor;
+                    this.players.set(remaining[0], victorItem);
+
+                    this.endedAt = Date.now();
+                } else if (this.currentPlayer === name) {
+                    this.currentPlayer = this.nextPlayer();
+                }
+            }
         }
 
         this.lastModifiedAt = Date.now();
@@ -198,7 +212,14 @@ export default class Game {
     getGameState(action?: GameAction): GameStateOutput {
         const players: { [key: string]: PlayerSerializable } = {};
         for (const [name, val] of this.players.entries()) {
-            players[name] = val.getSanitizedCopy().getSafeToSerialize();
+            if (
+                val.state === PlayerState.playing
+                || val.state === PlayerState.joined // This should not be possible currently
+                || val.state === PlayerState.ready // This should not be possible currently
+            )
+                players[name] = val.getSanitizedCopy().getSafeToSerialize();
+            else
+                players[name] = val.getSafeToSerialize();
         }
 
         return {
