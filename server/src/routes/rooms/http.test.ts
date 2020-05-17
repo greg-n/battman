@@ -2,6 +2,7 @@ import { GameAction, GameState } from "../../entities/Game";
 import { ServerItems, setUpServer, tearDownServerItems } from "../../server";
 import jwt from "jsonwebtoken";
 import request from "supertest";
+import { rooms } from "../../state/rooms";
 
 describe("http rooms portion", () => {
     let serverItems: ServerItems;
@@ -12,6 +13,7 @@ describe("http rooms portion", () => {
     afterEach(async () => {
         if (serverItems != null)
             await tearDownServerItems(serverItems);
+        rooms.clear();
     });
 
     describe("get", () => {
@@ -26,7 +28,7 @@ describe("http rooms portion", () => {
         it("Can create room/game", async () => {
             let resp = await request(serverItems.app)
                 .post("/rooms/testRoomName?creatorName=Steve")
-                .expect(200);
+                .expect(201);
             expect(resp.body)
                 .toStrictEqual({
                     roomCreated: true,
@@ -72,7 +74,7 @@ describe("http rooms portion", () => {
         it("Can add a player to a game in waiting", async () => {
             await request(serverItems.app)
                 .post("/rooms/testRoomName?creatorName=Steve")
-                .expect(200);
+                .expect(201);
 
             let resp = await request(serverItems.app)
                 .put("/rooms/testRoomName/players?playerName=Will")

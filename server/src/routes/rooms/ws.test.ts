@@ -2,6 +2,7 @@ import { ServerItems, setUpServer, tearDownServerItems } from "../../server";
 import { GameAction } from "../../entities/Game";
 import WebSocket from "ws";
 import request from "supertest";
+import { rooms } from "../../state/rooms";
 
 describe("ws rooms portion", () => {
     let serverItems: ServerItems;
@@ -12,6 +13,7 @@ describe("ws rooms portion", () => {
     afterEach(async () => {
         if (serverItems != null)
             await tearDownServerItems(serverItems);
+        rooms.clear();
     });
 
     it("Can create and join game", async (done) => {
@@ -64,7 +66,7 @@ describe("ws rooms portion", () => {
 
         const resp = await request(serverItems.app)
             .post("/rooms/testRoomName?creatorName=Steve")
-            .expect(200);
+            .expect(201);
 
         const token = resp.body.playerToken as string;
         const wsClient = new WebSocket(`ws://localhost:3000/rooms?accessToken=${token}`);

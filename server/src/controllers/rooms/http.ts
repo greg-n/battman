@@ -76,7 +76,10 @@ export namespace post {
         }
 
         const result = createRoom(req.params.roomName, creatorName);
-        res.json(result);
+        if (result.roomCreated)
+            res.status(201).json(result);
+        else
+            res.status(400).json(result);
     }
 }
 

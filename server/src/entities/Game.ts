@@ -184,26 +184,24 @@ export default class Game {
                 // try to set new marshall if old marshall is being removed
                 this.waitingRoomMarshall = this.players.size > 0 ? [...this.players.keys()][0] : undefined;
             }
-        } else {
+        } else if (this.state === GameState.running) {
             player.state = PlayerState.disconnected;
             player.guessedWordPortion = player.word;
             player.disconnectionReason = reason;
             this.players.set(name, player);
 
-            if (this.state === GameState.running) {
-                const remaining = this.getRemainingPlayers();
-                if (remaining.length < 2 && remaining.length) { // Length should never hit one
-                    this.state = GameState.ended;
-                    const victorItem = this.players.get(remaining[0]) as Player;
-                    victorItem.state = PlayerState.victor;
-                    this.players.set(remaining[0], victorItem);
+            const remaining = this.getRemainingPlayers();
+            if (remaining.length < 2 && remaining.length) { // Length should never hit one
+                this.state = GameState.ended;
+                const victorItem = this.players.get(remaining[0]) as Player;
+                victorItem.state = PlayerState.victor;
+                this.players.set(remaining[0], victorItem);
 
-                    this.endedAt = Date.now();
-                } else if (this.currentPlayer === name) {
-                    this.currentPlayer = this.nextPlayer();
-                }
+                this.endedAt = Date.now();
+            } else if (this.currentPlayer === name) {
+                this.currentPlayer = this.nextPlayer();
             }
-        }
+        } // If game state is ended all items are exposed by default
 
         this.lastModifiedAt = Date.now();
         return this.getGameState(GameAction.disconnect);
