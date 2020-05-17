@@ -197,7 +197,7 @@ describe("Game", () => {
         } catch (error) {
             expect(error.message).toBe("Player must have set a word to ready up.");
         }
-        game.setWord("Will", "tests");
+        game.setWord("Will", "test");
         game.readyUpToggle("Will");
 
         game.start("Will");

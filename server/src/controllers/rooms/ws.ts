@@ -33,9 +33,9 @@ export namespace ws {
     ): void {
         const room = rooms.get(token.roomName) as Room;
 
-        let gameState: GameStateOutput;
+        let state: GameStateOutput;
         try {
-            gameState = room.game.disconnectPlayer(token.playerName);
+            state = room.game.disconnectPlayer(token.playerName);
         } catch (error) {
             if (ws.readyState !== WebSocket.OPEN)
                 ws.send(JSON.stringify({ error: error.message }));
@@ -56,7 +56,7 @@ export namespace ws {
         room.clients.delete(token.playerName);
         if (room.clients.size > 0) {
             rooms.set(token.roomName, room);
-            broadcastToRoom(token.roomName, gameState, token.playerName);
+            broadcastToRoom(token.roomName, state, token.playerName);
         } else
             rooms.delete(token.roomName); // Delete room if no clients remain after one leaves
     }
@@ -64,8 +64,8 @@ export namespace ws {
     export function getGameState(ws: WebSocket, token: PlayerTokenInfo): void {
         const room = rooms.get(token.roomName) as Room;
 
-        const gameState = room.game.getGameState();
-        ws.send(JSON.stringify(gameState));
+        const state = room.game.getGameState();
+        ws.send(JSON.stringify(state));
     }
 
     export function guess(ws: WebSocket, token: PlayerTokenInfo, message: RoomsMessageData): void {
@@ -123,8 +123,8 @@ export namespace ws {
 
         room.clients.set(token.playerName, ws);
         rooms.set(token.roomName, room);
-        const gameState = room.game.getGameState(GameAction.join);
-        ws.send(JSON.stringify(gameState));
+        const state = room.game.getGameState(GameAction.join);
+        ws.send(JSON.stringify(state));
     }
 
     export function readyToggle(ws: WebSocket, token: PlayerTokenInfo): void {

@@ -16,7 +16,7 @@ export enum GameAction {
 }
 
 export interface GameExternalInfo {
-    gameState: GameState;
+    state: GameState;
     playerCount: number;
 }
 
@@ -31,8 +31,8 @@ export interface GameStateOutput extends GameOutput {
 }
 
 interface GameUpdate {
-    gameAction: GameAction;
-    gameState: GameState;
+    action: GameAction;
+    state: GameState;
     currentPlayer?: string;
     waitingRoomMarshall?: string;
     remainingPlayers: string[];
@@ -94,8 +94,8 @@ export default class Game {
 
     private buildGameUpdateOutput(action: GameAction): GameUpdate {
         return {
-            gameAction: action,
-            gameState: this.state,
+            action: action,
+            state: this.state,
             currentPlayer: this.currentPlayer,
             waitingRoomMarshall: this.waitingRoomMarshall,
             remainingPlayers: this.getRemainingPlayers(),
@@ -137,7 +137,7 @@ export default class Game {
 
     buildGameExternalInfo(): GameExternalInfo {
         return {
-            gameState: this.state,
+            state: this.state,
             playerCount: this.players.size
         };
     }
@@ -150,6 +150,9 @@ export default class Game {
             throw new Error("Game must be in waiting room to change word constraints.");
         }
         Game.checkWordConstraints(minChars, maxChars);
+
+        this.minChars = minChars;
+        this.maxChars = maxChars;
 
         for (const [name, playerItem] of this.players) {
             const word = playerItem.word || ""; // If not available then spoof is fine to force reset
@@ -244,7 +247,7 @@ export default class Game {
             throw new Error("Must be current player to make a guess.");
         }
         if (!this.players.has(actor) || !this.players.has(subject)) {
-            throw new Error("Could not find player values for actor or subject.");
+            throw new Error(`Could not find player values for actor '${actor}' or subject '${subject}'.`);
         }
         const remainingPlayers = this.getRemainingPlayers();
         if (!remainingPlayers.includes(actor) || !remainingPlayers.includes(subject)) {
@@ -298,10 +301,10 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                streamInfo = actor + " eliminated " + subject + " with guessed letter " + guessFixed + ".";
+                streamInfo = actor + " eliminated " + subject + " with guessed letter '" + guessFixed + "'.";
             } else {
                 subjectItem.guessedWordPortion = updatedPortion;
-                streamInfo = actor + " guessed letter " + guessFixed + " on " + subject + "'s word.";
+                streamInfo = actor + " guessed letter '" + guessFixed + "' on " + subject + "'s word.";
             }
         } else {
             // Guess is word
@@ -311,9 +314,9 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                streamInfo = actor + " eliminated " + subject + " with correct word guess " + guessFixed + ".";
+                streamInfo = actor + " eliminated " + subject + " with correct word guess '" + guessFixed + "'.";
             } else {
-                streamInfo = actor + " guessed word " + guessFixed + " on " + subject + "'s word.";
+                streamInfo = actor + " guessed word '" + guessFixed + "' on " + subject + "'s word.";
             }
         }
 

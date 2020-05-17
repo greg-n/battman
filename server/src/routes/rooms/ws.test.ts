@@ -33,8 +33,8 @@ describe("ws rooms portion", () => {
                     }
                 },
                 gameInfo: {
-                    gameAction: 0,
-                    gameState: 0,
+                    action: 0,
+                    state: 0,
                     waitingRoomMarshall: "Steve",
                     remainingPlayers: [],
                     minChars: 1,
@@ -53,8 +53,8 @@ describe("ws rooms portion", () => {
                     lastGuessedBy: []
                 },
                 gameInfo: {
-                    gameAction: 0,
-                    gameState: 0,
+                    action: 0,
+                    state: 0,
                     waitingRoomMarshall: "Steve",
                     remainingPlayers: [],
                     minChars: 1,

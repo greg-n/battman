@@ -46,8 +46,8 @@ describe("http rooms portion", () => {
                             word: null
                         },
                         gameInfo: {
-                            gameAction: GameAction.join,
-                            gameState: 0,
+                            action: GameAction.join,
+                            state: 0,
                             maxChars: 24,
                             minChars: 1,
                             remainingPlayers: [],
@@ -64,7 +64,7 @@ describe("http rooms portion", () => {
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
-                    gameState: GameState.waitingRoom,
+                    state: GameState.waitingRoom,
                     playerCount: 1
                 });
         });
@@ -95,8 +95,8 @@ describe("http rooms portion", () => {
                             word: null
                         },
                         gameInfo: {
-                            gameAction: GameAction.join,
-                            gameState: 0,
+                            action: GameAction.join,
+                            state: 0,
                             maxChars: 24,
                             minChars: 1,
                             remainingPlayers: [],
@@ -110,7 +110,7 @@ describe("http rooms portion", () => {
                 .expect(200);
             expect(resp.body)
                 .toStrictEqual({
-                    gameState: GameState.waitingRoom,
+                    state: GameState.waitingRoom,
                     playerCount: 2
                 });
         });
