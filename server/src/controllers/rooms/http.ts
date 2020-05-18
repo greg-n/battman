@@ -22,10 +22,7 @@ function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
 
     const playerUpdate = room.game.addPlayer(playerName);
     const playerToken = buildToken({ roomName, playerName });
-    // TODO on adding play via rest, there must be a way to broadcast that a player has joined to the the people currently in the game
-    // maybe have room state also track ws clients and broadcast that way. will have to remove clients from state once they timeout, or a message sending fails
-    // have a method to broadcast to a room (maybe wrap single sends too to remove client who can't be sent to from state)
-    // store client ws items in map on room state next to game item
+
     rooms.set(roomName, room);
     broadcastToRoom(
         roomName,
@@ -39,6 +36,12 @@ function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
 function createRoom(roomName: string, creatorName: string): RoomCreationOutput {
     if (rooms.has(roomName)) {
         return { roomCreated: false, failureReason: "Room already exists." };
+    }
+    if (roomName.length > 24) {
+        return { roomCreated: false, failureReason: "Room name is longer 24 chars." };
+    }
+    if (!/^[a-zA-Z-_]+$/g.test(roomName)) {
+        return { roomCreated: false, failureReason: "Room name should contain only [a-z, A-Z, -, _] chars." };
     }
 
     const newGame = new Game();
