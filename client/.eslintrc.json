@@ -2,7 +2,7 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaFeatures": {
-          "jsx": true
+            "jsx": true
         },
         "ecmaVersion": 2018,
         "sourceType": "module"
@@ -29,7 +29,12 @@
         },
         "import/resolver": {
             "node": {
-                "extensions": [".js", ".jsx", ".ts", ".tsx"]
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx"
+                ]
             }
         }
     },
@@ -59,19 +64,31 @@
             "error",
             "ignorePackages",
             {
-              "js": "never",
-              "jsx": "never",
-              "ts": "never",
-              "tsx": "never"
+                "js": "never",
+                "jsx": "never",
+                "ts": "never",
+                "tsx": "never"
             }
         ],
         "react/jsx-filename-extension": [
             1,
-            { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".ts",
+                    ".tsx"
+                ]
+            }
         ],
         "@typescript-eslint/no-use-before-define": [
             "error",
-            { "functions": false, "classes": false, "variables": true }
-        ]
+            {
+                "functions": false,
+                "classes": false,
+                "variables": true
+            }
+        ],
+        "react/self-closing-comp": "error"
     }
 }

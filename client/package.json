@@ -3,27 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.0",
+    "random-words": "^1.1.1",
     "react": "^16.13.1",
+    "react-bootstrap": "^1.0.1",
     "react-dom": "^16.13.1",
-    "socket.io-client": "^2.3.0"
+    "react-router-dom": "^5.2.0"
   },
   "devDependencies": {
-    "react-scripts": "3.4.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "@types/axios": "^0.14.0",
     "@types/jest": "^24.9.1",
     "@types/node": "^12.12.37",
     "@types/react": "^16.9.34",
+    "@types/react-bootstrap": "^1.0.1",
     "@types/react-dom": "^16.9.7",
-    "typescript": "^3.7.5",
+    "@types/react-router-dom": "^5.1.5",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",
     "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-react": "^7.19.0",
-    "ts-loader": "^7.0.2"
+    "react-scripts": "3.4.1",
+    "ts-loader": "^7.0.2",
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "start": "react-scripts start",
