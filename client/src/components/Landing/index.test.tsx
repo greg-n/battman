@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import React from "react";
-import Landing from "./Landing";
+import Landing from ".";
 
 test("renders landing text", () => {
     const { getByText } = render(<Landing />);

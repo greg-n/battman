@@ -52,8 +52,8 @@
         "no-var": "error",
         "no-alert": "error",
         "no-console": "off",
-        "no-unused-vars": "error",
-        "@typescript-eslint/no-unused-vars": "off", // turning off duplicate
+        "no-unused-vars": "off", // turning off duplicate
+        "@typescript-eslint/no-unused-vars": "error",
         "comma-dangle": [
             "error",
             "never"

@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import "./App.css";
 import Landing from "./components/Landing";
+import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap for whole app
 
 function App(): JSX.Element {
     return (
