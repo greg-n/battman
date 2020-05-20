@@ -1,11 +1,8 @@
 import React, { FormEvent } from "react";
-import { Form, Row, Col, Button, Spinner, Alert } from "react-bootstrap";
+import { Form, Row, Col, Button, Spinner } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { generateRoomName } from "../../utils/roomName";
-
-enum RoomFinderAlert {
-    populateOpenRoomName
-}
+import { toast } from "react-toastify";
 
 enum RoomNameVacancy {
     noName,
@@ -15,7 +12,6 @@ enum RoomNameVacancy {
 }
 
 interface RoomFinderState {
-    alerts: Set<RoomFinderAlert>;
     validated: boolean;
     nameVacancy: RoomNameVacancy;
     roomName: string | undefined;
@@ -26,7 +22,6 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         super(props);
 
         this.state = {
-            alerts: new Set([RoomFinderAlert.populateOpenRoomName]),
             validated: false,
             nameVacancy: RoomNameVacancy.noName,
             roomName: undefined
@@ -35,15 +30,12 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         this.populateOpenRoomName = this.populateOpenRoomName.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.renderSubmitButton = this.renderSubmitButton.bind(this);
-        this.renderAlerts = this.renderAlerts.bind(this);
     }
 
     componentDidMount(): void {
         this.populateOpenRoomName()
             .catch((error) => {
-                this.setState((prevState) => ({
-                    alerts: prevState.alerts.add(RoomFinderAlert.populateOpenRoomName)
-                }));
+                toast.error(error.message);
                 console.error(error);
             });
     }
@@ -101,43 +93,13 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         }
     }
 
-    renderAlerts(): JSX.Element[] {
-        const alerts: JSX.Element[] = [];
-
-        for (const alert of this.state.alerts) {
-            switch (alert) {
-                case RoomFinderAlert.populateOpenRoomName:
-                    alerts.push(
-                        <Alert
-                            key={alert}
-                            dismissible
-                            onClick={(): void => (
-                                this.setState((state) => {
-                                    const alerts = state.alerts;
-                                    alerts.delete(RoomFinderAlert.populateOpenRoomName);
-                                    return {
-                                        alerts
-                                    };
-                                })
-                            )}
-                        >
-                            Hi
-                        </Alert>
-                    );
-            }
-        }
-
-        return alerts;
-    }
-
     render(): JSX.Element {
         return (
             <div>
-                {this.renderAlerts()}
                 <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                     <Row>
                         <Col
-                            sm={2}
+                            xs={2}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
                         >
                             <Button
@@ -148,7 +110,7 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                             </Button>
                         </Col>
                         <Col
-                            sm={8}
+                            xs={8}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
                         >
                             <Form.Control
@@ -158,7 +120,7 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                             />
                         </Col>
                         <Col
-                            sm={2}
+                            xs={2}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
                         >
                             {this.renderSubmitButton()}
