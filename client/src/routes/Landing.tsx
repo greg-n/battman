@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import RoomFinder from "./RoomFinder";
+import RoomFinder from "../containers/RoomFinder";
 
 export default function Landing(): JSX.Element {
     return (

@@ -1,10 +1,17 @@
 import React from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { OverlayInjectedProps } from "react-bootstrap/Overlay";
+import { OverlayInjectedProps, Placement } from "react-bootstrap/Overlay";
 
-export default function SimpleToolTip(props: { text: string; children: JSX.Element }): JSX.Element {
+interface SimpleToolTipProps {
+    placement?: Placement;
+    text: string;
+    children: JSX.Element;
+}
+
+export default function SimpleToolTip(props: SimpleToolTipProps): JSX.Element {
     return (
         <OverlayTrigger
+            placement={props.placement}
             delay={{ show: 150, hide: 150 }}
             overlay={(overlayProps: OverlayInjectedProps): JSX.Element => (
                 <Tooltip id="button-tooltip" {...overlayProps}>

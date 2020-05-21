@@ -8,7 +8,7 @@ import {
     Route
 } from "react-router-dom";
 import "./App.css";
-import Landing from "./components/Landing";
+import Landing from "./routes/Landing";
 import { ToastContainer, Slide } from "react-toastify";
 
 function App(): JSX.Element {

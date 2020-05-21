@@ -1,13 +1,13 @@
 import React, { FormEvent } from "react";
 import { Form, Row, Col, Button, Spinner } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
-import { generateRoomName } from "./utils/roomName";
+import { generateRoomName } from "../utils/roomName";
 import { toast } from "react-toastify";
 import { api } from "../api";
 import { AxiosResponse } from "axios";
 import { GameExternalInfo } from "../types/Game";
 import debounce from "lodash.debounce";
-import SimpleToolTip from "./SimpleToolTip";
+import SimpleToolTip from "../components/SimpleToolTip";
 
 enum RoomNameVacancy {
     noName,
@@ -38,13 +38,19 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                     if (resp.data == null) { // if info is null then the game is available
                         this.setState({
                             roomName: userEditedName,
+                            validated: true,
                             nameVacancy: RoomNameVacancy.vacant
+                        });
+                    } else {
+                        this.setState({
+                            validated: false,
+                            nameVacancy: RoomNameVacancy.taken
                         });
                     }
                 })
                 .catch((error) => {
                     console.error(error);
-                    toast.error("Could not verify vacancy of this room name.");
+                    toast.error(error.message);
                 });
         },
         500,
@@ -61,6 +67,7 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         };
 
         this.checkRoomName = this.checkRoomName.bind(this);
+        this.getInvalidFeedBack = this.getInvalidFeedBack.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.populateOpenRoomName = this.populateOpenRoomName.bind(this);
         this.renderSubmitButton = this.renderSubmitButton.bind(this);
@@ -78,7 +85,10 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         if (!validRoomName(event.target.value)) {
             this.setState({
                 roomName: event.target.value,
-                nameVacancy: RoomNameVacancy.inValid
+                validated: false,
+                nameVacancy: event.target.value === "" || event.target.value == null
+                    ? RoomNameVacancy.noName
+                    : RoomNameVacancy.inValid
             });
             this.debounceCheck.cancel(); // stop any debounced event from happening
 
@@ -89,8 +99,20 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
             roomName: event.target.value,
             nameVacancy: RoomNameVacancy.determining
         });
-
         this.debounceCheck();
+    }
+
+    getInvalidFeedBack(): string {
+        switch (this.state.nameVacancy) {
+            case RoomNameVacancy.noName:
+                return "Must have a entry.";
+            case RoomNameVacancy.taken:
+                return "This room is taken.";
+            case RoomNameVacancy.inValid:
+                return "Room name is not only [a-z, A-Z, -, _] chars or is over 24 chars in length.";
+            default:
+                return "Form invalid.";
+        }
     }
 
     handleSubmit(event: FormEvent<HTMLFormElement>): void {
@@ -123,9 +145,9 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
 
         if (tryCounter >= maxTries || openRoom == null) {
             toast.error("Couldn't find an open room name. Try again.");
-            this.setState({ nameVacancy: RoomNameVacancy.inValid });
+            this.setState({ roomName: "", validated: false, nameVacancy: RoomNameVacancy.noName });
         } else {
-            this.setState({ roomName: openRoom, nameVacancy: RoomNameVacancy.vacant });
+            this.setState({ roomName: openRoom, validated: true, nameVacancy: RoomNameVacancy.vacant });
         }
     }
 
@@ -138,7 +160,7 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                         disabled
                     >
                         Go
-                    </ Button>
+                    </Button>
                 );
             case RoomNameVacancy.vacant:
                 return (
@@ -164,6 +186,14 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                     </Button>
                 );
             case RoomNameVacancy.taken:
+                return (
+                    <Button
+                        variant="dark"
+                        disabled
+                    >
+                        Go
+                    </Button>
+                );
             case RoomNameVacancy.inValid:
                 return (
                     <Button
@@ -187,7 +217,10 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                             xs={2}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
                         >
-                            <SimpleToolTip text="Find vacant room name.">
+                            <SimpleToolTip
+                                placement="top"
+                                text="Find vacant room name."
+                            >
                                 <Button
                                     variant="light"
                                     onClick={this.populateOpenRoomName}
@@ -204,8 +237,12 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
                                 placeholder="Room name"
                                 onChange={this.checkRoomName}
                                 value={this.state.roomName || ""}
+                                isInvalid={!this.state.validated && this.state.nameVacancy !== RoomNameVacancy.vacant}
                                 required
                             />
+                            <Form.Control.Feedback type="invalid">
+                                {this.getInvalidFeedBack()}
+                            </Form.Control.Feedback>
                         </Col>
                         <Col
                             xs={2}
