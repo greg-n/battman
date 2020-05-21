@@ -14,7 +14,7 @@ describe("server", () => {
     });
 
     it("Can connect", (done) => {
-        const wsClient = new WebSocket("ws://localhost:3000");
+        const wsClient = new WebSocket("ws://localhost:8080");
         wsClient.on("open", () => {
             wsClient.on("message", (msg: string) => {
                 expect(msg).toBe("Connected.");
@@ -25,7 +25,7 @@ describe("server", () => {
     });
 
     it("Can do the pings and the pongs", (done) => {
-        const wsClient = new WebSocket("ws://localhost:3000");
+        const wsClient = new WebSocket("ws://localhost:8080");
         wsClient.on("open", () => {
             wsClient.on("message", (msg: string) => {
                 expect(msg).toBe("Connected.");

@@ -3,6 +3,7 @@ import dotenv, { DotenvConfigOptions } from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import WebSocket from "ws";
 import buildWsRouting from "./routes/index/ws";
+import cors from "cors";
 import helmet from "helmet";
 import { router } from "./routes/index/http";
 
@@ -27,6 +28,7 @@ export async function setUpServer(): Promise<ServerItems> {
     }
     dotenv.config(dotenvConfig);
 
+    app.use(cors({ origin: ["http://localhost:3000"] }));
     app.use(helmet());
     app.use(router);
     app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -43,9 +45,9 @@ export async function setUpServer(): Promise<ServerItems> {
     });
 
     await new Promise((resolve) => {
-        server.listen(3000, () => {
+        server.listen(8080, () => {
             if (process.env.NODE_ENV !== "test")
-                console.log("listening on *:3000");
+                console.log("listening on *:8080");
             resolve();
         });
     });

@@ -16,7 +16,7 @@ function App(): JSX.Element {
         <span>
             <ToastContainer
                 position="top-center"
-                autoClose={2500}
+                autoClose={3000}
                 newestOnTop
                 draggable={false}
                 transition={Slide}

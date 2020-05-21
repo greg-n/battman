@@ -69,7 +69,7 @@ describe("ws rooms portion", () => {
             .expect(201);
 
         const token = resp.body.playerToken as string;
-        const wsClient = new WebSocket(`ws://localhost:3000/rooms?accessToken=${token}`);
+        const wsClient = new WebSocket(`ws://localhost:8080/rooms?accessToken=${token}`);
         wsClient.on("open", () => {
             let respIndex = 0;
             wsClient.on("message", (msg: string) => {

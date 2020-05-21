@@ -7,10 +7,13 @@ export default function Landing(): JSX.Element {
         <Container style={{ paddingTop: "33vh" }}>
             <Row>
                 <Col />
-                <Col md="6" style={{ textAlign: "center" }}>
-                    <h2 style={{ padding: "1.5rem" }}>
+                <Col md="6" style={{ textAlign: "center", padding: "1.5rem" }}>
+                    <h2>
                         Battman
                     </h2>
+                    <p>
+                        competitive hangman
+                    </p>
                 </Col>
                 <Col />
             </Row>
