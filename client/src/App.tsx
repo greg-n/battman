@@ -10,7 +10,7 @@ import {
 import "./App.css";
 import Landing from "./routes/Landing";
 import { ToastContainer, Slide } from "react-toastify";
-import Room from "./containers/Room";
+import Room from "./routes/Room";
 
 function App(): JSX.Element {
     return (

@@ -1,38 +1,57 @@
 import React from "react";
-import { withRouter, match as Match } from "react-router-dom";
-import { History, Location } from "history";
-import qs from "qs";
+import { GameExternalInfo, GameStateOutput } from "../types/Game";
+import { api } from "../api";
+import { AxiosResponse } from "axios";
+import { default as RoomComponent } from "../components/Room";
 import { toast } from "react-toastify";
 
 interface RoomProps {
-    history: History;
-    location: Location;
-    match: Match<{ roomName: string }>;
+    roomName: string;
+    tryImmediateCreate: boolean;
 }
 
-class Room extends React.Component<RoomProps, {}> {
-    componentDidMount(): void {
-        const searchQuery = this.props.location.search;
-        if (typeof searchQuery === "string") {
-            // should have '?' at beginning
-            const trimmed = searchQuery.slice(1, searchQuery.length);
-            const parsed = qs.parse(trimmed);
-            if (parsed.tryImmediateCreate === "true") {
-                toast("Will attempt immediate create!");
-            }
+interface RoomState {
+    roomInfo: null | GameExternalInfo;
+    gameState: null | GameStateOutput;
+    clientWS: null | WebSocket;
+}
+
+export default class Room extends React.Component<RoomProps, RoomState> {
+    constructor(props: RoomProps) {
+        super(props);
+
+        this.state = {
+            roomInfo: null,
+            gameState: null,
+            clientWS: null
+        };
+
+        this.fetchRoomInfo = this.fetchRoomInfo.bind(this);
+    }
+
+    async componentDidMount(): Promise<void> {
+        try {
+            const roomInfo = await this.fetchRoomInfo();
+            this.setState({ roomInfo });
+        } catch (error) {
+            console.error(error);
+            toast.error(error.message);
         }
+    }
+
+    async fetchRoomInfo(): Promise<null | GameExternalInfo> {
+        const resp: AxiosResponse<null | GameExternalInfo> = await api.get(`/rooms/${this.props.roomName}`);
+        return resp.data;
     }
 
     render(): JSX.Element {
         return (
-            <div>
-                Hi, welcome to {this.props.match.params.roomName}.
-            </div>
+            <RoomComponent
+                {...this.props}
+                roomInfo={this.state.roomInfo}
+                gameState={this.state.gameState}
+                clientWS={this.state.clientWS}
+            />
         );
     }
 }
-
-// dangerous, but type for withRouter does not reflect potential undefined state behavior 
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-// @ts-ignore
-export default withRouter(Room);
