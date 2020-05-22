@@ -1,7 +1,7 @@
 import React from "react";
-import { GameExternalInfo, GameStateOutput, GameState } from "../types/Game";
-import RoomLanding from "./RoomLanding";
-import RoomRunning from "./RoomRunning";
+import { GameExternalInfo, GameStateOutput, GameState } from "../../types/Game";
+import RoomLanding from "./Landing";
+import RoomRunning from "./Running";
 
 interface RoomProps {
     roomName: string;

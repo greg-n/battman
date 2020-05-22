@@ -1,7 +1,7 @@
 import React from "react";
-import { GameExternalInfo, GameState } from "../types/Game";
+import { GameExternalInfo, GameState } from "../../types/Game";
 import { Button, Container, Col, Row } from "react-bootstrap";
-import RoomFinder from "../containers/RoomFinder";
+import RoomFinder from "../../containers/RoomFinder";
 
 interface RoomLandingProps {
     roomName: string;
