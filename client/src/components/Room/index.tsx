@@ -5,10 +5,11 @@ import RoomRunning from "./Running";
 
 interface RoomProps {
     roomName: string;
-    tryImmediateCreate: boolean;
     roomInfo: null | GameExternalInfo;
     gameState: null | GameStateOutput;
     clientWS: null | WebSocket;
+    createRoom: () => Promise<void>;
+    joinRoom: () => Promise<void>;
 }
 
 export default class Room extends React.Component<RoomProps, {}> {
@@ -27,7 +28,8 @@ export default class Room extends React.Component<RoomProps, {}> {
                 <RoomLanding
                     roomName={this.props.roomName}
                     roomInfo={this.props.roomInfo}
-                    tryImmediateCreate={this.props.tryImmediateCreate}
+                    createRoom={this.props.createRoom}
+                    joinRoom={this.props.joinRoom}
                 />
             );
         else if (gameState?.gameInfo.state !== GameState.ended)

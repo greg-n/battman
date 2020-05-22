@@ -1,12 +1,14 @@
 import React from "react";
 import { GameExternalInfo, GameState } from "../../types/Game";
-import { Button, Container, Col, Row } from "react-bootstrap";
+import { Container, Col, Row } from "react-bootstrap";
 import RoomFinder from "../../containers/RoomFinder";
+import JoinCreate from "./JoinCreate";
 
 interface RoomLandingProps {
     roomName: string;
-    tryImmediateCreate: boolean;
     roomInfo: null | GameExternalInfo;
+    createRoom: () => Promise<void>;
+    joinRoom: () => Promise<void>;
 }
 
 export default class RoomLanding extends React.Component<RoomLandingProps, {}> {
@@ -15,10 +17,6 @@ export default class RoomLanding extends React.Component<RoomLandingProps, {}> {
 
         this.renderByRoomInfo = this.renderByRoomInfo.bind(this);
     }
-
-    // componentDidMount(): void {
-    //     // TODO immediate creation attempt if prop calls for it
-    // }
 
     renderByRoomInfo(): JSX.Element {
         if (this.props.roomInfo == null)
@@ -35,11 +33,11 @@ export default class RoomLanding extends React.Component<RoomLandingProps, {}> {
                     </Row>
                     <Row>
                         <Col />
-                        <Col md="6" style={{ textAlign: "center", padding: "1rem" }}>
-                            {/* TODO make this a component similar to room finder with action and text items passable */}
-                            <Button variant="success">
-                                Start a game here.
-                            </Button>
+                        <Col md="4" style={{ textAlign: "center", padding: "1rem" }}>
+                            <JoinCreate
+                                buttonText="Create"
+                                onSubmit={this.props.createRoom}
+                            />
                         </Col>
                         <Col />
                     </Row>
@@ -59,11 +57,11 @@ export default class RoomLanding extends React.Component<RoomLandingProps, {}> {
                     </Row>
                     <Row>
                         <Col />
-                        <Col md="6" style={{ textAlign: "center", padding: "1rem" }}>
-                            {/* TODO make this a component similar to room finder with action and text items passable */}
-                            <Button variant="success">
-                                Join.
-                            </Button>
+                        <Col md="4" style={{ textAlign: "center", padding: "1rem" }}>
+                            <JoinCreate
+                                buttonText="Join"
+                                onSubmit={this.props.joinRoom}
+                            />
                         </Col>
                         <Col />
                     </Row>
@@ -87,7 +85,7 @@ export default class RoomLanding extends React.Component<RoomLandingProps, {}> {
                     </Row>
                     <Row>
                         <Col />
-                        <Col md="6" style={{ textAlign: "center", padding: "1rem" }}>
+                        <Col md="4" style={{ textAlign: "center", padding: "1rem" }}>
                             <RoomFinder />
                         </Col>
                         <Col />

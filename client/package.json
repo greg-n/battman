@@ -3,11 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/qs": "^6.9.3",
     "axios": "^0.19.2",
     "bootstrap": "^4.5.0",
     "lodash.debounce": "^4.0.8",
-    "qs": "^6.9.4",
     "random-words": "^1.1.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
