@@ -10,6 +10,7 @@ import {
 import "./App.css";
 import Landing from "./routes/Landing";
 import { ToastContainer, Slide } from "react-toastify";
+import Room from "./containers/Room";
 
 function App(): JSX.Element {
     return (
@@ -23,8 +24,11 @@ function App(): JSX.Element {
             />
             <Router>
                 <Switch>
-                    <Route path="/">
+                    <Route exact path="/">
                         <Landing />
+                    </Route>
+                    <Route path="/:roomName">
+                        <Room />
                     </Route>
                 </Switch>
             </Router>

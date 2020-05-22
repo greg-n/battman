@@ -8,6 +8,8 @@ import { AxiosResponse } from "axios";
 import { GameExternalInfo } from "../types/Game";
 import debounce from "lodash.debounce";
 import SimpleToolTip from "../components/SimpleToolTip";
+import { withRouter, match as Match } from "react-router-dom";
+import { History, Location } from "history";
 
 enum RoomNameVacancy {
     noName,
@@ -15,6 +17,12 @@ enum RoomNameVacancy {
     determining,
     taken,
     inValid
+}
+
+interface RoomFinderProps {
+    history: History;
+    location: Location;
+    match: Match;
 }
 
 interface RoomFinderState {
@@ -27,7 +35,7 @@ function validRoomName(name: string): boolean {
     return /^[a-zA-Z-_]+$/g.test(name) && name.length <= 24;
 }
 
-export default class RoomFinder extends React.Component<{}, RoomFinderState> {
+class RoomFinder extends React.Component<RoomFinderProps, RoomFinderState> {
     // to allow checking via server when user stops typing
     debounceCheck = debounce(
         () => {
@@ -57,7 +65,7 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         { leading: false, trailing: true }
     );
 
-    constructor(props: {}) {
+    constructor(props: RoomFinderProps) {
         super(props);
 
         this.state = {
@@ -117,12 +125,16 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
 
     handleSubmit(event: FormEvent<HTMLFormElement>): void {
         const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+        event.preventDefault();
+        event.stopPropagation();
 
-        this.setState({ validated: true });
+        if (form.checkValidity()) {
+            this.props.history.push(
+                `/${this.state.roomName}?tryImmediateCreate=true`
+            );
+        } else {
+            toast.error("Form reads as invalid on submit.");
+        }
     }
 
     async populateOpenRoomName(): Promise<void> {
@@ -256,3 +268,5 @@ export default class RoomFinder extends React.Component<{}, RoomFinderState> {
         );
     }
 }
+
+export default withRouter(RoomFinder);
