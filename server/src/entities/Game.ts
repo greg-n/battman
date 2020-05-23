@@ -114,9 +114,8 @@ export default class Game {
         if (name.length > 16) {
             throw new Error("Name is over allowed length of 16 chars.");
         }
-        if (!/^[a-zA-Z0-9_ .]+$/g.test(name)) {
-            throw new Error("Name is not of a-z,A-Z,0-9 chars without multiple spaces one "
-                + "after another or spaces beginning or concluding the name.");
+        if (!/^[a-zA-Z0-9_.]+$/g.test(name)) {
+            throw new Error("Name is not of a-z,A-Z,0-9 chars without multiple spaces.");
         }
 
         const player: Player = new Player(name);

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 interface JoinCreateProps {
     buttonText: string;
-    onSubmit: () => Promise<void>;
+    onSubmit: (playerName: string) => Promise<void>;
 }
 
 interface JoinCreateState {
@@ -14,7 +14,7 @@ interface JoinCreateState {
 }
 
 function validPlayerName(name: string): boolean {
-    return /^[a-zA-Z0-9_ .]+$/g.test(name) && name.length <= 16;
+    return /^[a-zA-Z0-9_.]+$/g.test(name) && name.length <= 16;
 }
 
 export default class JoinCreate extends React.Component<JoinCreateProps, JoinCreateState> {
@@ -46,7 +46,7 @@ export default class JoinCreate extends React.Component<JoinCreateProps, JoinCre
             this.setState({
                 validated: false,
                 playerName: playerName,
-                invalidFeedback: "Name must be comprised solely of a maximum 16 [a-z, A-Z, 0-9, _, ' ', .] chars."
+                invalidFeedback: "Name must be comprised solely of a maximum 16 [a-z, A-Z, 0-9, _, .] chars."
             });
         else
             this.setState({
@@ -66,7 +66,7 @@ export default class JoinCreate extends React.Component<JoinCreateProps, JoinCre
             return;
         }
 
-        this.props.onSubmit()
+        this.props.onSubmit(this.state.playerName as string) // form should only be valid when playerName is defined
             .catch((error) => {
                 console.error(error);
                 toast.error(error.message);

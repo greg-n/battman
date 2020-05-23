@@ -130,7 +130,7 @@ class RoomFinder extends React.Component<RoomFinderProps, RoomFinderState> {
 
         if (form.checkValidity()) {
             this.props.history.push(
-                `/${this.state.roomName}?tryImmediateCreate=true`
+                `/${this.state.roomName}`
             );
         } else {
             toast.error("Form reads as invalid on submit.");

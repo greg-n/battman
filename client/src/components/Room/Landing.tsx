@@ -7,8 +7,8 @@ import JoinCreate from "./JoinCreate";
 interface RoomLandingProps {
     roomName: string;
     roomInfo: null | GameExternalInfo;
-    createRoom: () => Promise<void>;
-    joinRoom: () => Promise<void>;
+    createRoom: (playerName: string) => Promise<void>;
+    joinRoom: (playerName: string) => Promise<void>;
 }
 
 export default class RoomLanding extends React.Component<RoomLandingProps, {}> {

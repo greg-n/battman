@@ -14,6 +14,9 @@ interface RoomCreationOutput extends AddPlayerOutput {
     failureReason?: string;
 }
 
+// FIXME adding or creating should make an interval that will remove a player
+// from a game if no client ws connects after a certain amount of time
+
 function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
     const room = rooms.get(roomName);
     if (room == null) {

@@ -8,8 +8,8 @@ interface RoomProps {
     roomInfo: null | GameExternalInfo;
     gameState: null | GameStateOutput;
     clientWS: null | WebSocket;
-    createRoom: () => Promise<void>;
-    joinRoom: () => Promise<void>;
+    createRoom: (playerName: string) => Promise<void>;
+    joinRoom: (playerName: string) => Promise<void>;
 }
 
 export default class Room extends React.Component<RoomProps, {}> {
