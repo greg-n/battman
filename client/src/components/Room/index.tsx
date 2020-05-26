@@ -3,6 +3,7 @@ import { GameExternalInfo, GameState } from "../../types/Game";
 import RoomLanding from "./Landing";
 import RoomRunning from "./Running";
 import { CurrentGameState } from "../../utils/parseMessageData";
+import RoomWaiting from "./Waiting";
 
 interface RoomProps {
     roomName: string;
@@ -33,10 +34,11 @@ export default class Room extends React.Component<RoomProps, {}> {
                     joinRoom={this.props.joinRoom}
                 />
             );
-        else if (
-            gameState?.gameInfo.state === GameState.waitingRoom // need component
-            || gameState?.gameInfo.state === GameState.running
-        )
+        else if (gameState?.gameInfo.state === GameState.waitingRoom)
+            return (
+                <RoomWaiting />
+            );
+        else if (gameState?.gameInfo.state === GameState.running)
             return (
                 <RoomRunning />
             );

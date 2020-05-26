@@ -30,16 +30,15 @@ function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
 
         if (
             roomLater.game.players.has(playerName)
-            && roomLater.clients.has(playerName)
-        )
-            return;
-
-        // not broadcasting since no one knows this player exists
-        roomLater.game.disconnectPlayer(playerName);
-        if (roomLater.clients.size > 0) {
-            rooms.set(roomName, roomLater);
-        } else
-            rooms.delete(roomName); // Delete room if no clients remain after one leaves
+            && !roomLater.clients.has(playerName)
+        ) {
+            // not broadcasting since no one knows this player exists
+            roomLater.game.disconnectPlayer(playerName);
+            if (roomLater.clients.size > 0) {
+                rooms.set(roomName, roomLater);
+            } else
+                rooms.delete(roomName); // Delete room if no clients remain after one leaves  
+        }
     }, Number(process.env.REMOVE_NON_CLIENT_TIMEOUT) || 7000);
 
     rooms.set(roomName, room);

@@ -46,7 +46,6 @@ export default class Room extends React.Component<RoomProps, RoomState> {
     }
 
     async createRoom(playerName: string): Promise<void> {
-        toast("Create pressed");
         let resp: AxiosResponse<RoomCreationOutput> | undefined;
         try {
             resp = await api.post(`/rooms/${this.props.roomName}?creatorName=${playerName}`);
@@ -89,7 +88,6 @@ export default class Room extends React.Component<RoomProps, RoomState> {
     }
 
     async joinRoom(playerName: string): Promise<void> {
-        toast("Join pressed");
         let resp: AxiosResponse<AddPlayerOutput> | undefined;
         try {
             resp = await api.put(`/rooms/${this.props.roomName}/players?playerName=${playerName}`);
@@ -127,6 +125,10 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         const ws = new WebSocket(`ws://${baseURL}/rooms?accessToken=${playerToken}`);
         let connected = false;
 
+        // attempting not to use "this" within the on functions later as they have a "this" param in their d.ts
+        const setState = (newItems: Partial<RoomState>): void => {
+            this.setState((state) => ({ ...state, newItems }));
+        };
         const updateCurrentGameState = (event: MessageEvent): void => {
             this.setState((state) => {
                 try {
@@ -171,7 +173,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             updateCurrentGameState(event);
         };
         ws.onclose = (event: CloseEvent): void => {
-            this.setState({
+            setState({
                 roomInfo: null,
                 clientWS: null,
                 playerName: undefined,
