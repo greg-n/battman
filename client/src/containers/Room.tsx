@@ -1,10 +1,11 @@
 import React from "react";
-import { GameExternalInfo, GameStateOutput } from "../types/Game";
+import { GameExternalInfo, GameAction, GameState } from "../types/Game";
 import { api, baseURL } from "../api";
 import { AxiosResponse } from "axios";
 import { default as RoomComponent } from "../components/Room";
 import { toast } from "react-toastify";
-import { RoomCreationOutput } from "../types/Room";
+import { RoomCreationOutput, AddPlayerOutput } from "../types/Room";
+import parseMessageData, { CurrentGameState, buildInitCurrentGameState, ErrorMessage } from "../utils/parseMessageData";
 
 interface RoomProps {
     roomName: string;
@@ -12,9 +13,9 @@ interface RoomProps {
 
 interface RoomState {
     roomInfo: null | GameExternalInfo;
-    gameState: null | GameStateOutput;
     clientWS: null | WebSocket;
     playerName: undefined | string;
+    currentGameState: undefined | CurrentGameState;
 }
 
 export default class Room extends React.Component<RoomProps, RoomState> {
@@ -23,9 +24,9 @@ export default class Room extends React.Component<RoomProps, RoomState> {
 
         this.state = {
             roomInfo: null,
-            gameState: null,
             clientWS: null,
-            playerName: undefined
+            playerName: undefined,
+            currentGameState: undefined
         };
 
         this.createRoom = this.createRoom.bind(this);
@@ -76,7 +77,9 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             return;
         }
 
-        // TODO maybe pass everything that should be set in state to the builder
+        this.setState({
+            currentGameState: buildInitCurrentGameState(playerUpdate)
+        });
         this.joinBuildWSClient(playerToken);
     }
 
@@ -85,25 +88,105 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         return resp.data;
     }
 
-    joinRoom(/* playerName: string */): Promise<void> {
+    async joinRoom(playerName: string): Promise<void> {
         toast("Join pressed");
-        return new Promise((resolve) => { resolve(); });
+        let resp: AxiosResponse<AddPlayerOutput> | undefined;
+        try {
+            resp = await api.put(`/rooms/${this.props.roomName}/players?playerName=${playerName}`);
+        } catch (error) {
+            if (error.response != null) {
+                toast.error("Join was blocked by server. Try again");
+            } else if (error.request != null) {
+                console.error(error.request);
+                toast.error("No response from server");
+            } else {
+                console.error(error.message);
+                toast.error("Something failed while trying to join a room");
+            }
+
+            return;
+        }
+        if (resp == null) {
+            toast.error("Server returned item was empty");
+            return;
+        }
+
+        const { playerToken, playerUpdate } = resp.data;
+        if (playerToken == null || playerUpdate == null) {
+            toast.error("Server returned malformed items");
+            return;
+        }
+
+        this.setState({
+            currentGameState: buildInitCurrentGameState(playerUpdate)
+        });
+        this.joinBuildWSClient(playerToken);
     }
 
     joinBuildWSClient(playerToken: string): WebSocket {
         const ws = new WebSocket(`ws://${baseURL}/rooms?accessToken=${playerToken}`);
+        let connected = false;
 
-        ws.onopen = (event): void => {
-            console.log(event);
+        const updateCurrentGameState = (event: MessageEvent): void => {
+            this.setState((state) => {
+                try {
+                    const newState = parseMessageData(
+                        event.data,
+                        state.currentGameState as CurrentGameState // connect shows that this should exist
+                    );
+
+                    if ((newState as ErrorMessage).error != null) {
+                        toast.error((newState as ErrorMessage).error);
+                        return state;
+                    } else {
+                        const gameState = (newState as CurrentGameState).gameInfo.state;
+
+                        return {
+                            ...state,
+                            gameState: gameState as GameState,
+                            currentGameState: newState as CurrentGameState
+                        };
+                    }
+                } catch (error) {
+                    toast.error(error.message);
+                    return state;
+                }
+            });
+        };
+
+        ws.onopen = (): void => {
+            ws.send(JSON.stringify({
+                action: GameAction.join
+            }));
         };
         ws.onmessage = (event: MessageEvent): void => {
-            console.log(event);
+            if (!connected && event.data === "Connected.") {
+                connected = true;
+                return;
+            } else if (!connected) {
+                return;
+            }
+
+            // parse message and replay items in state
+            updateCurrentGameState(event);
         };
         ws.onclose = (event: CloseEvent): void => {
-            console.log(event);
+            this.setState({
+                roomInfo: null,
+                clientWS: null,
+                playerName: undefined,
+                currentGameState: undefined
+            });
+
+            if (event.reason != null)
+                toast.warning(`Disconnected. ${event.reason}`);
+            else if (event.code === 1006)
+                toast.error("Connection to server cut");
+            else
+                toast.warning("Game closed");
         };
         ws.onerror = (event: Event): void => {
-            console.log(event);
+            console.error("ws connection error", event);
         };
 
         return ws;
@@ -114,7 +197,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             <RoomComponent
                 {...this.props}
                 roomInfo={this.state.roomInfo}
-                gameState={this.state.gameState}
+                gameState={this.state.currentGameState}
                 clientWS={this.state.clientWS}
                 createRoom={this.createRoom}
                 joinRoom={this.joinRoom}

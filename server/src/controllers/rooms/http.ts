@@ -1,6 +1,5 @@
 import Game, { GameExternalInfo, PlayerUpdateOutput } from "../../entities/Game";
 import { NextFunction, Request, Response } from "express";
-import broadcastToRoom from "../../state/utils/broadcastToRoom";
 import { buildToken } from "../../utils/playerToken";
 import { rooms } from "../../state/rooms";
 
@@ -14,9 +13,6 @@ interface RoomCreationOutput extends AddPlayerOutput {
     failureReason?: string;
 }
 
-// FIXME adding or creating should make an interval that will remove a player
-// from a game if no client ws connects after a certain amount of time
-
 function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
     const room = rooms.get(roomName);
     if (room == null) {
@@ -26,12 +22,27 @@ function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
     const playerUpdate = room.game.addPlayer(playerName);
     const playerToken = buildToken({ roomName, playerName });
 
+    // NOTE giving the client 7 seconds to connect after token issuing before force removing
+    setTimeout(() => {
+        const roomLater = rooms.get(roomName);
+        if (roomLater == null)
+            return;
+
+        if (
+            roomLater.game.players.has(playerName)
+            && roomLater.clients.has(playerName)
+        )
+            return;
+
+        // not broadcasting since no one knows this player exists
+        roomLater.game.disconnectPlayer(playerName);
+        if (roomLater.clients.size > 0) {
+            rooms.set(roomName, roomLater);
+        } else
+            rooms.delete(roomName); // Delete room if no clients remain after one leaves
+    }, Number(process.env.REMOVE_NON_CLIENT_TIMEOUT) || 7000);
+
     rooms.set(roomName, room);
-    broadcastToRoom(
-        roomName,
-        { forOthers: playerUpdate.forOthers, gameInfo: playerUpdate.gameInfo },
-        playerName
-    );
     delete playerUpdate.forOthers;
     return { playerUpdate, playerToken };
 }

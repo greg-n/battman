@@ -1,4 +1,4 @@
-import { PlayerSerializable } from "./Player";
+import { Player } from "./Player";
 
 export enum GameAction {
     join, // Match token to player in game
@@ -24,10 +24,10 @@ export enum GameState {
 }
 
 export interface GameStateOutput extends GameOutput {
-    players: { [key: string]: PlayerSerializable };
+    players: { [key: string]: Player };
 }
 
-interface GameUpdate {
+export interface GameUpdate {
     action: GameAction;
     state: GameState;
     currentPlayer?: string;
@@ -48,6 +48,6 @@ export interface GameOutput {
 }
 
 export interface PlayerUpdateOutput extends GameOutput {
-    forEffected: PlayerSerializable;
-    forOthers: PlayerSerializable;
+    forEffected: Player;
+    forOthers?: Player;
 }

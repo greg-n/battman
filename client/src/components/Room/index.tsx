@@ -1,12 +1,13 @@
 import React from "react";
-import { GameExternalInfo, GameStateOutput, GameState } from "../../types/Game";
+import { GameExternalInfo, GameState } from "../../types/Game";
 import RoomLanding from "./Landing";
 import RoomRunning from "./Running";
+import { CurrentGameState } from "../../utils/parseMessageData";
 
 interface RoomProps {
     roomName: string;
     roomInfo: null | GameExternalInfo;
-    gameState: null | GameStateOutput;
+    gameState: undefined | CurrentGameState;
     clientWS: null | WebSocket;
     createRoom: (playerName: string) => Promise<void>;
     joinRoom: (playerName: string) => Promise<void>;
@@ -32,7 +33,10 @@ export default class Room extends React.Component<RoomProps, {}> {
                     joinRoom={this.props.joinRoom}
                 />
             );
-        else if (gameState?.gameInfo.state !== GameState.ended)
+        else if (
+            gameState?.gameInfo.state === GameState.waitingRoom // need component
+            || gameState?.gameInfo.state === GameState.running
+        )
             return (
                 <RoomRunning />
             );

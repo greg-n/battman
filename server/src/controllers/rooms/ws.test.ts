@@ -82,15 +82,27 @@ describe("ws rooms controller", () => {
         // Expect broadcast of new player to Steve, the existing player
         expect(JSON.parse(players.Steve.sendMock.mock.calls[1][0]))
             .toStrictEqual({
-                forOthers: {
-                    name: "Will",
-                    guessedWordPortion: null,
-                    guessedLetters: [],
-                    guessedWords: [],
-                    eliminatedPlayers: [],
-                    state: PlayerState.joined,
-                    lastGuessedAgainst: [],
-                    lastGuessedBy: []
+                players: {
+                    Steve: {
+                        name: "Steve",
+                        guessedWordPortion: null,
+                        guessedLetters: [],
+                        guessedWords: [],
+                        eliminatedPlayers: [],
+                        state: PlayerState.joined,
+                        lastGuessedAgainst: [],
+                        lastGuessedBy: []
+                    },
+                    Will: {
+                        name: "Will",
+                        guessedWordPortion: null,
+                        guessedLetters: [],
+                        guessedWords: [],
+                        eliminatedPlayers: [],
+                        state: PlayerState.joined,
+                        lastGuessedAgainst: [],
+                        lastGuessedBy: []
+                    }
                 },
                 gameInfo: {
                     action: GameAction.join,

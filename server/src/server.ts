@@ -1,5 +1,4 @@
 import * as http from "http";
-import dotenv, { DotenvConfigOptions } from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
 import WebSocket from "ws";
 import buildWsRouting from "./routes/index/ws";
@@ -13,20 +12,17 @@ export interface ServerItems {
     wss: WebSocket.Server;
 }
 
+function checkRequireENV(): void {
+    if (process.env.JWT_SECRET == null)
+        throw new Error("process.env.JWT_SECRET must be defined.");
+}
+
 export async function setUpServer(): Promise<ServerItems> {
     const app = express();
     const server = http.createServer(app);
     const wss = new WebSocket.Server({ server });
 
-    const dotenvConfig: DotenvConfigOptions = {};
-    switch (process.env.NODE_ENV) {
-        case "test":
-            dotenvConfig.path = `${__dirname}/../.env.test.local`;
-            break;
-        default:
-            dotenvConfig.path = `${__dirname}/../.env.development.local`;
-    }
-    dotenv.config(dotenvConfig);
+    checkRequireENV();
 
     app.use(cors({ origin: ["http://localhost:3000"] }));
     app.use(helmet());

@@ -56,7 +56,7 @@ export namespace ws {
         room.clients.delete(token.playerName);
         if (room.clients.size > 0) {
             rooms.set(token.roomName, room);
-            broadcastToRoom(token.roomName, state, token.playerName);
+            broadcastToRoom(token.roomName, state); // TODO allow kicking?
         } else
             rooms.delete(token.roomName); // Delete room if no clients remain after one leaves
     }
@@ -124,7 +124,7 @@ export namespace ws {
         room.clients.set(token.playerName, ws);
         rooms.set(token.roomName, room);
         const state = room.game.getGameState(GameAction.join);
-        ws.send(JSON.stringify(state));
+        broadcastToRoom(token.roomName, state);
     }
 
     export function readyToggle(ws: WebSocket, token: PlayerTokenInfo): void {

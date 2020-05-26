@@ -1,3 +1,14 @@
+export interface Player {
+    name: string;
+    guessedWordPortion: null | string;
+    guessedLetters: string[];
+    guessedWords: string[];
+    eliminatedPlayers: string[];
+    state: PlayerState;
+    lastGuessedAgainst: string[];
+    lastGuessedBy: string[];
+}
+
 export enum PlayerState {
     joined,
     ready,
@@ -5,8 +16,4 @@ export enum PlayerState {
     eliminated,
     disconnected,
     victor
-}
-
-export type PlayerSerializable = {
-    [key: string]: string | null | string[] | PlayerState;
 }
