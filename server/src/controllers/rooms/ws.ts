@@ -65,7 +65,8 @@ export namespace ws {
         const room = rooms.get(token.roomName) as Room;
 
         const state = room.game.getGameState();
-        ws.send(JSON.stringify(state));
+        const clientState = room.game.players.get(token.playerName)?.getSafeToSerialize();
+        ws.send(JSON.stringify({ ...state, clientState }));
     }
 
     export function guess(ws: WebSocket, token: PlayerTokenInfo, message: RoomsMessageData): void {

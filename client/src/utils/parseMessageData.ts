@@ -85,15 +85,14 @@ export default function parseMessageData(
         case GameAction.disconnect:
         case GameAction.changeWordConstraints:
         case GameAction.startGame:
-        case GameAction.getGameState:
             return {
-                clientState: oldState.clientState, // this should be set when token is retrieved
+                clientState: oldState.clientState,
                 gameInfo: data.gameInfo,
                 playerStates: (data as GameStateOutput).players
             };
         case GameAction.transferMarshalship:
             return {
-                clientState: oldState.clientState, // this should be set when token is retrieved
+                clientState: oldState.clientState,
                 gameInfo: data.gameInfo,
                 playerStates: oldState.playerStates
             };
@@ -102,6 +101,12 @@ export default function parseMessageData(
             return parsePlayerUpdateOutput(data, oldState);
         case GameAction.guess:
             return parseGuess(data, oldState);
+        case GameAction.getGameState:
+            return {
+                clientState: data.clientState || oldState.clientState,
+                gameInfo: data.gameInfo,
+                playerStates: (data as GameStateOutput).players
+            };
         default:
             throw new Error(`Unknown game action '${data.gameInfo.action}'.`);
     }
