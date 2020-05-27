@@ -35,6 +35,7 @@ export interface GameUpdate {
     remainingPlayers: string[];
     minChars: number;
     maxChars: number;
+    streamInfo: string[]; // list of changes in the game
 }
 
 export interface GuessOutput extends GameOutput {
@@ -49,5 +50,5 @@ export interface GameOutput {
 
 export interface PlayerUpdateOutput extends GameOutput {
     forEffected: Player;
-    forOthers?: Player;
+    forAll?: Player;
 }

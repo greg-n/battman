@@ -18,9 +18,9 @@ interface SomeGameUpdate {
 }
 
 export function buildInitCurrentGameState(data: PlayerUpdateOutput): CurrentGameState {
-    if (data.forOthers != null) {
+    if (data.forAll != null) {
         const newPlayerState: { [key: string]: Player } = {};
-        newPlayerState[data.forOthers.name] = data.forOthers;
+        newPlayerState[data.forAll.name] = data.forAll;
 
         return {
             clientState: {
@@ -109,48 +109,34 @@ export default function parseMessageData(
 
 function parseGuess(data: SomeGameUpdate, oldState: CurrentGameState): CurrentGameState {
     const newState = oldState;
+    newState.gameInfo = data.gameInfo;
 
-    if (data.actorUpdate.forOthers != null) {
-        const newPlayerStates = oldState.playerStates;
-        newPlayerStates[data.actorUpdate.forOthers.name] = data.actorUpdate.forOthers;
-
-        newState.playerStates = newPlayerStates;
-    } else {
+    if (data.actorUpdate.forEffected != null) {
         newState.clientState = data.actorUpdate.forEffected;
     }
-
-    if (data.subjectUpdate.forOthers != null) {
-        const newPlayerStates = oldState.playerStates;
-        newPlayerStates[data.subjectUpdate.forOthers.name] = data.subjectUpdate.forOthers;
-
-        newState.playerStates = newPlayerStates;
-    } else {
+    if (data.subjectUpdate.forEffected != null) {
         newState.clientState = data.subjectUpdate.forEffected;
     }
+    const newPlayerStates = oldState.playerStates;
+    newPlayerStates[data.actorUpdate.forAll.name] = data.actorUpdate.forAll;
+    newPlayerStates[data.subjectUpdate.forAll.name] = data.subjectUpdate.forAll;
+    newState.playerStates = newPlayerStates;
 
     return newState;
 }
 
 function parsePlayerUpdateOutput(data: SomeGameUpdate, oldState: CurrentGameState): CurrentGameState {
-    if (data.forOthers != null) {
-        const newPlayerState = oldState.playerStates;
-        newPlayerState[data.forOthers.name] = data.forOthers;
+    const newState = oldState;
+    newState.gameInfo = data.gameInfo;
 
-        return {
-            clientState: oldState.clientState,
-            gameInfo: data.gameInfo,
-            playerStates: newPlayerState
-        };
-    } else {
-        const newClientState = data.forEffected; //don't update playerStates
-        // allow client to see the state as the others do
-
-        return {
-            clientState: newClientState,
-            gameInfo: data.gameInfo,
-            playerStates: oldState.playerStates
-        };
+    if (data.forEffected != null) {
+        newState.clientState = data.forEffected;
     }
+    const newPlayerStates = oldState.playerStates;
+    newPlayerStates[data.forAll.name] = data.forAll;
+    newState.playerStates = newPlayerStates;
+
+    return newState;
 }
 
 /*

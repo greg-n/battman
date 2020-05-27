@@ -38,12 +38,12 @@ interface GameUpdate {
     remainingPlayers: string[];
     minChars: number;
     maxChars: number;
+    streamInfo: string[];
 }
 
 interface GuessOutput extends GameOutput {
     actorUpdate: Omit<PlayerUpdateOutput, "gameInfo">;
     subjectUpdate: Omit<PlayerUpdateOutput, "gameInfo">;
-    streamInfo: string;
 }
 
 interface GameOutput {
@@ -52,7 +52,7 @@ interface GameOutput {
 
 export interface PlayerUpdateOutput extends GameOutput {
     forEffected: PlayerSerializable;
-    forOthers: PlayerSerializable;
+    forAll: PlayerSerializable;
 }
 
 export default class Game {
@@ -78,6 +78,7 @@ export default class Game {
     createdAt: number;
     lastModifiedAt: number;
     endedAt: number | undefined;
+    streamInfo: string[]; // list of all game updates
 
     /**
      * Word constraints should exist upon creation.
@@ -90,6 +91,7 @@ export default class Game {
         this.maxChars = maxChars;
         this.createdAt = Date.now();
         this.lastModifiedAt = Date.now();
+        this.streamInfo = [];
     }
 
     private buildGameUpdateOutput(action: GameAction): GameUpdate {
@@ -100,7 +102,8 @@ export default class Game {
             waitingRoomMarshall: this.waitingRoomMarshall,
             remainingPlayers: this.getRemainingPlayers(),
             minChars: this.minChars,
-            maxChars: this.maxChars
+            maxChars: this.maxChars,
+            streamInfo: this.streamInfo
         };
     }
 
@@ -126,10 +129,12 @@ export default class Game {
             this.waitingRoomMarshall = name;
         }
 
+        this.streamInfo.push(`Player ${name} has been added.`);
+
         this.lastModifiedAt = Date.now();
         return {
             forEffected: player.getSafeToSerialize(),
-            forOthers: player.getSanitizedCopy().getSafeToSerialize(),
+            forAll: player.getSanitizedCopy().getSafeToSerialize(),
             gameInfo: this.buildGameUpdateOutput(GameAction.join)
         };
     }
@@ -165,6 +170,8 @@ export default class Game {
                 this.players.set(name, playerItem);
             }
         }
+
+        this.streamInfo.push(`Word constraints have been changed to min: ${minChars}, max: ${maxChars}.`);
 
         this.lastModifiedAt = Date.now();
         return this.getGameState(GameAction.changeWordConstraints);
@@ -204,6 +211,12 @@ export default class Game {
                 this.currentPlayer = this.nextPlayer();
             }
         } // If game state is ended all items are exposed by default
+
+        this.streamInfo.push(
+            reason == null
+                ? `Player ${name} has disconnected.`
+                : `Player ${name} has disconnected for reason '${reason}'.`
+        );
 
         this.lastModifiedAt = Date.now();
         return this.getGameState(GameAction.disconnect);
@@ -284,7 +297,6 @@ export default class Game {
         subjectItem.lastGuessedBy.unshift(actor);
         subjectItem.lastGuessedBy = subjectItem.lastGuessedBy.slice(0, 5);
 
-        let streamInfo: string | undefined;
         let subjectEliminated = false;
         if (guessFixed.length === 1) {
             // Guess is letter
@@ -300,10 +312,14 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                streamInfo = actor + " eliminated " + subject + " with guessed letter '" + guessFixed + "'.";
+                this.streamInfo.push(
+                    actor + " eliminated " + subject + " with guessed letter '" + guessFixed + "'."
+                );
             } else {
                 subjectItem.guessedWordPortion = updatedPortion;
-                streamInfo = actor + " guessed letter '" + guessFixed + "' on " + subject + "'s word.";
+                this.streamInfo.push(
+                    actor + " guessed letter '" + guessFixed + "' on " + subject + "'s word."
+                );
             }
         } else {
             // Guess is word
@@ -313,9 +329,13 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                streamInfo = actor + " eliminated " + subject + " with correct word guess '" + guessFixed + "'.";
+                this.streamInfo.push(
+                    actor + " eliminated " + subject + " with correct word guess '" + guessFixed + "'."
+                );
             } else {
-                streamInfo = actor + " guessed word '" + guessFixed + "' on " + subject + "'s word.";
+                this.streamInfo.push(
+                    actor + " guessed word '" + guessFixed + "' on " + subject + "'s word."
+                );
             }
         }
 
@@ -341,18 +361,17 @@ export default class Game {
         return {
             actorUpdate: {
                 forEffected: actorItem.getSafeToSerialize(),
-                forOthers: gameEnded
+                forAll: gameEnded
                     ? actorItem.getSafeToSerialize() // Reveal on game end
                     : actorItem.getSanitizedCopy().getSafeToSerialize()
             },
             subjectUpdate: {
                 forEffected: subjectItem.getSafeToSerialize(),
-                forOthers: subjectEliminated
+                forAll: subjectEliminated
                     ? subjectItem.getSafeToSerialize() // Reveal all on elimination
                     : subjectItem.getSanitizedCopy().getSafeToSerialize()
             },
-            gameInfo: this.buildGameUpdateOutput(GameAction.guess),
-            streamInfo
+            gameInfo: this.buildGameUpdateOutput(GameAction.guess)
         };
     }
 
@@ -389,10 +408,12 @@ export default class Game {
             : PlayerState.joined;
         this.players.set(actor, player);
 
+        this.streamInfo.push(`${actor} has changed their ready state.`);
+
         this.lastModifiedAt = Date.now();
         return {
             forEffected: player.getSafeToSerialize(),
-            forOthers: player.getSanitizedCopy().getSafeToSerialize(),
+            forAll: player.getSanitizedCopy().getSafeToSerialize(),
             gameInfo: this.buildGameUpdateOutput(GameAction.readyToggle)
         };
     }
@@ -426,10 +447,12 @@ export default class Game {
         actorItem.guessedWordPortion = "_".repeat(wordFixed.length);
         this.players.set(actor, actorItem);
 
+        this.streamInfo.push(`${actor} has set their word.`);
+
         this.lastModifiedAt = Date.now();
         return {
             forEffected: actorItem.getSafeToSerialize(),
-            forOthers: actorItem.getSanitizedCopy().getSafeToSerialize(),
+            forAll: actorItem.getSanitizedCopy().getSafeToSerialize(),
             gameInfo: this.buildGameUpdateOutput(GameAction.setWord)
         };
     }
@@ -468,6 +491,8 @@ export default class Game {
         this.players = newShuffledPlayers;
         this.currentPlayer = shuffledPlayersList[0];
 
+        this.streamInfo.push("Game has started.");
+
         this.lastModifiedAt = Date.now();
         return this.getGameState(GameAction.startGame);
     }
@@ -484,6 +509,8 @@ export default class Game {
         }
 
         this.waitingRoomMarshall = subject;
+
+        this.streamInfo.push(`${actor} has transferred marshalship to ${subject}.`);
 
         this.lastModifiedAt = Date.now();
         return {

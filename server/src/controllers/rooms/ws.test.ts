@@ -109,6 +109,10 @@ describe("ws rooms controller", () => {
                     state: GameState.waitingRoom,
                     waitingRoomMarshall: "Steve",
                     remainingPlayers: [],
+                    streamInfo: [
+                        "Player Steve has been added.",
+                        "Player Will has been added."
+                    ],
                     minChars: 1,
                     maxChars: 24
                 }
@@ -129,6 +133,11 @@ describe("ws rooms controller", () => {
                 state: GameState.waitingRoom,
                 waitingRoomMarshall: "Will",
                 remainingPlayers: [],
+                streamInfo: [
+                    "Player Steve has been added.",
+                    "Player Will has been added.",
+                    "Steve has transferred marshalship to Will."
+                ],
                 minChars: 1,
                 maxChars: 24
             }
@@ -157,18 +166,7 @@ describe("ws rooms controller", () => {
                     lastGuessedAgainst: [],
                     lastGuessedBy: []
                 },
-                gameInfo: {
-                    action: GameAction.setWord,
-                    state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Will",
-                    remainingPlayers: [],
-                    minChars: 1,
-                    maxChars: 24
-                }
-            });
-        expect(JSON.parse(players.Will.sendMock.mock.calls[2][0]))
-            .toStrictEqual({
-                forOthers: {
+                forAll: {
                     name: "Steve",
                     guessedWordPortion: "_________",
                     guessedLetters: [],
@@ -183,6 +181,38 @@ describe("ws rooms controller", () => {
                     state: GameState.waitingRoom,
                     waitingRoomMarshall: "Will",
                     remainingPlayers: [],
+                    streamInfo: [
+                        "Player Steve has been added.",
+                        "Player Will has been added.",
+                        "Steve has transferred marshalship to Will.",
+                        "Steve has set their word."
+                    ],
+                    minChars: 1,
+                    maxChars: 24
+                }
+            });
+        expect(JSON.parse(players.Will.sendMock.mock.calls[2][0]))
+            .toStrictEqual({
+                forAll: {
+                    name: "Steve",
+                    guessedWordPortion: "_________",
+                    guessedLetters: [],
+                    guessedWords: [],
+                    eliminatedPlayers: [],
+                    state: PlayerState.joined,
+                    lastGuessedAgainst: [],
+                    lastGuessedBy: []
+                },
+                gameInfo: {
+                    action: GameAction.setWord,
+                    state: GameState.waitingRoom,
+                    waitingRoomMarshall: "Will",
+                    remainingPlayers: [],
+                    streamInfo: [
+                        "Player Steve has been added.",
+                        "Player Will has been added.",
+                        "Steve has transferred marshalship to Will.",
+                        "Steve has set their word."],
                     minChars: 1,
                     maxChars: 24
                 }
@@ -205,18 +235,7 @@ describe("ws rooms controller", () => {
                     lastGuessedAgainst: [],
                     lastGuessedBy: []
                 },
-                gameInfo: {
-                    action: GameAction.readyToggle,
-                    state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Will",
-                    remainingPlayers: [],
-                    minChars: 1,
-                    maxChars: 24
-                }
-            });
-        expect(JSON.parse(players.Will.sendMock.mock.calls[3][0]))
-            .toStrictEqual({
-                forOthers: {
+                forAll: {
                     name: "Steve",
                     guessedWordPortion: "_________",
                     guessedLetters: [],
@@ -231,6 +250,41 @@ describe("ws rooms controller", () => {
                     state: GameState.waitingRoom,
                     waitingRoomMarshall: "Will",
                     remainingPlayers: [],
+                    streamInfo: [
+                        "Player Steve has been added.",
+                        "Player Will has been added.",
+                        "Steve has transferred marshalship to Will.",
+                        "Steve has set their word.",
+                        "Steve has changed their ready state."
+                    ],
+                    minChars: 1,
+                    maxChars: 24
+                }
+            });
+        expect(JSON.parse(players.Will.sendMock.mock.calls[3][0]))
+            .toStrictEqual({
+                forAll: {
+                    name: "Steve",
+                    guessedWordPortion: "_________",
+                    guessedLetters: [],
+                    guessedWords: [],
+                    eliminatedPlayers: [],
+                    state: PlayerState.ready,
+                    lastGuessedAgainst: [],
+                    lastGuessedBy: []
+                },
+                gameInfo: {
+                    action: GameAction.readyToggle,
+                    state: GameState.waitingRoom,
+                    waitingRoomMarshall: "Will",
+                    remainingPlayers: [],
+                    streamInfo: [
+                        "Player Steve has been added.",
+                        "Player Will has been added.",
+                        "Steve has transferred marshalship to Will.",
+                        "Steve has set their word.",
+                        "Steve has changed their ready state."
+                    ],
                     minChars: 1,
                     maxChars: 24
                 }
@@ -269,6 +323,14 @@ describe("ws rooms controller", () => {
                 state: GameState.waitingRoom,
                 waitingRoomMarshall: "Will",
                 remainingPlayers: [],
+                streamInfo: [
+                    "Player Steve has been added.",
+                    "Player Will has been added.",
+                    "Steve has transferred marshalship to Will.",
+                    "Steve has set their word.",
+                    "Steve has changed their ready state.",
+                    "Word constraints have been changed to min: 5, max: 5."
+                ],
                 minChars: 5,
                 maxChars: 5
             }

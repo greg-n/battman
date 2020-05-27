@@ -83,23 +83,20 @@ export namespace ws {
             broadcastToRoom(
                 token.roomName,
                 {
-                    actorUpdate: { forOthers: guessOutput.actorUpdate.forOthers },
-                    subjectUpdate: { forOthers: guessOutput.subjectUpdate.forOthers },
-                    streamInfo: guessOutput.streamInfo,
+                    actorUpdate: { forAll: guessOutput.actorUpdate.forAll },
+                    subjectUpdate: { forAll: guessOutput.subjectUpdate.forAll },
                     gameInfo: guessOutput.gameInfo
                 },
                 [token.playerName, message.subject || ""]
             );
             ws.send(JSON.stringify({
-                actorUpdate: { forEffected: guessOutput.actorUpdate.forEffected },
-                subjectUpdate: { forOthers: guessOutput.subjectUpdate.forOthers },
-                streamInfo: guessOutput.streamInfo,
+                actorUpdate: guessOutput.actorUpdate,
+                subjectUpdate: { forAll: guessOutput.subjectUpdate.forAll },
                 gameInfo: guessOutput.gameInfo
             }));
             subjectClient?.send(JSON.stringify({
-                actorUpdate: { forOthers: guessOutput.actorUpdate.forOthers },
-                subjectUpdate: { forEffected: guessOutput.subjectUpdate.forEffected },
-                streamInfo: guessOutput.streamInfo,
+                actorUpdate: { forAll: guessOutput.actorUpdate.forAll },
+                subjectUpdate: guessOutput.subjectUpdate,
                 gameInfo: guessOutput.gameInfo
             }));
         } catch (error) {
@@ -136,10 +133,9 @@ export namespace ws {
             rooms.set(token.roomName, room);
             broadcastToRoom(
                 token.roomName,
-                { forOthers: playerUpdate.forOthers, gameInfo: playerUpdate.gameInfo },
+                { forAll: playerUpdate.forAll, gameInfo: playerUpdate.gameInfo },
                 token.playerName
             );
-            delete playerUpdate.forOthers;
             ws.send(JSON.stringify(playerUpdate));
         } catch (error) {
             ws.send(JSON.stringify({ error: error.message }));
@@ -160,10 +156,9 @@ export namespace ws {
             rooms.set(token.roomName, room);
             broadcastToRoom(
                 token.roomName,
-                { forOthers: playerUpdate.forOthers, gameInfo: playerUpdate.gameInfo },
+                { forAll: playerUpdate.forAll, gameInfo: playerUpdate.gameInfo },
                 token.playerName
             );
-            delete playerUpdate.forOthers;
             ws.send(JSON.stringify(playerUpdate));
         } catch (error) {
             ws.send(JSON.stringify({ error: error.message }));

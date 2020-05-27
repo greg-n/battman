@@ -48,6 +48,9 @@ describe("http rooms portion", () => {
                         gameInfo: {
                             action: GameAction.join,
                             state: 0,
+                            streamInfo: [
+                                "Player Steve has been added."
+                            ],
                             maxChars: 24,
                             minChars: 1,
                             remainingPlayers: [],
@@ -99,6 +102,10 @@ describe("http rooms portion", () => {
                             state: 0,
                             maxChars: 24,
                             minChars: 1,
+                            streamInfo: [
+                                "Player Steve has been added.",
+                                "Player Will has been added."
+                            ],
                             remainingPlayers: [],
                             waitingRoomMarshall: "Steve"
                         }
