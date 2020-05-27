@@ -50,5 +50,5 @@ export interface GameOutput {
 
 export interface PlayerUpdateOutput extends GameOutput {
     forEffected: Player;
-    forAll?: Player;
+    forAll: Player;
 }

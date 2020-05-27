@@ -18,34 +18,31 @@ interface SomeGameUpdate {
 }
 
 export function buildInitCurrentGameState(data: PlayerUpdateOutput): CurrentGameState {
-    if (data.forAll != null) {
-        const newPlayerState: { [key: string]: Player } = {};
-        newPlayerState[data.forAll.name] = data.forAll;
-
-        return {
-            clientState: {
-                name: "",
-                guessedWordPortion: null,
-                guessedLetters: [],
-                guessedWords: [],
-                eliminatedPlayers: [],
-                state: PlayerState.joined,
-                lastGuessedAgainst: [],
-                lastGuessedBy: []
-            },
-            gameInfo: data.gameInfo,
-            playerStates: newPlayerState
-        };
+    let newClientState: Player | undefined;
+    console.log(data);
+    if (data.forEffected != null) {
+        newClientState = data.forEffected;
     } else {
-        const newClientState = data.forEffected; //don't update playerStates
-        // allow client to see the state as the others do
-
-        return {
-            clientState: newClientState,
-            gameInfo: data.gameInfo,
-            playerStates: {}
+        newClientState = {
+            name: "",
+            guessedWordPortion: null,
+            guessedLetters: [],
+            guessedWords: [],
+            eliminatedPlayers: [],
+            state: PlayerState.joined,
+            lastGuessedAgainst: [],
+            lastGuessedBy: []
         };
     }
+
+    const newPlayerState: { [key: string]: Player } = {};
+    newPlayerState[data.forAll.name] = data.forAll;
+
+    return {
+        clientState: newClientState,
+        gameInfo: data.gameInfo,
+        playerStates: newPlayerState
+    };
 }
 
 // ensure that the gameInfo field exists and is filled out

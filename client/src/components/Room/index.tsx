@@ -34,9 +34,19 @@ export default class Room extends React.Component<RoomProps, {}> {
                     joinRoom={this.props.joinRoom}
                 />
             );
+        else if (clientWS == null || gameState == null)
+            return (
+                <div>
+                    Either ws or game state null.
+                </div>
+            );
         else if (gameState?.gameInfo.state === GameState.waitingRoom)
             return (
-                <RoomWaiting />
+                <RoomWaiting
+                    roomName={this.props.roomName}
+                    gameState={gameState}
+                    clientWS={clientWS}
+                />
             );
         else if (gameState?.gameInfo.state === GameState.running)
             return (

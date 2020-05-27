@@ -4,7 +4,7 @@ import { buildToken } from "../../utils/playerToken";
 import { rooms } from "../../state/rooms";
 
 interface AddPlayerOutput {
-    playerUpdate?: Omit<PlayerUpdateOutput, "forAll">;
+    playerUpdate?: PlayerUpdateOutput;
     playerToken?: string;
 }
 
@@ -42,7 +42,6 @@ function addNewPlayer(roomName: string, playerName: string): AddPlayerOutput {
     }, Number(process.env.REMOVE_NON_CLIENT_TIMEOUT) || 7000);
 
     rooms.set(roomName, room);
-    delete playerUpdate.forAll;
     return { playerUpdate, playerToken };
 }
 
@@ -62,7 +61,6 @@ function createRoom(roomName: string, creatorName: string): RoomCreationOutput {
     const playerToken = buildToken({ roomName, playerName: creatorName });
 
     rooms.set(roomName, { game: newGame, clients: new Map() });
-    delete playerUpdate.forAll;
     return { roomCreated: true, playerUpdate, playerToken };
 }
 

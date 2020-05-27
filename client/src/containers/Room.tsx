@@ -127,7 +127,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
 
         // attempting not to use "this" within the on functions later as they have a "this" param in their d.ts
         const setState = (newItems: Partial<RoomState>): void => {
-            this.setState((state) => ({ ...state, newItems }));
+            this.setState((state) => ({ ...state, ...newItems }));
         };
         const updateCurrentGameState = (event: MessageEvent): void => {
             this.setState((state) => {
@@ -164,6 +164,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         ws.onmessage = (event: MessageEvent): void => {
             if (!connected && event.data === "Connected.") {
                 connected = true;
+                setState({ clientWS: ws });
                 return;
             } else if (!connected) {
                 return;

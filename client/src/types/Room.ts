@@ -1,7 +1,7 @@
 import { GameAction, PlayerUpdateOutput } from "./Game";
 
 export interface AddPlayerOutput {
-    playerUpdate?: Omit<PlayerUpdateOutput, "forAll">;
+    playerUpdate?: PlayerUpdateOutput;
     playerToken?: string;
 }
 
