@@ -1,4 +1,4 @@
-import { GameUpdate, GameAction, GameState, GameStateOutput, PlayerUpdateOutput } from "../types/Game";
+import { GameAction, GameState, GameStateOutput, GameUpdate, PlayerUpdateOutput } from "../types/Game";
 import { Player, PlayerState } from "../types/Player";
 
 export interface ErrorMessage {
@@ -19,7 +19,7 @@ interface SomeGameUpdate {
 
 export function buildInitCurrentGameState(data: PlayerUpdateOutput): CurrentGameState {
     let newClientState: Player | undefined;
-    console.log(data);
+
     if (data.forEffected != null) {
         newClientState = data.forEffected;
     } else {

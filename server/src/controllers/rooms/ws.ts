@@ -1,9 +1,9 @@
-import { GameAction, GameStateOutput } from "../../entities/Game";
-import { Room, rooms } from "../../state/rooms";
-import { PlayerTokenInfo } from "../../utils/playerToken";
-import { RoomsMessageData } from "../../routes/rooms/ws";
 import WebSocket from "ws";
+import { GameAction, GameStateOutput } from "../../entities/Game";
+import { RoomsMessageData } from "../../routes/rooms/ws";
+import { Room, rooms } from "../../state/rooms";
 import broadcastToRoom from "../../state/utils/broadcastToRoom";
+import { PlayerTokenInfo } from "../../utils/playerToken";
 
 // Will trust that room in token exists
 export namespace ws {

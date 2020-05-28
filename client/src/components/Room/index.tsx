@@ -1,8 +1,8 @@
 import React from "react";
 import { GameExternalInfo, GameState } from "../../types/Game";
+import { CurrentGameState } from "../../utils/parseMessageData";
 import RoomLanding from "./Landing";
 import RoomRunning from "./Running";
-import { CurrentGameState } from "../../utils/parseMessageData";
 import RoomWaiting from "./Waiting";
 
 interface RoomProps {
@@ -11,6 +11,7 @@ interface RoomProps {
     gameState: undefined | CurrentGameState;
     clientWS: null | WebSocket;
     createRoom: (playerName: string) => Promise<void>;
+    fetchGameState: () => void;
     joinRoom: (playerName: string) => Promise<void>;
 }
 
@@ -45,7 +46,7 @@ export default class Room extends React.Component<RoomProps, {}> {
                 <RoomWaiting
                     roomName={this.props.roomName}
                     gameState={gameState}
-                    clientWS={clientWS}
+                    fetchGameState={this.props.fetchGameState}
                 />
             );
         else if (gameState?.gameInfo.state === GameState.running)

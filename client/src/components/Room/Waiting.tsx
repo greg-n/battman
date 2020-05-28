@@ -1,55 +1,60 @@
 import React from "react";
-import { Container, Row, Col, Button } from "react-bootstrap";
-import { CurrentGameState } from "../../utils/parseMessageData";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
+import { CurrentGameState } from "../../utils/parseMessageData";
+import PlayerList from "./PlayerList";
 
 interface RoomWaitingProps {
     roomName: string;
     gameState: CurrentGameState;
-    clientWS: WebSocket;
+    fetchGameState: () => void;
 }
 
-export default class RoomWaiting extends React.Component<RoomWaitingProps, {}> {
-    constructor(props: RoomWaitingProps) {
-        super(props);
-
-        this.refreshGameState = this.refreshGameState.bind(this);
-    }
-
-    refreshGameState(): void {
-        //
-    }
-
-    render(): JSX.Element {
-        return (
-            <span style={{ height: "100vh", display: "flex", flexFlow: "column" }}>
-                <div style={{ marginLeft: "4vw", marginRight: "4vw" }}>
-                    <Col>
-                        <div style={{ paddingTop: ".2rem", paddingBottom: ".2rem" }}>
-                            <Button
-                                variant="light"
-                                onClick={this.refreshGameState}
-                            >
-                                <BsArrowClockwise />
-                                <span style={{ paddingLeft: ".2em" }}>
-                                    - Refresh game without disconnecting
-                                </span>
-                            </Button>
-                        </div>
-                    </Col>
-                </div>
-                <span style={{ flexGrow: 1, marginLeft: "4vw", marginRight: "4vw" }}>
+export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
+    return (
+        <span
+            style={{
+                marginLeft: "4vw",
+                marginRight: "4vw",
+                height: "100vh",
+                display: "flex",
+                flexFlow: "column"
+            }}
+        >
+            <div >
+                <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
+                    <div>
+                        <Button
+                            variant="light"
+                            onClick={props.fetchGameState}
+                        >
+                            <BsArrowClockwise />
+                            <span style={{ paddingLeft: ".2em" }}>
+                                - Refresh game without disconnecting
+                            </span>
+                        </Button>
+                    </div>
+                </Col>
+            </div>
+            <span
+                style={{
+                    height: "100%",
+                    borderLeft: ".1em solid #ECF0F1",
+                    borderRight: ".1em solid #ECF0F1",
+                    borderTop: ".1em solid #ECF0F1"
+                }}
+            >
+                <span style={{ flexShrink: 1, flexGrow: 1 }}>
                     <span style={{ display: "flex", height: "100%" }}>
-                        <Container fluid="md">
+                        <Container fluid="md" style={{ maxHeight: "90vh", overflow: "auto" }}>
                             <Row
                                 style={{ height: "100%" }}
                             >
                                 <Col
                                     xs={12}
-                                    style={{ backgroundColor: "yellow" }}
                                 >
-                                    Hi
-                            </Col>
+                                    <PlayerList />
+                                </Col>
                             </Row>
                         </Container>
                         <Container fluid="md">
@@ -58,25 +63,27 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, {}> {
                             >
                                 <Col
                                     xs={12}
-                                    style={{ backgroundColor: "green" }}
                                 >
-                                    Hi
-                            </Col>
+                                    <div>
+                                        Hi
+                                    </div>
+                                </Col>
                             </Row>
                             <Row
                                 style={{ height: "50%" }}
                             >
                                 <Col
                                     xs={12}
-                                    style={{ backgroundColor: "blue" }}
                                 >
-                                    Hi
-                            </Col>
+                                    <div>
+                                        Hi
+                                    </div>
+                                </Col>
                             </Row>
                         </Container>
                     </span>
                 </span>
             </span>
-        );
-    }
+        </span>
+    );
 }

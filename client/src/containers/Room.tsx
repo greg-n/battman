@@ -1,11 +1,11 @@
-import React from "react";
-import { GameExternalInfo, GameAction, GameState } from "../types/Game";
-import { api, baseURL } from "../api";
 import { AxiosResponse } from "axios";
-import { default as RoomComponent } from "../components/Room";
+import React from "react";
 import { toast } from "react-toastify";
-import { RoomCreationOutput, AddPlayerOutput } from "../types/Room";
-import parseMessageData, { CurrentGameState, buildInitCurrentGameState, ErrorMessage } from "../utils/parseMessageData";
+import { api, baseURL } from "../api";
+import { default as RoomComponent } from "../components/Room";
+import { GameAction, GameExternalInfo, GameState } from "../types/Game";
+import { AddPlayerOutput, RoomCreationOutput, RoomsMessageData } from "../types/Room";
+import parseMessageData, { buildInitCurrentGameState, CurrentGameState, ErrorMessage } from "../utils/parseMessageData";
 
 interface RoomProps {
     roomName: string;
@@ -31,6 +31,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
 
         this.createRoom = this.createRoom.bind(this);
         this.fetchRoomInfo = this.fetchRoomInfo.bind(this);
+        this.fetchGameState = this.fetchGameState.bind(this);
         this.joinRoom = this.joinRoom.bind(this);
         this.joinBuildWSClient = this.joinBuildWSClient.bind(this);
     }
@@ -80,6 +81,11 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             currentGameState: buildInitCurrentGameState(playerUpdate)
         });
         this.joinBuildWSClient(playerToken);
+    }
+
+    fetchGameState(): void {
+        const msg: RoomsMessageData = { action: GameAction.getGameState };
+        this.state.clientWS?.send(JSON.stringify(msg));
     }
 
     async fetchRoomInfo(): Promise<null | GameExternalInfo> {
@@ -203,6 +209,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                 gameState={this.state.currentGameState}
                 clientWS={this.state.clientWS}
                 createRoom={this.createRoom}
+                fetchGameState={this.fetchGameState}
                 joinRoom={this.joinRoom}
             />
         );
