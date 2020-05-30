@@ -1,5 +1,5 @@
 import React, { FormEvent } from "react";
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Button, Col, Form, Row } from "react-bootstrap";
 import { toast } from "react-toastify";
 
 interface JoinCreateProps {
@@ -18,7 +18,6 @@ function validPlayerName(name: string): boolean {
 }
 
 export default class JoinCreate extends React.Component<JoinCreateProps, JoinCreateState> {
-
     constructor(props: JoinCreateProps) {
         super(props);
 
@@ -60,6 +59,10 @@ export default class JoinCreate extends React.Component<JoinCreateProps, JoinCre
         const form = event.currentTarget;
         event.preventDefault();
         event.stopPropagation();
+
+        if (!this.state.validated) {
+            return;
+        }
 
         if (!form.checkValidity()) {
             toast.error("Form reads as invalid on submit.");
@@ -126,4 +129,3 @@ export default class JoinCreate extends React.Component<JoinCreateProps, JoinCre
         );
     }
 }
-

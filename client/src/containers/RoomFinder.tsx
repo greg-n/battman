@@ -1,15 +1,15 @@
+import { AxiosResponse } from "axios";
+import { History, Location } from "history";
+import debounce from "lodash.debounce";
 import React, { FormEvent } from "react";
-import { Form, Row, Col, Button, Spinner } from "react-bootstrap";
+import { Button, Col, Form, Row, Spinner } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
-import { generateRoomName } from "../utils/roomName";
+import { match as Match, withRouter } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../api";
-import { AxiosResponse } from "axios";
-import { GameExternalInfo } from "../types/Game";
-import debounce from "lodash.debounce";
 import SimpleToolTip from "../components/SimpleToolTip";
-import { withRouter, match as Match } from "react-router-dom";
-import { History, Location } from "history";
+import { GameExternalInfo } from "../types/Game";
+import { generateRoomName } from "../utils/roomName";
 
 enum RoomNameVacancy {
     noName,
@@ -127,6 +127,10 @@ class RoomFinder extends React.Component<RoomFinderProps, RoomFinderState> {
         const form = event.currentTarget;
         event.preventDefault();
         event.stopPropagation();
+
+        if (!this.state.validated) {
+            return;
+        }
 
         if (form.checkValidity()) {
             this.props.history.push(

@@ -38,10 +38,7 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
             </div>
             <span
                 style={{
-                    height: "100%",
-                    borderLeft: ".1em solid #ECF0F1",
-                    borderRight: ".1em solid #ECF0F1",
-                    borderTop: ".1em solid #ECF0F1"
+                    height: "100%"
                 }}
             >
                 <span style={{ flexShrink: 1, flexGrow: 1 }}>
@@ -53,7 +50,11 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                 <Col
                                     xs={12}
                                 >
-                                    <PlayerList />
+                                    <PlayerList
+                                        playerList={props.gameState.playerStates}
+                                        gameState={props.gameState.gameInfo.state}
+                                        marshall={props.gameState.gameInfo.waitingRoomMarshall}
+                                    />
                                 </Col>
                             </Row>
                         </Container>
