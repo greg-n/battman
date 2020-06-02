@@ -13,6 +13,7 @@ interface RoomProps {
     createRoom: (playerName: string) => Promise<void>;
     fetchGameState: () => void;
     joinRoom: (playerName: string) => Promise<void>;
+    setWord: (word: string) => void;
 }
 
 export default class Room extends React.Component<RoomProps, {}> {
@@ -47,6 +48,7 @@ export default class Room extends React.Component<RoomProps, {}> {
                     roomName={this.props.roomName}
                     gameState={gameState}
                     fetchGameState={this.props.fetchGameState}
+                    setWord={this.props.setWord}
                 />
             );
         else if (gameState?.gameInfo.state === GameState.running)

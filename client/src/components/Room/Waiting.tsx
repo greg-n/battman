@@ -3,19 +3,21 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { CurrentGameState } from "../../utils/parseMessageData";
 import PlayerList from "./PlayerList";
+import SetWord from "./SetWord";
 
 interface RoomWaitingProps {
     roomName: string;
     gameState: CurrentGameState;
     fetchGameState: () => void;
+    setWord: (word: string) => void;
 }
 
 export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
     return (
         <span
             style={{
-                marginLeft: "4vw",
-                marginRight: "4vw",
+                marginLeft: "3vw",
+                marginRight: "3vw",
                 height: "100vh",
                 display: "flex",
                 flexFlow: "column"
@@ -45,7 +47,7 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                     <span style={{ display: "flex", height: "100%" }}>
                         <Container fluid="md" style={{ maxHeight: "90vh", overflow: "auto" }}>
                             <Row
-                                style={{ height: "100%" }}
+                                style={{ height: "100%", paddingRight: "1em" }}
                             >
                                 <Col
                                     xs={12}
@@ -61,7 +63,7 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                         </Container>
                         <Container fluid="md">
                             <Row
-                                style={{ height: "50%" }}
+                                style={{ height: "50%", paddingLeft: "1em" }}
                             >
                                 <Col
                                     xs={12}
@@ -72,14 +74,18 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                 </Col>
                             </Row>
                             <Row
-                                style={{ height: "50%" }}
+                                style={{ height: "50%", paddingLeft: "1em" }}
                             >
                                 <Col
-                                    xs={12}
+                                    xs={8}
                                 >
-                                    <div>
-                                        Hi
-                                    </div>
+                                    <SetWord
+                                        playerState={props.gameState.clientState.state}
+                                        playerWord={props.gameState.clientState.word}
+                                        minLength={props.gameState.gameInfo.minChars}
+                                        maxLength={props.gameState.gameInfo.maxChars}
+                                        setWord={props.setWord}
+                                    />
                                 </Col>
                             </Row>
                         </Container>

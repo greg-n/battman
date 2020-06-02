@@ -18,7 +18,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
     const playerList = props.playerList;
     const playerItems: JSX.Element[] = [];
     for (const [name, player] of Object.entries(playerList)) {
-        let bgColor: "secondary" | undefined;
+        let bgColor: "secondary" | "light" = "light";
         let textColor: "white" | undefined;
         if (
             [PlayerState.eliminated, PlayerState.disconnected]
@@ -122,32 +122,45 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                         </span>
                     </Card.Header>
                     {displaySubItems ? (
-                        <ListGroup variant="flush">
-                            {displayWordPortion
-                                ? (
-                                    <ListGroup.Item>
-                                        {player.guessedWordPortion}
-                                    </ListGroup.Item>
-                                ) : undefined}
-                            {displayGuessedLetters
-                                ? (
-                                    <ListGroup.Item>
-                                        {player.guessedLetters}
-                                    </ListGroup.Item>
-                                ) : undefined}
-                            {displayGuessedWords
-                                ? (
-                                    <ListGroup.Item>
-                                        {player.guessedWords}
-                                    </ListGroup.Item>
-                                ) : undefined}
-                            {displayEliminatedBy
-                                ? (
-                                    <ListGroup.Item>
-                                        Eliminated by: {player.lastGuessedBy[0]}
-                                    </ListGroup.Item>
-                                ) : undefined}
-                        </ListGroup>
+                        <Card.Body style={{ padding: 0 }}>
+                            <ListGroup variant="flush">
+                                {displayWordPortion
+                                    ? (
+                                        <ListGroup.Item style={{ letterSpacing: ".3em", backgroundColor: "transparent", color: textColor }}>
+                                            {player.guessedWordPortion}
+                                        </ListGroup.Item>
+                                    ) : undefined}
+                                {displayGuessedLetters
+                                    ? (
+                                        <ListGroup.Item style={{ letterSpacing: ".3em", backgroundColor: "transparent", color: textColor }}>
+                                            {player.guessedLetters}
+                                        </ListGroup.Item>
+                                    ) : undefined}
+                                {displayGuessedWords
+                                    ? (
+                                        <ListGroup.Item style={{ backgroundColor: "transparent", color: textColor }}>
+                                            {player.guessedWords.map((word, i) => (
+                                                <span
+                                                    key={word}
+                                                    style={
+                                                        i < player.guessedWords.length - 1
+                                                            ? { paddingRight: ".3em" }
+                                                            : undefined
+                                                    }
+                                                >
+                                                    {word}
+                                                </span>
+                                            ))}
+                                        </ListGroup.Item>
+                                    ) : undefined}
+                                {displayEliminatedBy
+                                    ? (
+                                        <ListGroup.Item style={{ backgroundColor: "transparent", color: textColor }}>
+                                            Eliminated by: {player.lastGuessedBy[0]}
+                                        </ListGroup.Item>
+                                    ) : undefined}
+                            </ListGroup>
+                        </Card.Body>
                     ) : undefined}
                 </Card>
             </ListGroup.Item>
