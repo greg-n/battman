@@ -76,8 +76,9 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                             <Row
                                 style={{ height: "50%", paddingLeft: "1em" }}
                             >
+                                <Col />
                                 <Col
-                                    xs={8}
+                                    xs={6}
                                 >
                                     <SetWord
                                         playerState={props.gameState.clientState.state}
@@ -87,6 +88,7 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                         setWord={props.setWord}
                                     />
                                 </Col>
+                                <Col />
                             </Row>
                         </Container>
                     </span>

@@ -93,6 +93,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
         }
 
         this.props.setWord(this.state.playerWord as string);
+        this.setState({ validated: undefined });
     }
 
     renderSubmitButton(): JSX.Element {
@@ -121,8 +122,8 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                         variant="primary"
                         disabled
                     >
-                        Set!
-                        </Button>
+                        Got It!
+                    </Button>
                 </SimpleToolTip>
             );
         else if (!this.state.validated)
@@ -154,7 +155,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                     </Row>
                     <Row>
                         <Col
-                            xs={8}
+                            xs={7}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
                         >
                             <Form.Control
@@ -170,6 +171,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                                 {this.state.invalidFeedback}
                             </Form.Control.Feedback>
                         </Col>
+                        <Col xs={1} />
                         <Col
                             xs={4}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
