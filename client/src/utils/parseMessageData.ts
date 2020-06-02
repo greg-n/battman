@@ -25,6 +25,7 @@ export function buildInitCurrentGameState(data: PlayerUpdateOutput): CurrentGame
     } else {
         newClientState = {
             name: "",
+            word: null,
             guessedWordPortion: null,
             guessedLetters: [],
             guessedWords: [],

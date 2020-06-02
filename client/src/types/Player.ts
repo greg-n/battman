@@ -1,5 +1,6 @@
 export interface Player {
     name: string;
+    word: null | string; // will only be filled for eliminated players or client state
     guessedWordPortion: null | string;
     guessedLetters: string[];
     guessedWords: string[];

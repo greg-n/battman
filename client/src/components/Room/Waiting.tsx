@@ -53,6 +53,7 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                     <PlayerList
                                         playerList={props.gameState.playerStates}
                                         gameState={props.gameState.gameInfo.state}
+                                        playerWordSet={props.gameState.clientState.word != null}
                                         marshall={props.gameState.gameInfo.waitingRoomMarshall}
                                     />
                                 </Col>
