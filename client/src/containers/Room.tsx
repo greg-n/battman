@@ -30,6 +30,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             currentGameState: undefined
         };
 
+        this.changeWordConstraints = this.changeWordConstraints.bind(this);
         this.createRoom = this.createRoom.bind(this);
         this.fetchRoomInfo = this.fetchRoomInfo.bind(this);
         this.fetchGameState = this.fetchGameState.bind(this);
@@ -37,6 +38,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         this.joinBuildWSClient = this.joinBuildWSClient.bind(this);
         this.readyUp = this.readyUp.bind(this);
         this.setWord = this.setWord.bind(this);
+        this.transferMarshalship = this.transferMarshalship.bind(this);
     }
 
     async componentDidMount(): Promise<void> {
@@ -204,6 +206,14 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         return ws;
     }
 
+    changeWordConstraints(minChars: number, maxChars: number): void {
+        this.state.clientWS?.send(roomMessageStringify({
+            action: GameAction.changeWordConstraints,
+            minChars,
+            maxChars
+        }));
+    }
+
     readyUp(): void {
         this.state.clientWS?.send(roomMessageStringify({
             action: GameAction.readyToggle
@@ -217,6 +227,13 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         }));
     }
 
+    transferMarshalship(subject: string): void {
+        this.state.clientWS?.send(roomMessageStringify({
+            action: GameAction.transferMarshalship,
+            subject
+        }));
+    }
+
     render(): JSX.Element {
         return (
             <RoomComponent
@@ -224,11 +241,13 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                 roomInfo={this.state.roomInfo}
                 gameState={this.state.currentGameState}
                 clientWS={this.state.clientWS}
+                changeWordConstraints={this.changeWordConstraints}
                 createRoom={this.createRoom}
                 fetchGameState={this.fetchGameState}
                 joinRoom={this.joinRoom}
                 readyUp={this.readyUp}
                 setWord={this.setWord}
+                transferMarshalship={this.transferMarshalship}
             />
         );
     }

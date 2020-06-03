@@ -160,7 +160,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                         <Form.Label>
                             Set your word
                             {this.props.playerWord != null && this.state.playerWord !== this.props.playerWord
-                                ? `Currently: ${this.props.playerWord}`
+                                ? `. Currently: ${this.props.playerWord}`
                                 : undefined}
                         </Form.Label>
                     </Row>

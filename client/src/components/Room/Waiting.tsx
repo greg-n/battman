@@ -5,13 +5,16 @@ import { CurrentGameState } from "../../utils/parseMessageData";
 import PlayerList from "./PlayerList";
 import SetWord from "./SetWord";
 import ReadyUp from "./ReadyUp";
+import MarshallControls from "./MarshallControls";
 
 interface RoomWaitingProps {
     roomName: string;
     gameState: CurrentGameState;
+    changeWordConstraints: (minChars: number, maxChars: number) => void;
     fetchGameState: () => void;
     readyUp: () => void;
     setWord: (word: string) => void;
+    transferMarshalship: (subject: string) => void;
 }
 
 interface RoomWaitingState {
@@ -89,18 +92,15 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                             <Container fluid="md" style={{ height: "50%", paddingLeft: "1em" }}>
                                 {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
                                     ? (
-                                        <span>
-                                            <Row>
-                                                <Col
-                                                    xs={12}
-                                                >
-                                                    <div>
-                                                        Hi
-                                                </div>
-                                                </Col>
-                                            </Row>
-                                            <Row style={{ paddingTop: "1.3em" }} />
-                                        </span>
+                                        <MarshallControls
+                                            playerList={this.props.gameState.playerStates}
+                                            minChars={this.props.gameState.gameInfo.minChars}
+                                            maxChars={this.props.gameState.gameInfo.maxChars}
+                                            selected={this.state.selectedUser}
+                                            changeSelected={this.changeSelectedUser}
+                                            changeWordConstraints={this.props.changeWordConstraints}
+                                            transferMarshalship={this.props.transferMarshalship}
+                                        />
                                     ) : undefined
                                 }
                                 <Row>

@@ -12,6 +12,7 @@
     "react-dom": "^16.13.1",
     "react-icons": "^3.10.0",
     "react-router-dom": "^5.2.0",
+    "react-slider": "^1.0.7",
     "react-toastify": "^6.0.4"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "@types/react-bootstrap": "^1.0.1",
     "@types/react-dom": "^16.9.7",
     "@types/react-router-dom": "^5.1.5",
+    "@types/react-slider": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^2.30.0",
     "@typescript-eslint/parser": "^2.30.0",
     "eslint": "^6.8.0",

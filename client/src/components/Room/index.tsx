@@ -10,11 +10,13 @@ interface RoomProps {
     roomInfo: null | GameExternalInfo;
     gameState: undefined | CurrentGameState;
     clientWS: null | WebSocket;
+    changeWordConstraints: (minChars: number, maxChars: number) => void;
     createRoom: (playerName: string) => Promise<void>;
     fetchGameState: () => void;
     joinRoom: (playerName: string) => Promise<void>;
     readyUp: () => void;
     setWord: (word: string) => void;
+    transferMarshalship: (subject: string) => void;
 }
 
 export default function Room(props: RoomProps): JSX.Element {
@@ -41,9 +43,11 @@ export default function Room(props: RoomProps): JSX.Element {
             <RoomWaiting
                 roomName={props.roomName}
                 gameState={gameState}
+                changeWordConstraints={props.changeWordConstraints}
                 fetchGameState={props.fetchGameState}
                 readyUp={props.readyUp}
                 setWord={props.setWord}
+                transferMarshalship={props.transferMarshalship}
             />
         );
     else if (gameState?.gameInfo.state === GameState.running)
