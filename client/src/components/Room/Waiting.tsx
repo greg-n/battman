@@ -4,11 +4,13 @@ import { BsArrowClockwise } from "react-icons/bs";
 import { CurrentGameState } from "../../utils/parseMessageData";
 import PlayerList from "./PlayerList";
 import SetWord from "./SetWord";
+import ReadyUp from "./ReadyUp";
 
 interface RoomWaitingProps {
     roomName: string;
     gameState: CurrentGameState;
     fetchGameState: () => void;
+    readyUp: () => void;
     setWord: (word: string) => void;
 }
 
@@ -86,6 +88,12 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                         minLength={props.gameState.gameInfo.minChars}
                                         maxLength={props.gameState.gameInfo.maxChars}
                                         setWord={props.setWord}
+                                    />
+                                    <Row style={{ paddingTop: "1.3em" }} />
+                                    <ReadyUp
+                                        playerState={props.gameState.clientState.state}
+                                        playerWord={props.gameState.clientState.word}
+                                        readyUp={props.readyUp}
                                     />
                                 </Col>
                                 <Col />

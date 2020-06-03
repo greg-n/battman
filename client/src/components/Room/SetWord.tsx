@@ -102,12 +102,15 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                 <SimpleToolTip
                     text="Must not be readied to set a word."
                 >
-                    <Button
-                        variant="secondary"
-                        disabled
-                    >
-                        Set Word
-                    </Button>
+                    <span>
+                        <Button
+                            style={{ pointerEvents: "none" }}
+                            variant="secondary"
+                            disabled
+                        >
+                            Set Word
+                        </Button>
+                    </span>
                 </SimpleToolTip>
             );
         else if (
@@ -118,12 +121,15 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                 <SimpleToolTip
                     text="This is your set word."
                 >
-                    <Button
-                        variant="primary"
-                        disabled
-                    >
-                        Got It!
-                    </Button>
+                    <span>
+                        <Button
+                            style={{ pointerEvents: "none" }}
+                            variant="primary"
+                            disabled
+                        >
+                            Got It!
+                        </Button>
+                    </span>
                 </SimpleToolTip>
             );
         else if (!this.state.validated)

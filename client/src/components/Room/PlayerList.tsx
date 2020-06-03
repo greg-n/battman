@@ -28,61 +28,61 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             textColor = "white";
         }
 
-        const badgeStyle: React.CSSProperties = { paddingLeft: ".2rem" };
+        const badgeStyle: React.CSSProperties = { paddingLeft: ".3rem" };
         const playerBadges: JSX.Element[] = [];
         if (props.gameState === GameState.waitingRoom) {
             if (player.name === props.marshall)
                 playerBadges.push(
-                    <span style={badgeStyle}>
-                        <SimpleToolTip
-                            text="Waiting room marshall."
-                        >
+                    <SimpleToolTip
+                        text="Waiting room marshall."
+                    >
+                        <span style={badgeStyle}>
                             <GiLawStar />
-                        </SimpleToolTip>
-                    </span>
+                        </span>
+                    </SimpleToolTip>
                 );
 
             if (props.playerWordSet === true && player.state === PlayerState.ready) {
                 playerBadges.push(
-                    <span style={badgeStyle}>
-                        <SimpleToolTip
-                            text="Word set. Ready to play."
-                        >
+                    <SimpleToolTip
+                        text="Word set. Ready to play."
+                    >
+                        <span style={badgeStyle}>
                             <BsCheckAll />
-                        </SimpleToolTip>
-                    </span>
+                        </span>
+                    </SimpleToolTip>
                 );
             } else if (props.playerWordSet === true) {
                 playerBadges.push(
-                    <span style={badgeStyle}>
-                        <SimpleToolTip
-                            text="Word set. Not yet readied up."
-                        >
+                    <SimpleToolTip
+                        text="Word set. Not yet readied up."
+                    >
+                        <span style={badgeStyle}>
                             <BsCheck />
-                        </SimpleToolTip>
-                    </span>
+                        </span>
+                    </SimpleToolTip>
                 );
             }
         } else {
             if (player.state === PlayerState.eliminated)
                 playerBadges.push(
-                    <span style={badgeStyle}>
-                        <SimpleToolTip
-                            text="Eliminated."
-                        >
+                    <SimpleToolTip
+                        text="Eliminated."
+                    >
+                        <span style={badgeStyle}>
                             <GiDeadHead />
-                        </SimpleToolTip>
-                    </span>
+                        </span>
+                    </SimpleToolTip>
                 );
             if (player.state === PlayerState.disconnected)
                 playerBadges.push(
-                    <span style={badgeStyle}>
-                        <SimpleToolTip
-                            text="Disconnected."
-                        >
+                    <SimpleToolTip
+                        text="Disconnected."
+                    >
+                        <span style={badgeStyle}>
                             <GiLostLimb />
-                        </SimpleToolTip>
-                    </span>
+                        </span>
+                    </SimpleToolTip>
                 );
         }
 

@@ -13,63 +13,53 @@ interface RoomProps {
     createRoom: (playerName: string) => Promise<void>;
     fetchGameState: () => void;
     joinRoom: (playerName: string) => Promise<void>;
+    readyUp: () => void;
     setWord: (word: string) => void;
 }
 
-export default class Room extends React.Component<RoomProps, {}> {
-    constructor(props: RoomProps) {
-        super(props);
+export default function Room(props: RoomProps): JSX.Element {
+    const clientWS = props.clientWS;
+    const gameState = props.gameState;
 
-        this.renderByClientState = this.renderByClientState.bind(this);
-    }
-
-    renderByClientState(): JSX.Element {
-        const clientWS = this.props.clientWS;
-        const gameState = this.props.gameState;
-
-        if (clientWS == null && gameState == null) // Client is not connected here
-            return (
-                <RoomLanding
-                    roomName={this.props.roomName}
-                    roomInfo={this.props.roomInfo}
-                    createRoom={this.props.createRoom}
-                    joinRoom={this.props.joinRoom}
-                />
-            );
-        else if (clientWS == null || gameState == null)
-            return (
-                <div>
-                    Either ws or game state null.
-                </div>
-            );
-        else if (gameState?.gameInfo.state === GameState.waitingRoom)
-            return (
-                <RoomWaiting
-                    roomName={this.props.roomName}
-                    gameState={gameState}
-                    fetchGameState={this.props.fetchGameState}
-                    setWord={this.props.setWord}
-                />
-            );
-        else if (gameState?.gameInfo.state === GameState.running)
-            return (
-                <RoomRunning />
-            );
-        else if (gameState?.gameInfo.state === GameState.ended)
-            return (
-                <div>
-                    TODO game ended screen
-                </div>
-            );
-        else
-            return (
-                <div>
-                    Ummm... this is embarrassing
-                </div>
-            );
-    }
-
-    render(): JSX.Element {
-        return this.renderByClientState();
-    }
+    if (clientWS == null && gameState == null) // Client is not connected here
+        return (
+            <RoomLanding
+                roomName={props.roomName}
+                roomInfo={props.roomInfo}
+                createRoom={props.createRoom}
+                joinRoom={props.joinRoom}
+            />
+        );
+    else if (clientWS == null || gameState == null)
+        return (
+            <div>
+                Either ws or game state null.
+            </div>
+        );
+    else if (gameState?.gameInfo.state === GameState.waitingRoom)
+        return (
+            <RoomWaiting
+                roomName={props.roomName}
+                gameState={gameState}
+                fetchGameState={props.fetchGameState}
+                readyUp={props.readyUp}
+                setWord={props.setWord}
+            />
+        );
+    else if (gameState?.gameInfo.state === GameState.running)
+        return (
+            <RoomRunning />
+        );
+    else if (gameState?.gameInfo.state === GameState.ended)
+        return (
+            <div>
+                TODO game ended screen
+            </div>
+        );
+    else
+        return (
+            <div>
+                Ummm... this is embarrassing
+            </div>
+        );
 }
