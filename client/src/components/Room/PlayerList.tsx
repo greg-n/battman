@@ -12,6 +12,7 @@ interface PlayerListProps {
     playerWordSet?: boolean;
     marshall?: string;
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
+    changeSelected: (name?: string) => void;
 }
 
 export default function PlayerList(props: PlayerListProps): JSX.Element {
@@ -105,6 +106,9 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                     border={props.selected === name
                         ? "primary"
                         : undefined}
+                    onClick={(): void => {
+                        props.changeSelected(name !== props.selected ? name : undefined);
+                    }}
                 >
                     <Card.Header
                         style={{ fontSize: "1.3em" }}

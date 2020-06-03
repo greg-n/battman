@@ -14,89 +14,121 @@ interface RoomWaitingProps {
     setWord: (word: string) => void;
 }
 
-export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
-    return (
-        <span
-            style={{
-                marginLeft: "3vw",
-                marginRight: "3vw",
-                height: "100vh",
-                display: "flex",
-                flexFlow: "column"
-            }}
-        >
-            <div >
-                <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
-                    <div>
-                        <Button
-                            variant="light"
-                            onClick={props.fetchGameState}
-                        >
-                            <BsArrowClockwise />
-                            <span style={{ paddingLeft: ".2em" }}>
-                                - Refresh game without disconnecting
-                            </span>
-                        </Button>
-                    </div>
-                </Col>
-            </div>
+interface RoomWaitingState {
+    selectedUser: string | undefined;
+}
+
+export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomWaitingState> {
+    constructor(props: RoomWaitingProps) {
+        super(props);
+
+        this.state = {
+            selectedUser: undefined
+        };
+
+        this.changeSelectedUser = this.changeSelectedUser.bind(this);
+    }
+
+    // unset by passing undefined
+    changeSelectedUser(name?: string): void {
+        this.setState({ selectedUser: name });
+    }
+
+    render(): JSX.Element {
+        return (
             <span
                 style={{
-                    height: "100%"
+                    marginLeft: "3vw",
+                    marginRight: "3vw",
+                    height: "100vh",
+                    display: "flex",
+                    flexFlow: "column"
                 }}
             >
-                <span style={{ flexShrink: 1, flexGrow: 1 }}>
-                    <span style={{ display: "flex", height: "100%" }}>
-                        <Container fluid="md" style={{ maxHeight: "90vh", overflow: "auto", height: "100%", paddingRight: "1em" }}>
-                            <Row                            >
-                                <Col
-                                    xs={12}
-                                >
-                                    <PlayerList
-                                        playerList={props.gameState.playerStates}
-                                        gameState={props.gameState.gameInfo.state}
-                                        playerWordSet={props.gameState.clientState.word != null}
-                                        marshall={props.gameState.gameInfo.waitingRoomMarshall}
-                                    />
-                                </Col>
-                            </Row>
-                        </Container>
-                        <Container fluid="md" style={{ height: "50%", paddingLeft: "1em" }}>
-                            <Row>
-                                <Col
-                                    xs={12}
-                                >
-                                    <div>
-                                        Hi
-                                    </div>
-                                </Col>
-                            </Row>
-                            <Row style={{ paddingTop: "1.3em" }} />
-                            <Row>
-                                <Col />
-                                <Col
-                                    xs={7}
-                                >
-                                    <SetWord
-                                        playerState={props.gameState.clientState.state}
-                                        playerWord={props.gameState.clientState.word}
-                                        minLength={props.gameState.gameInfo.minChars}
-                                        maxLength={props.gameState.gameInfo.maxChars}
-                                        setWord={props.setWord}
-                                    />
-                                    <Row style={{ paddingTop: "1.3em" }} />
-                                    <ReadyUp
-                                        playerState={props.gameState.clientState.state}
-                                        playerWord={props.gameState.clientState.word}
-                                        readyUp={props.readyUp}
-                                    />
-                                </Col>
-                                <Col />
-                            </Row>
-                        </Container>
+                <div >
+                    <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
+                        <div>
+                            <Button
+                                variant="light"
+                                onClick={this.props.fetchGameState}
+                            >
+                                <BsArrowClockwise />
+                                <span style={{ paddingLeft: ".2em" }}>
+                                    - Refresh game without disconnecting
+                                </span>
+                            </Button>
+                        </div>
+                    </Col>
+                </div>
+                <span
+                    style={{
+                        height: "100%"
+                    }}
+                >
+                    <span style={{ flexShrink: 1, flexGrow: 1 }}>
+                        <span style={{ display: "flex", height: "100%" }}>
+                            <Container
+                                fluid="md"
+                                style={{ maxHeight: "90vh", overflow: "auto", height: "100%", paddingRight: "1em" }}
+                            >
+                                <Row >
+                                    <Col
+                                        xs={12}
+                                    >
+                                        <PlayerList
+                                            playerList={this.props.gameState.playerStates}
+                                            gameState={this.props.gameState.gameInfo.state}
+                                            playerWordSet={this.props.gameState.clientState.word != null}
+                                            marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                            selected={this.state.selectedUser}
+                                            changeSelected={this.changeSelectedUser}
+                                        />
+                                    </Col>
+                                </Row>
+                            </Container>
+                            <Container fluid="md" style={{ height: "50%", paddingLeft: "1em" }}>
+                                {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
+                                    ? (
+                                        <span>
+                                            <Row>
+                                                <Col
+                                                    xs={12}
+                                                >
+                                                    <div>
+                                                        Hi
+                                                </div>
+                                                </Col>
+                                            </Row>
+                                            <Row style={{ paddingTop: "1.3em" }} />
+                                        </span>
+                                    ) : undefined
+                                }
+                                <Row>
+                                    <Col />
+                                    <Col
+                                        xs={7}
+                                    >
+                                        <SetWord
+                                            playerState={this.props.gameState.clientState.state}
+                                            playerWord={this.props.gameState.clientState.word}
+                                            minLength={this.props.gameState.gameInfo.minChars}
+                                            maxLength={this.props.gameState.gameInfo.maxChars}
+                                            setWord={this.props.setWord}
+                                        />
+                                        <Row style={{ paddingTop: "1.3em" }} />
+                                        <ReadyUp
+                                            playerState={this.props.gameState.clientState.state}
+                                            playerWord={this.props.gameState.clientState.word}
+                                            readyUp={this.props.readyUp}
+                                        />
+                                    </Col>
+                                    <Col />
+                                </Row>
+                            </Container>
+                        </span>
                     </span>
                 </span>
             </span>
-        </span>
-    );
+        );
+    }
 }
