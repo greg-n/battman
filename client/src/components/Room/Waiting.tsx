@@ -47,10 +47,8 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
             >
                 <span style={{ flexShrink: 1, flexGrow: 1 }}>
                     <span style={{ display: "flex", height: "100%" }}>
-                        <Container fluid="md" style={{ maxHeight: "90vh", overflow: "auto" }}>
-                            <Row
-                                style={{ height: "100%", paddingRight: "1em" }}
-                            >
+                        <Container fluid="md" style={{ maxHeight: "90vh", overflow: "auto", height: "100%", paddingRight: "1em" }}>
+                            <Row                            >
                                 <Col
                                     xs={12}
                                 >
@@ -63,10 +61,8 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                 </Col>
                             </Row>
                         </Container>
-                        <Container fluid="md">
-                            <Row
-                                style={{ height: "50%", paddingLeft: "1em" }}
-                            >
+                        <Container fluid="md" style={{ height: "50%", paddingLeft: "1em" }}>
+                            <Row>
                                 <Col
                                     xs={12}
                                 >
@@ -75,12 +71,11 @@ export default function RoomWaiting(props: RoomWaitingProps): JSX.Element {
                                     </div>
                                 </Col>
                             </Row>
-                            <Row
-                                style={{ height: "50%", paddingLeft: "1em" }}
-                            >
+                            <Row style={{ paddingTop: "1.3em" }} />
+                            <Row>
                                 <Col />
                                 <Col
-                                    xs={6}
+                                    xs={7}
                                 >
                                     <SetWord
                                         playerState={props.gameState.clientState.state}

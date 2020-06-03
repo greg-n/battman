@@ -157,7 +157,12 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
             <div>
                 <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                     <Row>
-                        <Form.Label>Set your word</Form.Label>
+                        <Form.Label>
+                            Set your word
+                            {this.props.playerWord != null && this.state.playerWord !== this.props.playerWord
+                                ? `Currently: ${this.props.playerWord}`
+                                : undefined}
+                        </Form.Label>
                     </Row>
                     <Row>
                         <Col
