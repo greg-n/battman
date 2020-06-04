@@ -1,8 +1,7 @@
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { Player } from "../../types/Player";
-import ReactSlider from "react-slider";
-import "./Slider.css";
+import ChangeWordConstraints from "./ChangeWordConstraints";
 
 interface MarshallControlsProp {
     playerList: { [key: string]: Player };
@@ -18,23 +17,17 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
     return (
         <span>
             <Row>
+                <Col />
                 <Col
-                    xs={12}
+                    xs={7}
                 >
-                    <ReactSlider
-                        className="horizontal-slider"
-                        thumbClassName="thumb"
-                        trackClassName="track"
-                        min={1}
-                        max={24}
-                        defaultValue={[props.minChars, props.maxChars]}
-                        ariaLabel={["Lower thumb", "Upper thumb"]}
-                        ariaValuetext={(state): string => `Thumb value ${state.valueNow}`}
-                        renderThumb={(props, state): JSX.Element => <div {...props}>{state.valueNow}</div>}
-                        onChange={(e): void => console.log(e)}
-                        pearling
+                    <ChangeWordConstraints
+                        minChars={props.minChars}
+                        maxChars={props.maxChars}
+                        changeWordConstraints={props.changeWordConstraints}
                     />
                 </Col>
+                <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em" }} />
             <Row>

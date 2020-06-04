@@ -43,7 +43,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                     </SimpleToolTip>
                 );
 
-            if (props.playerWordSet === true && player.state === PlayerState.ready) {
+            if (player.wordSet && player.state === PlayerState.ready) {
                 playerBadges.push(
                     <SimpleToolTip
                         text="Word set. Ready to play."
@@ -53,7 +53,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                         </span>
                     </SimpleToolTip>
                 );
-            } else if (props.playerWordSet === true) {
+            } else if (player.wordSet) {
                 playerBadges.push(
                     <SimpleToolTip
                         text="Word set. Not yet readied up."

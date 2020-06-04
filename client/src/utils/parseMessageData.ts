@@ -26,6 +26,7 @@ export function buildInitCurrentGameState(data: PlayerUpdateOutput): CurrentGame
         newClientState = {
             name: "",
             word: null,
+            wordSet: false,
             guessedWordPortion: null,
             guessedLetters: [],
             guessedWords: [],
@@ -81,7 +82,6 @@ export default function parseMessageData(
     switch (data.gameInfo.action) {
         case GameAction.join:
         case GameAction.disconnect:
-        case GameAction.changeWordConstraints:
         case GameAction.startGame:
             return {
                 clientState: oldState.clientState,
@@ -94,6 +94,7 @@ export default function parseMessageData(
                 gameInfo: data.gameInfo,
                 playerStates: oldState.playerStates
             };
+        case GameAction.changeWordConstraints:
         case GameAction.setWord:
         case GameAction.readyToggle:
             return parsePlayerUpdateOutput(data, oldState);
@@ -138,7 +139,7 @@ function parsePlayerUpdateOutput(data: SomeGameUpdate, oldState: CurrentGameStat
     const newPlayerStates = oldState.playerStates;
     newPlayerStates[data.forAll.name] = data.forAll;
     newState.playerStates = newPlayerStates;
-
+    console.log(newState);
     return newState;
 }
 

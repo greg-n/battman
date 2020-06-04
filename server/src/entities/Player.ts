@@ -10,7 +10,7 @@ export enum PlayerState {
 }
 
 export type PlayerSerializable = {
-    [key: string]: string | null | string[] | PlayerState;
+    [key: string]: string | null | boolean | string[] | PlayerState;
 }
 
 export default class Player {
@@ -18,6 +18,8 @@ export default class Player {
     name: string;
     // Will be set prior to game beginning, readying
     word: string | null;
+    // To aid in badge population on frontend
+    wordSet: boolean;
     // Will be set prior to game beginning, readying
     guessedWordPortion: string | null;
     // Letters that have been guessed on this player's word
@@ -35,6 +37,7 @@ export default class Player {
     constructor(name: string) {
         this.name = name;
         this.word = null;
+        this.wordSet = false;
         this.guessedWordPortion = null;
         this.guessedLetters = new Set();
         this.guessedWords = new Set();
@@ -49,6 +52,7 @@ export default class Player {
         return {
             name: this.name,
             word: this.word,
+            wordSet: this.wordSet,
             guessedWordPortion: this.guessedWordPortion,
             // These set -> array for valid JSON.stringify
             guessedLetters: [...this.guessedLetters],

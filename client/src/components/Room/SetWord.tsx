@@ -37,6 +37,27 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
         this.renderSubmitButton = this.renderSubmitButton.bind(this);
     }
 
+    componentDidUpdate(prevProps: SetWordProps): void {
+        if (prevProps === this.props)
+            return;
+
+        if (prevProps.playerWord != null) {
+            if (prevProps.playerWord.length < this.props.minLength) {
+                this.setState({
+                    // keep current word in state so user has a starting place
+                    validated: false,
+                    invalidFeedback: `Word must be longer than ${this.props.minLength} chars.`
+                });
+            } else if (prevProps.playerWord.length > this.props.maxLength) {
+                this.setState({
+                    // keep current word in state so user has a starting place
+                    validated: false,
+                    invalidFeedback: `Word must be shorter than ${this.props.maxLength} chars.`
+                });
+            }
+        }
+    }
+
     checkPlayerWord(event: React.ChangeEvent<HTMLInputElement>): void {
         const word = event.target.value;
 
@@ -98,6 +119,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
 
     renderSubmitButton(): JSX.Element {
         if (this.props.playerState !== PlayerState.joined)
+            // FIXME are calls made twice 
             return (
                 <SimpleToolTip
                     text="Must not be readied to set a word."
@@ -161,13 +183,13 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                             Set your word
                             {this.props.playerWord != null && this.state.playerWord !== this.props.playerWord
                                 ? `. Currently: ${this.props.playerWord}`
-                                : undefined}
+                                : `. Min: ${this.props.minLength}. Max: ${this.props.maxLength}.`}
                         </Form.Label>
                     </Row>
                     <Row>
                         <Col
                             xs={7}
-                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
+                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
                         >
                             <Form.Control
                                 placeholder="Your word"
@@ -185,7 +207,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                         <Col xs={1} />
                         <Col
                             xs={4}
-                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em" }}
+                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
                         >
                             {this.renderSubmitButton()}
                         </Col>

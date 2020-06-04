@@ -146,7 +146,7 @@ export default class Game {
         };
     }
 
-    changeWordConstraints(actor: string, minChars = 1, maxChars = 24): GameStateOutput {
+    changeWordConstraints(actor: string, minChars = 1, maxChars = 24): { [key: string]: PlayerUpdateOutput } {
         if (actor !== this.waitingRoomMarshall) {
             throw new Error("Only the waiting room marshall can modify word constraints.");
         }
@@ -158,6 +158,9 @@ export default class Game {
         this.minChars = minChars;
         this.maxChars = maxChars;
 
+        this.streamInfo.push(`Word constraints have been changed to min: ${minChars}, max: ${maxChars}.`);
+
+        const retVal: { [key: string]: PlayerUpdateOutput } = {};
         for (const [name, playerItem] of this.players) {
             const word = playerItem.word || ""; // If not available then spoof is fine to force reset
             if (
@@ -165,16 +168,28 @@ export default class Game {
                 && [PlayerState.joined, PlayerState.ready].includes(playerItem.state)
             ) {
                 playerItem.word = null;
+                playerItem.wordSet = false;
                 playerItem.guessedWordPortion = null;
                 playerItem.state = PlayerState.joined;
+
+                retVal[name] = {
+                    forEffected: playerItem.getSafeToSerialize(),
+                    forAll: playerItem.getSanitizedCopy().getSafeToSerialize(),
+                    gameInfo: this.buildGameUpdateOutput(GameAction.changeWordConstraints)
+                };
+
                 this.players.set(name, playerItem);
+            } else {
+                retVal[name] = {
+                    forEffected: playerItem.getSafeToSerialize(),
+                    forAll: playerItem.getSanitizedCopy().getSafeToSerialize(),
+                    gameInfo: this.buildGameUpdateOutput(GameAction.changeWordConstraints)
+                };
             }
         }
 
-        this.streamInfo.push(`Word constraints have been changed to min: ${minChars}, max: ${maxChars}.`);
-
         this.lastModifiedAt = Date.now();
-        return this.getGameState(GameAction.changeWordConstraints);
+        return retVal;
     }
 
     /**
@@ -444,6 +459,7 @@ export default class Game {
 
         actorItem.state = PlayerState.joined; // Unready
         actorItem.word = wordFixed;
+        actorItem.wordSet = true;
         actorItem.guessedWordPortion = "_".repeat(wordFixed.length);
         this.players.set(actor, actorItem);
 
