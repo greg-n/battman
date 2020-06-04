@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import { BsCheck, BsCheckAll, BsPersonSquare } from "react-icons/bs";
+import { BsCheck, BsCheckAll, BsPersonFill } from "react-icons/bs";
 import { GiDeadHead, GiLawStar, GiLostLimb } from "react-icons/gi";
 import { GameState } from "../../types/Game";
 import { Player, PlayerState } from "../../types/Player";
@@ -39,7 +39,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                     text="This is you."
                 >
                     <span style={badgeStyle}>
-                        <BsPersonSquare />
+                        <BsPersonFill />
                     </span>
                 </SimpleToolTip>
             );

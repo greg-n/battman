@@ -1,6 +1,6 @@
 import { GameAction, GameStateOutput } from "../../entities/Game";
 import { Room, rooms } from "../../state/rooms";
-import { playerUpdateToEachKey, toRoom } from "../../state/utils/broadcast";
+import broadcastToRoom, { playerUpdateToEachKey } from "../../state/utils/broadcastToRoom";
 import { PlayerTokenInfo } from "../../utils/playerToken";
 import { RoomsMessageData } from "../../routes/rooms/ws";
 import WebSocket from "ws";
@@ -56,7 +56,7 @@ export namespace ws {
         room.clients.delete(token.playerName);
         if (room.clients.size > 0) {
             rooms.set(token.roomName, room);
-            toRoom(token.roomName, state); // TODO allow kicking?
+            broadcastToRoom(token.roomName, state); // TODO allow kicking?
         } else
             rooms.delete(token.roomName); // Delete room if no clients remain after one leaves
     }
@@ -81,7 +81,7 @@ export namespace ws {
             );
             rooms.set(token.roomName, room);
 
-            toRoom(
+            broadcastToRoom(
                 token.roomName,
                 {
                     actorUpdate: { forAll: guessOutput.actorUpdate.forAll },
@@ -122,7 +122,7 @@ export namespace ws {
         room.clients.set(token.playerName, ws);
         rooms.set(token.roomName, room);
         const state = room.game.getGameState(GameAction.join);
-        toRoom(token.roomName, state);
+        broadcastToRoom(token.roomName, state);
     }
 
     export function readyToggle(ws: WebSocket, token: PlayerTokenInfo): void {
@@ -132,7 +132,7 @@ export namespace ws {
                 token.playerName
             );
             rooms.set(token.roomName, room);
-            toRoom(
+            broadcastToRoom(
                 token.roomName,
                 { forAll: playerUpdate.forAll, gameInfo: playerUpdate.gameInfo },
                 token.playerName
@@ -155,7 +155,7 @@ export namespace ws {
                 message.word || ""
             );
             rooms.set(token.roomName, room);
-            toRoom(
+            broadcastToRoom(
                 token.roomName,
                 { forAll: playerUpdate.forAll, gameInfo: playerUpdate.gameInfo },
                 token.playerName
@@ -173,10 +173,10 @@ export namespace ws {
                 token.playerName,
             );
             rooms.set(token.roomName, room);
-            toRoom(token.roomName, result);
+            broadcastToRoom(token.roomName, result);
         } catch (error) {
             // Broadcast game start errors to notify those not ready
-            toRoom(token.roomName, { error: error.message });
+            broadcastToRoom(token.roomName, { error: error.message });
         }
     }
 
@@ -191,7 +191,7 @@ export namespace ws {
                 token.playerName,
                 message.subject || "", // Is string but will fail to get a valid player
             );
-            toRoom(token.roomName, result);
+            broadcastToRoom(token.roomName, result);
         } catch (error) {
             ws.send(JSON.stringify({ error: error.message }));
         }

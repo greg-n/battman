@@ -138,7 +138,7 @@ function parsePlayerUpdateOutput(data: SomeGameUpdate, oldState: CurrentGameStat
     const newPlayerStates = oldState.playerStates;
     newPlayerStates[data.forAll.name] = data.forAll;
     newState.playerStates = newPlayerStates;
-    console.log(newState);
+
     return newState;
 }
 

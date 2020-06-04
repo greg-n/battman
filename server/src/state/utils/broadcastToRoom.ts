@@ -2,7 +2,7 @@ import { PlayerUpdateOutput } from "../../entities/Game";
 import WebSocket from "ws";
 import { rooms } from "../rooms";
 
-export function toRoom(room: string, message: object, excludePlayer?: string | string[]): void {
+export default function broadcastToRoom(room: string, message: object, excludePlayer?: string | string[]): void {
     const roomObj = rooms.get(room);
     if (roomObj == null)
         return;
@@ -35,7 +35,7 @@ export function playerUpdateToEachKey(room: string, messages: { [key: string]: P
         const messageStr = JSON.stringify(message);
         if (cWs.readyState === WebSocket.OPEN) {
             cWs.send(messageStr);
-            toRoom(
+            broadcastToRoom(
                 room,
                 { forAll: message.forAll, gameInfo: message.gameInfo },
                 name

@@ -141,6 +141,8 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             this.setState((state) => ({ ...state, ...newItems }));
         };
         const updateCurrentGameState = (event: MessageEvent): void => {
+            // in dev and strict mode setState is called twice with the same state
+            // this behavior should disappear in prod https://github.com/facebook/react/issues/12856#issuecomment-390206425
             this.setState((state) => {
                 try {
                     const newState = parseMessageData(
@@ -215,6 +217,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
     }
 
     readyUp(): void {
+        console.log("readying!");
         this.state.clientWS?.send(roomMessageStringify({
             action: GameAction.readyToggle
         }));
