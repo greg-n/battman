@@ -168,7 +168,6 @@ export default class Game {
                 && [PlayerState.joined, PlayerState.ready].includes(playerItem.state)
             ) {
                 playerItem.word = null;
-                playerItem.wordSet = false;
                 playerItem.guessedWordPortion = null;
                 playerItem.state = PlayerState.joined;
 
@@ -459,7 +458,6 @@ export default class Game {
 
         actorItem.state = PlayerState.joined; // Unready
         actorItem.word = wordFixed;
-        actorItem.wordSet = true;
         actorItem.guessedWordPortion = "_".repeat(wordFixed.length);
         this.players.set(actor, actorItem);
 

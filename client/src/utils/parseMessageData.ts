@@ -26,7 +26,6 @@ export function buildInitCurrentGameState(data: PlayerUpdateOutput): CurrentGame
         newClientState = {
             name: "",
             word: null,
-            wordSet: false,
             guessedWordPortion: null,
             guessedLetters: [],
             guessedWords: [],

@@ -79,9 +79,9 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                         xs={12}
                                     >
                                         <PlayerList
+                                            clientName={this.props.gameState.clientState.name}
                                             playerList={this.props.gameState.playerStates}
                                             gameState={this.props.gameState.gameInfo.state}
-                                            playerWordSet={this.props.gameState.clientState.word != null}
                                             marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
                                             selected={this.state.selectedUser}
                                             changeSelected={this.changeSelectedUser}

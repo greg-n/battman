@@ -1,15 +1,15 @@
 import React from "react";
 import { Card, ListGroup } from "react-bootstrap";
-import { BsCheck, BsCheckAll } from "react-icons/bs";
+import { BsCheck, BsCheckAll, BsPersonSquare } from "react-icons/bs";
 import { GiDeadHead, GiLawStar, GiLostLimb } from "react-icons/gi";
 import { GameState } from "../../types/Game";
 import { Player, PlayerState } from "../../types/Player";
 import SimpleToolTip from "../SimpleToolTip";
 
 interface PlayerListProps {
+    clientName: string;
     playerList: { [key: string]: Player };
     gameState: GameState;
-    playerWordSet?: boolean;
     marshall?: string;
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     changeSelected: (name?: string) => void;
@@ -31,6 +31,20 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
 
         const badgeStyle: React.CSSProperties = { paddingLeft: ".3rem" };
         const playerBadges: JSX.Element[] = [];
+
+        // general badges
+        if (player.name === props.clientName) {
+            playerBadges.push(
+                <SimpleToolTip
+                    text="This is you."
+                >
+                    <span style={badgeStyle}>
+                        <BsPersonSquare />
+                    </span>
+                </SimpleToolTip>
+            );
+        }
+
         if (props.gameState === GameState.waitingRoom) {
             if (player.name === props.marshall)
                 playerBadges.push(
@@ -43,7 +57,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                     </SimpleToolTip>
                 );
 
-            if (player.wordSet && player.state === PlayerState.ready) {
+            if (typeof player.guessedWordPortion === "string" && player.state === PlayerState.ready) {
                 playerBadges.push(
                     <SimpleToolTip
                         text="Word set. Ready to play."
@@ -53,7 +67,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                         </span>
                     </SimpleToolTip>
                 );
-            } else if (player.wordSet) {
+            } else if (typeof player.guessedWordPortion === "string") {
                 playerBadges.push(
                     <SimpleToolTip
                         text="Word set. Not yet readied up."
