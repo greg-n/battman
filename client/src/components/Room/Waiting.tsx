@@ -14,6 +14,7 @@ interface RoomWaitingProps {
     fetchGameState: () => void;
     readyUp: () => void;
     setWord: (word: string) => void;
+    startGame: () => void;
     transferMarshalship: (subject: string) => void;
 }
 
@@ -100,6 +101,7 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                             selected={this.state.selectedUser}
                                             changeSelected={this.changeSelectedUser}
                                             changeWordConstraints={this.props.changeWordConstraints}
+                                            startGame={this.props.startGame}
                                             transferMarshalship={this.props.transferMarshalship}
                                         />
                                     ) : undefined

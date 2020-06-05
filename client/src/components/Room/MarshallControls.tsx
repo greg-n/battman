@@ -1,8 +1,9 @@
 import React from "react";
-import { Col, Row } from "react-bootstrap";
-import { Player } from "../../types/Player";
+import { Col, Row, Button } from "react-bootstrap";
+import { Player, PlayerState } from "../../types/Player";
 import ChangeWordConstraints from "./ChangeWordConstraints";
 import TransferMarshalship from "./TransferMarshalship";
+import SimpleToolTip from "../SimpleToolTip";
 
 interface MarshallControlsProp {
     currentMarshall: string;
@@ -12,14 +13,22 @@ interface MarshallControlsProp {
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     changeSelected: (name?: string) => void;
     changeWordConstraints: (minChars: number, maxChars: number) => void;
+    startGame: () => void;
     transferMarshalship: (subject: string) => void;
 }
 
 export default function MarshallControls(props: MarshallControlsProp): JSX.Element {
+    let numNotReady = 0;
+    for (const player of Object.values(props.playerList)) {
+        if (player.state !== PlayerState.ready) {
+            numNotReady++;
+        }
+    }
+
     return (
         <span>
             <h6
-                style={{ marginLeft: "6rem" }}
+                style={{ marginLeft: "8rem" }}
             >
                 Marshall Controls
             </h6>
@@ -52,8 +61,39 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                 </Col>
                 <Col />
             </Row>
-            <Row style={{ paddingTop: "1.3em" }} />
-            <Row>
+            <Row style={{ paddingTop: "3.4em" }}>
+                <Col />
+                <Col
+                    xs={7}
+                    style={{ textAlign: "center" }}
+                >
+                    {numNotReady === 0
+                        ? (
+                            <Button
+                                variant="success"
+                                onClick={props.startGame}
+                            >
+                                Start Game
+                            </Button>
+                        ) : (
+                            <SimpleToolTip
+                                text={`${numNotReady} ${numNotReady === 1 ? "player is" : "players are"} not ready.`}
+                            >
+                                <span>
+                                    <Button
+                                        style={{ pointerEvents: "none" }}
+                                        variant="secondary"
+                                        disabled
+                                    >
+                                        Start Game
+                                    </Button>
+                                </span>
+                            </SimpleToolTip>
+                        )}
+                </ Col>
+                <Col />
+            </Row>
+            <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
                 <Col />
                 <Col
                     xs={8}

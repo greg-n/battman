@@ -38,6 +38,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         this.joinBuildWSClient = this.joinBuildWSClient.bind(this);
         this.readyUp = this.readyUp.bind(this);
         this.setWord = this.setWord.bind(this);
+        this.startGame = this.startGame.bind(this);
         this.transferMarshalship = this.transferMarshalship.bind(this);
     }
 
@@ -229,6 +230,12 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         }));
     }
 
+    startGame(): void {
+        this.state.clientWS?.send(roomMessageStringify({
+            action: GameAction.startGame
+        }));
+    }
+
     transferMarshalship(subject: string): void {
         this.state.clientWS?.send(roomMessageStringify({
             action: GameAction.transferMarshalship,
@@ -249,6 +256,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                 joinRoom={this.joinRoom}
                 readyUp={this.readyUp}
                 setWord={this.setWord}
+                startGame={this.startGame}
                 transferMarshalship={this.transferMarshalship}
             />
         );

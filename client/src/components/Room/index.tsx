@@ -16,6 +16,7 @@ interface RoomProps {
     joinRoom: (playerName: string) => Promise<void>;
     readyUp: () => void;
     setWord: (word: string) => void;
+    startGame: () => void;
     transferMarshalship: (subject: string) => void;
 }
 
@@ -47,6 +48,7 @@ export default function Room(props: RoomProps): JSX.Element {
                 fetchGameState={props.fetchGameState}
                 readyUp={props.readyUp}
                 setWord={props.setWord}
+                startGame={props.startGame}
                 transferMarshalship={props.transferMarshalship}
             />
         );
