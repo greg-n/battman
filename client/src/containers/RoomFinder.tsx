@@ -136,6 +136,8 @@ class RoomFinder extends React.Component<RoomFinderProps, RoomFinderState> {
             this.props.history.push(
                 `/${this.state.roomName}`
             );
+            // unfortunate force rerender needed when already on a landing page of a running room. maybe there's a better way
+            window.location.reload();
         } else {
             toast.error("Form reads as invalid on submit.");
         }

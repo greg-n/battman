@@ -25,6 +25,14 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
         }
     }
 
+    const numPlayers = Object.keys(props.playerList).length;
+    let disabledStartMessage = "Can't start. Check ready states and player amount.";
+    if (numNotReady > 0) {
+        disabledStartMessage = `${numNotReady} ${numNotReady === 1 ? "player is" : "players are"} not ready.`;
+    } else if (numPlayers <= 1) {
+        disabledStartMessage = `Must have more than ${numPlayers} player.`;
+    }
+
     return (
         <span>
             <h6
@@ -67,7 +75,7 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                     xs={7}
                     style={{ textAlign: "center" }}
                 >
-                    {numNotReady === 0
+                    {numNotReady === 0 && numPlayers > 1
                         ? (
                             <Button
                                 variant="success"
@@ -77,7 +85,7 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                             </Button>
                         ) : (
                             <SimpleToolTip
-                                text={`${numNotReady} ${numNotReady === 1 ? "player is" : "players are"} not ready.`}
+                                text={disabledStartMessage}
                             >
                                 <span>
                                     <Button
