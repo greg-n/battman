@@ -119,7 +119,6 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
 
     renderSubmitButton(): JSX.Element {
         if (this.props.playerState !== PlayerState.joined)
-            // FIXME are calls made twice 
             return (
                 <SimpleToolTip
                     text="Must not be readied to set a word."
@@ -204,7 +203,7 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                                 {this.state.invalidFeedback}
                             </Form.Control.Feedback>
                         </Col>
-                        <Col xs={1} />
+                        <Col />
                         <Col
                             xs={4}
                             style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}

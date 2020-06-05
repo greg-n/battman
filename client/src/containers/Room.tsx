@@ -217,7 +217,6 @@ export default class Room extends React.Component<RoomProps, RoomState> {
     }
 
     readyUp(): void {
-        console.log("readying!");
         this.state.clientWS?.send(roomMessageStringify({
             action: GameAction.readyToggle
         }));

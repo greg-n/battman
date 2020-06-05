@@ -2,8 +2,10 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { Player } from "../../types/Player";
 import ChangeWordConstraints from "./ChangeWordConstraints";
+import TransferMarshalship from "./TransferMarshalship";
 
 interface MarshallControlsProp {
+    currentMarshall: string;
     playerList: { [key: string]: Player };
     minChars: number;
     maxChars: number;
@@ -16,6 +18,11 @@ interface MarshallControlsProp {
 export default function MarshallControls(props: MarshallControlsProp): JSX.Element {
     return (
         <span>
+            <h6
+                style={{ marginLeft: "6rem" }}
+            >
+                Marshall Controls
+            </h6>
             <Row>
                 <Col />
                 <Col
@@ -31,15 +38,30 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
             </Row>
             <Row style={{ paddingTop: "1.3em" }} />
             <Row>
+                <Col />
                 <Col
-                    xs={12}
+                    xs={7}
                 >
-                    <div>
-                        Hi{props.minChars} {props.selected}
-                    </div>
+                    <TransferMarshalship
+                        currentMarshall={props.currentMarshall}
+                        playerNames={Object.keys(props.playerList)}
+                        selected={props.selected}
+                        changeSelected={props.changeSelected}
+                        transferMarshalship={props.transferMarshalship}
+                    />
                 </Col>
+                <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em" }} />
+            <Row>
+                <Col />
+                <Col
+                    xs={8}
+                >
+                    <hr />
+                </ Col>
+                <Col />
+            </Row>
         </span>
     );
 }

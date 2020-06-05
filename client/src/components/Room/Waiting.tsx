@@ -93,6 +93,7 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                 {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
                                     ? (
                                         <MarshallControls
+                                            currentMarshall={this.props.gameState.gameInfo.waitingRoomMarshall as string} // marshall ought to exist
                                             playerList={this.props.gameState.playerStates}
                                             minChars={this.props.gameState.gameInfo.minChars}
                                             maxChars={this.props.gameState.gameInfo.maxChars}
