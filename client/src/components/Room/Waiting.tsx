@@ -2,10 +2,11 @@ import React from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { CurrentGameState } from "../../utils/parseMessageData";
-import PlayerList from "./PlayerList";
-import SetWord from "./SetWord";
-import ReadyUp from "./ReadyUp";
 import MarshallControls from "./MarshallControls";
+import PlayerList from "./PlayerList";
+import ReadyUp from "./ReadyUp";
+import SetWord from "./SetWord";
+import StreamInfo from "./StreamInfo";
 
 interface RoomWaitingProps {
     roomName: string;
@@ -39,6 +40,10 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
     }
 
     render(): JSX.Element {
+        // marshall ought to exist
+        const marshall = this.props.gameState.gameInfo.waitingRoomMarshall as string;
+        const streamInfo = this.props.gameState.gameInfo.streamInfo;
+
         return (
             <span
                 style={{
@@ -65,47 +70,23 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                     </Col>
                 </div>
                 <span
-                    style={{
-                        height: "100%"
-                    }}
                 >
                     <span style={{ flexShrink: 1, flexGrow: 1 }}>
-                        <span style={{ display: "flex", height: "100%" }}>
+                        <span style={{ display: "flex" }}>
                             <Container
                                 fluid="md"
-                                style={{ maxHeight: "90vh", overflow: "auto", height: "100%", paddingRight: "1em" }}
+                                style={{ maxWidth: "40%" }}
                             >
-                                <Row >
-                                    <Col
-                                        xs={12}
-                                    >
-                                        <PlayerList
-                                            clientName={this.props.gameState.clientState.name}
-                                            playerList={this.props.gameState.playerStates}
-                                            gameState={this.props.gameState.gameInfo.state}
-                                            marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
-                                            selected={this.state.selectedUser}
-                                            changeSelected={this.changeSelectedUser}
-                                        />
-                                    </Col>
-                                </Row>
+                                <PlayerList
+                                    clientName={this.props.gameState.clientState.name}
+                                    playerList={this.props.gameState.playerStates}
+                                    gameState={this.props.gameState.gameInfo.state}
+                                    marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                    selected={this.state.selectedUser}
+                                    changeSelected={this.changeSelectedUser}
+                                />
                             </Container>
-                            <Container fluid="md" style={{ height: "50%", paddingLeft: "1em" }}>
-                                {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
-                                    ? (
-                                        <MarshallControls
-                                            currentMarshall={this.props.gameState.gameInfo.waitingRoomMarshall as string} // marshall ought to exist
-                                            playerList={this.props.gameState.playerStates}
-                                            minChars={this.props.gameState.gameInfo.minChars}
-                                            maxChars={this.props.gameState.gameInfo.maxChars}
-                                            selected={this.state.selectedUser}
-                                            changeSelected={this.changeSelectedUser}
-                                            changeWordConstraints={this.props.changeWordConstraints}
-                                            startGame={this.props.startGame}
-                                            transferMarshalship={this.props.transferMarshalship}
-                                        />
-                                    ) : undefined
-                                }
+                            <Container fluid="md">
                                 <Row>
                                     <Col />
                                     <Col
@@ -127,6 +108,34 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                     </Col>
                                     <Col />
                                 </Row>
+                                <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
+                                    <Col />
+                                    <Col
+                                        xs={8}
+                                    >
+                                        <hr />
+                                    </ Col>
+                                    <Col />
+                                </Row>
+                                {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
+                                    ? (
+                                        <MarshallControls
+                                            currentMarshall={marshall}
+                                            playerList={this.props.gameState.playerStates}
+                                            minChars={this.props.gameState.gameInfo.minChars}
+                                            maxChars={this.props.gameState.gameInfo.maxChars}
+                                            selected={this.state.selectedUser}
+                                            changeSelected={this.changeSelectedUser}
+                                            changeWordConstraints={this.props.changeWordConstraints}
+                                            startGame={this.props.startGame}
+                                            transferMarshalship={this.props.transferMarshalship}
+                                        />
+                                    ) : undefined}
+                                {streamInfo.length > 0 ? (
+                                    <StreamInfo
+                                        streamItems={streamInfo}
+                                    />
+                                ) : undefined}
                             </Container>
                         </span>
                     </span>

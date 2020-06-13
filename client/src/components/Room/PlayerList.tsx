@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, ListGroup } from "react-bootstrap";
+import { Card, Col, ListGroup, Row } from "react-bootstrap";
 import { BsCheck, BsCheckAll, BsPersonFill } from "react-icons/bs";
 import { GiDeadHead, GiLawStar, GiLostLimb } from "react-icons/gi";
 import { GameState } from "../../types/Game";
@@ -187,9 +187,24 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
 
     return (
         <span>
-            <ListGroup variant="flush">
-                {playerItems}
-            </ListGroup>
+            <Row>
+                <Col
+                    xs={12}
+                >
+                    <ListGroup variant="flush">
+                        {playerItems}
+                    </ListGroup>
+                </Col>
+            </Row>
+            <Row style={{ paddingTop: "1em", paddingBottom: "1.3em" }}>
+                <Col />
+                <Col
+                    xs={10}
+                >
+                    <hr />
+                </ Col>
+                <Col />
+            </Row>
         </span>
     );
 }

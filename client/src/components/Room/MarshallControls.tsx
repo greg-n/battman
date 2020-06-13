@@ -1,9 +1,9 @@
 import React from "react";
-import { Col, Row, Button } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { Player, PlayerState } from "../../types/Player";
+import SimpleToolTip from "../SimpleToolTip";
 import ChangeWordConstraints from "./ChangeWordConstraints";
 import TransferMarshalship from "./TransferMarshalship";
-import SimpleToolTip from "../SimpleToolTip";
 
 interface MarshallControlsProp {
     currentMarshall: string;
@@ -36,7 +36,7 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
     return (
         <span>
             <h6
-                style={{ marginLeft: "8rem" }}
+                style={{ marginLeft: "7rem" }}
             >
                 Marshall Controls
             </h6>
