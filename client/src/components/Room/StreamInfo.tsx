@@ -23,7 +23,7 @@ export default function StreamInfo(props: Props): JSX.Element {
                     <Card style={{ overflow: "scroll", height: "16em" }}>
                         <ListGroup variant="flush" >
                             {
-                                props.streamItems.reverse().map((streamLine, i) => (
+                                props.streamItems.map((streamLine, i) => (
                                     <ListGroup.Item
                                         key={i}
                                         style={itemStyle}

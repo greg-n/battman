@@ -129,7 +129,7 @@ export default class Game {
             this.waitingRoomMarshall = name;
         }
 
-        this.streamInfo.push(`Player ${name} has been added.`);
+        this.streamInfo.unshift(`Player ${name} has been added.`);
 
         this.lastModifiedAt = Date.now();
         return {
@@ -158,7 +158,7 @@ export default class Game {
         this.minChars = minChars;
         this.maxChars = maxChars;
 
-        this.streamInfo.push(`Word constraints have been changed to min: ${minChars}, max: ${maxChars}.`);
+        this.streamInfo.unshift(`Word constraints have been changed to min: ${minChars}, max: ${maxChars}.`);
 
         const retVal: { [key: string]: PlayerUpdateOutput } = {};
         for (const [name, playerItem] of this.players) {
@@ -226,7 +226,7 @@ export default class Game {
             }
         } // If game state is ended all items are exposed by default
 
-        this.streamInfo.push(
+        this.streamInfo.unshift(
             reason == null
                 ? `Player ${name} has disconnected.`
                 : `Player ${name} has disconnected for reason '${reason}'.`
@@ -315,7 +315,7 @@ export default class Game {
         if (guessFixed.length === 1) {
             // Guess is letter
             subjectItem.guessedLetters.add(guessFixed);
-            const updatedPortion = fillInChars(
+            const [updatedPortion, filled] = fillInChars(
                 subjectItem.word as string, // Asserting string since game start should ensure
                 subjectItem.guessedWordPortion as string, // Asserting string since game start should ensure
                 guessFixed
@@ -326,13 +326,13 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                this.streamInfo.push(
-                    actor + " eliminated " + subject + " with guessed letter '" + guessFixed + "'."
+                this.streamInfo.unshift(
+                    `${actor} eliminated ${subject} with guessed letter '${guessFixed}'. Filling ${filled} blanks.`
                 );
             } else {
                 subjectItem.guessedWordPortion = updatedPortion;
-                this.streamInfo.push(
-                    actor + " guessed letter '" + guessFixed + "' on " + subject + "'s word."
+                this.streamInfo.unshift(
+                    `${actor} guessed letter '${guessFixed}' on ${subject}'s word. Filling ${filled} blanks.`
                 );
             }
         } else {
@@ -343,11 +343,11 @@ export default class Game {
                 subjectItem.state = PlayerState.eliminated;
                 actorItem.eliminatedPlayers.add(subject);
                 subjectEliminated = true;
-                this.streamInfo.push(
+                this.streamInfo.unshift(
                     actor + " eliminated " + subject + " with correct word guess '" + guessFixed + "'."
                 );
             } else {
-                this.streamInfo.push(
+                this.streamInfo.unshift(
                     actor + " guessed word '" + guessFixed + "' on " + subject + "'s word."
                 );
             }
@@ -422,7 +422,7 @@ export default class Game {
             : PlayerState.joined;
         this.players.set(actor, player);
 
-        this.streamInfo.push(`${actor} has changed their ready state.`);
+        this.streamInfo.unshift(`${actor} has changed their ready state.`);
 
         this.lastModifiedAt = Date.now();
         return {
@@ -461,7 +461,7 @@ export default class Game {
         actorItem.guessedWordPortion = "_".repeat(wordFixed.length);
         this.players.set(actor, actorItem);
 
-        this.streamInfo.push(`${actor} has set their word.`);
+        this.streamInfo.unshift(`${actor} has set their word.`);
 
         this.lastModifiedAt = Date.now();
         return {
@@ -505,7 +505,7 @@ export default class Game {
         this.players = newShuffledPlayers;
         this.currentPlayer = shuffledPlayersList[0];
 
-        this.streamInfo.push("Game has started.");
+        this.streamInfo.unshift("Game has started.");
 
         this.lastModifiedAt = Date.now();
         return this.getGameState(GameAction.startGame);
@@ -524,7 +524,7 @@ export default class Game {
 
         this.waitingRoomMarshall = subject;
 
-        this.streamInfo.push(`${actor} has transferred marshalship to ${subject}.`);
+        this.streamInfo.unshift(`${actor} has transferred marshalship to ${subject}.`);
 
         this.lastModifiedAt = Date.now();
         return {

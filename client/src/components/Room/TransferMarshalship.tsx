@@ -124,6 +124,7 @@ export default class TransferMarshalship extends React.Component<Props, State> {
                                     >
                                         <span>
                                             <Button
+                                                style={{ pointerEvents: "none" }}
                                                 variant="secondary"
                                                 disabled
                                             >

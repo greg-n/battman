@@ -5,7 +5,8 @@ describe("Fill in chars", () => {
         const actual = "test";
         const current = "_es_";
         const char = "t";
-        const resp = fillInChars(actual, current, char);
+        const [resp, filled] = fillInChars(actual, current, char);
         expect(resp).toBe(actual);
+        expect(filled).toBe(2);
     });
 });

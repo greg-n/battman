@@ -1,44 +1,113 @@
 import React from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Button, Col, Container } from "react-bootstrap";
+import { BsArrowClockwise } from "react-icons/bs";
+import { PlayerState } from "../../types/Player";
+import { CurrentGameState } from "../../utils/parseMessageData";
+import Guess from "./Guess";
+import PlayerList from "./PlayerList";
+import StreamInfo from "./StreamInfo";
 
-export default class RoomRunning extends React.Component<{}, {}> {
+interface Props {
+    roomName: string;
+    gameState: CurrentGameState;
+    fetchGameState: () => void;
+    makeGuess: (subject: string, guess: string) => void;
+}
+
+interface State {
+    selectedUser: string | undefined;
+}
+
+export default class RoomRunning extends React.Component<Props, State> {
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            selectedUser: undefined
+        };
+
+        this.changeSelectedUser = this.changeSelectedUser.bind(this);
+    }
+
+    // unset by passing undefined
+    changeSelectedUser(name?: string): void {
+        this.setState({ selectedUser: name });
+    }
+
     render(): JSX.Element {
+        const streamInfo = this.props.gameState.gameInfo.streamInfo;
+        const isCurrentPlayer =
+            this.props.gameState.gameInfo.currentPlayer === this.props.gameState.clientState.name;
+
         return (
-            <span style={{ display: "flex" }}>
-                <Container fluid="md" style={{ marginLeft: "4vw" }}>
-                    <Row
-                        style={{ height: "100vh" }}
-                    >
-                        <Col
-                            xs={12}
-                            style={{ backgroundColor: "yellow" }}
+            <span
+                style={{
+                    marginLeft: "3vw",
+                    marginRight: "3vw",
+                    height: "100vh",
+                    display: "flex",
+                    flexFlow: "column"
+                }}
+            >
+                <div >
+                    <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
+                        <div>
+                            <Button
+                                variant="light"
+                                onClick={this.props.fetchGameState}
+                            >
+                                <BsArrowClockwise />
+                                <span style={{ paddingLeft: ".2em" }}>
+                                    - Refresh game without disconnecting
+                                </span>
+                            </Button>
+                        </div>
+                    </Col>
+                </div>
+                <span style={{ flexShrink: 1, flexGrow: 1 }}>
+                    <span style={{ display: "flex" }}>
+                        <Container
+                            fluid="md"
+                            style={{ maxWidth: "40%" }}
                         >
-                            Hi
-                        </Col>
-                    </Row>
-                </Container>
-                <Container fluid="md" style={{ marginRight: "4vw" }}>
-                    <Row
-                        style={{ height: "50vh" }}
-                    >
-                        <Col
-                            xs={12}
-                            style={{ backgroundColor: "green" }}
-                        >
-                            Hi
-                        </Col>
-                    </Row>
-                    <Row
-                        style={{ height: "50vh" }}
-                    >
-                        <Col
-                            xs={12}
-                            style={{ backgroundColor: "blue" }}
-                        >
-                            Hi
-                        </Col>
-                    </Row>
-                </Container>
+                            <PlayerList
+                                clientName={this.props.gameState.clientState.name}
+                                clientWord={this.props.gameState.clientState.word || undefined}
+                                currentPlayer={this.props.gameState.gameInfo.currentPlayer}
+                                playerList={this.props.gameState.playerStates}
+                                gameState={this.props.gameState.gameInfo.state}
+                                marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                selected={this.state.selectedUser}
+                                selectOnlyPlaying={true}
+                                changeSelected={this.changeSelectedUser}
+                            />
+                        </Container>
+                        <Container fluid="md">
+                            {isCurrentPlayer ? (
+                                <Guess
+                                    clientName={this.props.gameState.clientState.name}
+                                    selected={this.state.selectedUser}
+                                    guessablePlayers={
+                                        Object.entries(this.props.gameState.playerStates)
+                                            .map(([name, item]) => {
+                                                return item.state === PlayerState.playing
+                                                    ? name
+                                                    : undefined;
+                                            })
+                                            .filter((value) => typeof value === "string") as string[]
+                                    }
+                                    changeSelected={this.changeSelectedUser}
+                                    makeGuess={this.props.makeGuess}
+                                />
+                            ) : undefined}
+                            {streamInfo.length > 0 ? (
+                                <StreamInfo
+                                    streamItems={streamInfo}
+                                />
+                            ) : undefined}
+                        </Container>
+                    </span>
+                </span>
             </span>
         );
     }

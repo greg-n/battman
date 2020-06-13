@@ -14,6 +14,7 @@ interface RoomProps {
     createRoom: (playerName: string) => Promise<void>;
     fetchGameState: () => void;
     joinRoom: (playerName: string) => Promise<void>;
+    makeGuess: (subject: string, guess: string) => void;
     readyUp: () => void;
     setWord: (word: string) => void;
     startGame: () => void;
@@ -54,7 +55,12 @@ export default function Room(props: RoomProps): JSX.Element {
         );
     else if (gameState?.gameInfo.state === GameState.running)
         return (
-            <RoomRunning />
+            <RoomRunning
+                roomName={props.roomName}
+                gameState={gameState}
+                fetchGameState={props.fetchGameState}
+                makeGuess={props.makeGuess}
+            />
         );
     else if (gameState?.gameInfo.state === GameState.ended)
         return (

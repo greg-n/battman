@@ -1,11 +1,10 @@
 import React from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { CurrentGameState } from "../../utils/parseMessageData";
 import MarshallControls from "./MarshallControls";
 import PlayerList from "./PlayerList";
-import ReadyUp from "./ReadyUp";
-import SetWord from "./SetWord";
+import SetAndReady from "./SetAndReady";
 import StreamInfo from "./StreamInfo";
 
 interface RoomWaitingProps {
@@ -69,75 +68,50 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                         </div>
                     </Col>
                 </div>
-                <span
-                >
-                    <span style={{ flexShrink: 1, flexGrow: 1 }}>
-                        <span style={{ display: "flex" }}>
-                            <Container
-                                fluid="md"
-                                style={{ maxWidth: "40%" }}
-                            >
-                                <PlayerList
-                                    clientName={this.props.gameState.clientState.name}
-                                    playerList={this.props.gameState.playerStates}
-                                    gameState={this.props.gameState.gameInfo.state}
-                                    marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
-                                    selected={this.state.selectedUser}
-                                    changeSelected={this.changeSelectedUser}
-                                />
-                            </Container>
-                            <Container fluid="md">
-                                <Row>
-                                    <Col />
-                                    <Col
-                                        xs={7}
-                                    >
-                                        <SetWord
-                                            playerState={this.props.gameState.clientState.state}
-                                            playerWord={this.props.gameState.clientState.word}
-                                            minLength={this.props.gameState.gameInfo.minChars}
-                                            maxLength={this.props.gameState.gameInfo.maxChars}
-                                            setWord={this.props.setWord}
-                                        />
-                                        <Row style={{ paddingTop: "1.3em" }} />
-                                        <ReadyUp
-                                            playerState={this.props.gameState.clientState.state}
-                                            playerWord={this.props.gameState.clientState.word}
-                                            readyUp={this.props.readyUp}
-                                        />
-                                    </Col>
-                                    <Col />
-                                </Row>
-                                <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                                    <Col />
-                                    <Col
-                                        xs={8}
-                                    >
-                                        <hr />
-                                    </ Col>
-                                    <Col />
-                                </Row>
-                                {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
-                                    ? (
-                                        <MarshallControls
-                                            currentMarshall={marshall}
-                                            playerList={this.props.gameState.playerStates}
-                                            minChars={this.props.gameState.gameInfo.minChars}
-                                            maxChars={this.props.gameState.gameInfo.maxChars}
-                                            selected={this.state.selectedUser}
-                                            changeSelected={this.changeSelectedUser}
-                                            changeWordConstraints={this.props.changeWordConstraints}
-                                            startGame={this.props.startGame}
-                                            transferMarshalship={this.props.transferMarshalship}
-                                        />
-                                    ) : undefined}
-                                {streamInfo.length > 0 ? (
-                                    <StreamInfo
-                                        streamItems={streamInfo}
+                <span style={{ flexShrink: 1, flexGrow: 1 }}>
+                    <span style={{ display: "flex" }}>
+                        <Container
+                            fluid="md"
+                            style={{ maxWidth: "40%" }}
+                        >
+                            <PlayerList
+                                clientName={this.props.gameState.clientState.name}
+                                playerList={this.props.gameState.playerStates}
+                                gameState={this.props.gameState.gameInfo.state}
+                                marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                selected={this.state.selectedUser}
+                                changeSelected={this.changeSelectedUser}
+                            />
+                        </Container>
+                        <Container fluid="md">
+                            <SetAndReady
+                                playerState={this.props.gameState.clientState.state}
+                                playerWord={this.props.gameState.clientState.word}
+                                minLength={this.props.gameState.gameInfo.minChars}
+                                maxLength={this.props.gameState.gameInfo.maxChars}
+                                readyUp={this.props.readyUp}
+                                setWord={this.props.setWord}
+                            />
+                            {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
+                                ? (
+                                    <MarshallControls
+                                        currentMarshall={marshall}
+                                        playerList={this.props.gameState.playerStates}
+                                        minChars={this.props.gameState.gameInfo.minChars}
+                                        maxChars={this.props.gameState.gameInfo.maxChars}
+                                        selected={this.state.selectedUser}
+                                        changeSelected={this.changeSelectedUser}
+                                        changeWordConstraints={this.props.changeWordConstraints}
+                                        startGame={this.props.startGame}
+                                        transferMarshalship={this.props.transferMarshalship}
                                     />
                                 ) : undefined}
-                            </Container>
-                        </span>
+                            {streamInfo.length > 0 ? (
+                                <StreamInfo
+                                    streamItems={streamInfo}
+                                />
+                            ) : undefined}
+                        </Container>
                     </span>
                 </span>
             </span>

@@ -36,6 +36,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         this.fetchGameState = this.fetchGameState.bind(this);
         this.joinRoom = this.joinRoom.bind(this);
         this.joinBuildWSClient = this.joinBuildWSClient.bind(this);
+        this.makeGuess = this.makeGuess.bind(this);
         this.readyUp = this.readyUp.bind(this);
         this.setWord = this.setWord.bind(this);
         this.startGame = this.startGame.bind(this);
@@ -217,6 +218,14 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         }));
     }
 
+    makeGuess(subject: string, guess: string): void {
+        this.state.clientWS?.send(roomMessageStringify({
+            action: GameAction.guess,
+            subject,
+            guess
+        }));
+    }
+
     readyUp(): void {
         this.state.clientWS?.send(roomMessageStringify({
             action: GameAction.readyToggle
@@ -254,6 +263,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                 createRoom={this.createRoom}
                 fetchGameState={this.fetchGameState}
                 joinRoom={this.joinRoom}
+                makeGuess={this.makeGuess}
                 readyUp={this.readyUp}
                 setWord={this.setWord}
                 startGame={this.startGame}

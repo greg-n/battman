@@ -1,17 +1,20 @@
 import React from "react";
 import { Card, Col, ListGroup, Row } from "react-bootstrap";
 import { BsCheck, BsCheckAll, BsPersonFill } from "react-icons/bs";
-import { GiDeadHead, GiLawStar, GiLostLimb } from "react-icons/gi";
+import { GiDeadHead, GiLawStar, GiLostLimb, GiPawn } from "react-icons/gi";
 import { GameState } from "../../types/Game";
 import { Player, PlayerState } from "../../types/Player";
 import SimpleToolTip from "../SimpleToolTip";
 
 interface PlayerListProps {
     clientName: string;
+    clientWord?: string;
+    currentPlayer?: string;
     playerList: { [key: string]: Player };
     gameState: GameState;
     marshall?: string;
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
+    selectOnlyPlaying?: boolean; // will make only playing players selectable
     changeSelected: (name?: string) => void;
 }
 
@@ -79,6 +82,17 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                 );
             }
         } else {
+            if (player.name === props.currentPlayer
+                && props.gameState === GameState.running)
+                playerBadges.push(
+                    <SimpleToolTip
+                        text="Current player."
+                    >
+                        <span style={badgeStyle}>
+                            <GiPawn />
+                        </span>
+                    </SimpleToolTip>
+                );
             if (player.state === PlayerState.eliminated)
                 playerBadges.push(
                     <SimpleToolTip
@@ -121,6 +135,9 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                         ? "primary"
                         : undefined}
                     onClick={(): void => {
+                        if (props.selectOnlyPlaying === true && player.state !== PlayerState.playing)
+                            return;
+
                         props.changeSelected(name !== props.selected ? name : undefined);
                     }}
                 >
@@ -145,7 +162,11 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                                 {displayWordPortion
                                     ? (
                                         <ListGroup.Item style={{ letterSpacing: ".3em", backgroundColor: "transparent", color: textColor }}>
-                                            {player.guessedWordPortion}
+                                            {player.guessedWordPortion}{
+                                                player.name === props.clientName && props.clientWord != null
+                                                    ? `/${props.clientWord}`
+                                                    : undefined
+                                            }
                                         </ListGroup.Item>
                                     ) : undefined}
                                 {displayGuessedLetters

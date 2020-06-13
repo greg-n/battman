@@ -71,13 +71,13 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
             this.setState({
                 validated: false,
                 playerWord: word,
-                invalidFeedback: `Word must be longer than ${this.props.minLength} chars.`
+                invalidFeedback: `Word must be at least ${this.props.minLength} chars.`
             });
         else if (word.length > this.props.maxLength)
             this.setState({
                 validated: false,
                 playerWord: word,
-                invalidFeedback: `Word must be shorter than ${this.props.maxLength} chars.`
+                invalidFeedback: `Word must be at most ${this.props.maxLength} chars.`
             });
         else if (!validWord(word))
             this.setState({
