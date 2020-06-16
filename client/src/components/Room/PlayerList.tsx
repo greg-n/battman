@@ -125,7 +125,10 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             || displayEliminatedBy;
 
         playerItems.push(
-            <ListGroup.Item key={name}>
+            <ListGroup.Item
+                key={name}
+                style={{ paddingLeft: 0, paddingRight: 0 }}
+            >
                 <Card
                     bg={bgColor}
                     text={textColor}
@@ -209,22 +212,27 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
     return (
         <span>
             <Row>
+                <Col />
                 <Col
-                    xs={12}
+                    xs={9}
                 >
-                    <ListGroup variant="flush">
+                    <ListGroup
+                        variant="flush"
+                        style={{ padding: 0 }}
+                    >
                         {playerItems}
                     </ListGroup>
                 </Col>
+                <Col xs={1} />
             </Row>
             <Row style={{ paddingTop: "1em", paddingBottom: "1.3em" }}>
                 <Col />
                 <Col
-                    xs={10}
+                    xs={9}
                 >
                     <hr />
                 </ Col>
-                <Col />
+                <Col xs={1} />
             </Row>
         </span>
     );

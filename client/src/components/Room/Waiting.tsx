@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Container } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { CurrentGameState } from "../../utils/parseMessageData";
 import MarshallControls from "./MarshallControls";
@@ -44,35 +44,28 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
         const streamInfo = this.props.gameState.gameInfo.streamInfo;
 
         return (
-            <span
-                style={{
-                    marginLeft: "3vw",
-                    marginRight: "3vw",
-                    height: "100vh",
-                    display: "flex",
-                    flexFlow: "column"
-                }}
-            >
-                <div >
-                    <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
-                        <div>
-                            <Button
-                                variant="light"
-                                onClick={this.props.fetchGameState}
-                            >
-                                <BsArrowClockwise />
-                                <span style={{ paddingLeft: ".2em" }}>
-                                    - Refresh game without disconnecting
-                                </span>
-                            </Button>
+            <Row>
+                <Col xs={12}>
+                    <Row style={{ paddingLeft: "1em" }}>
+                        <div >
+                            <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
+                                <div>
+                                    <Button
+                                        variant="light"
+                                        onClick={this.props.fetchGameState}
+                                    >
+                                        <BsArrowClockwise />
+                                        <span style={{ paddingLeft: ".2em" }}>
+                                            - Refresh game without disconnecting
+                                        </span>
+                                    </Button>
+                                </div>
+                            </Col>
                         </div>
-                    </Col>
-                </div>
-                <span style={{ flexShrink: 1, flexGrow: 1 }}>
-                    <span style={{ display: "flex" }}>
-                        <Container
-                            fluid="md"
-                            style={{ maxWidth: "40%" }}
+                    </Row>
+                    <Row>
+                        <Col
+                            xs={5}
                         >
                             <PlayerList
                                 clientName={this.props.gameState.clientState.name}
@@ -82,8 +75,8 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                 selected={this.state.selectedUser}
                                 changeSelected={this.changeSelectedUser}
                             />
-                        </Container>
-                        <Container fluid="md">
+                        </Col>
+                        <Col xs={7}>
                             <SetAndReady
                                 playerState={this.props.gameState.clientState.state}
                                 playerWord={this.props.gameState.clientState.word}
@@ -111,10 +104,10 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                     streamItems={streamInfo}
                                 />
                             ) : undefined}
-                        </Container>
-                    </span>
-                </span>
-            </span>
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
         );
     }
 }

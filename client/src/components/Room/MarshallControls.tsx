@@ -4,6 +4,7 @@ import { Player, PlayerState } from "../../types/Player";
 import SimpleToolTip from "../SimpleToolTip";
 import ChangeWordConstraints from "./ChangeWordConstraints";
 import TransferMarshalship from "./TransferMarshalship";
+import "../../styles/Sections.css";
 
 interface MarshallControlsProp {
     currentMarshall: string;
@@ -35,15 +36,13 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
 
     return (
         <span>
-            <h6
-                style={{ marginLeft: "7rem" }}
-            >
+            <span className="section-header">
                 Marshall Controls
-            </h6>
+            </span>
             <Row>
-                <Col />
+                <Col xs={1} />
                 <Col
-                    xs={7}
+                    xs={9}
                 >
                     <ChangeWordConstraints
                         minChars={props.minChars}
@@ -55,9 +54,9 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
             </Row>
             <Row style={{ paddingTop: "1.3em" }} />
             <Row>
-                <Col />
+                <Col xs={1} />
                 <Col
-                    xs={7}
+                    xs={9}
                 >
                     <TransferMarshalship
                         currentMarshall={props.currentMarshall}
@@ -70,9 +69,9 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                 <Col />
             </Row>
             <Row style={{ paddingTop: "3.4em" }}>
-                <Col />
+                <Col xs={1} />
                 <Col
-                    xs={7}
+                    xs={9}
                     style={{ textAlign: "center" }}
                 >
                     {numNotReady === 0 && numPlayers > 1
@@ -102,9 +101,9 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                 <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                <Col />
+                <Col xs={1} />
                 <Col
-                    xs={8}
+                    xs={9}
                 >
                     <hr />
                 </ Col>

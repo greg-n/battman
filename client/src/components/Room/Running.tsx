@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Container } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { PlayerState } from "../../types/Player";
 import { CurrentGameState } from "../../utils/parseMessageData";
@@ -40,35 +40,28 @@ export default class RoomRunning extends React.Component<Props, State> {
             this.props.gameState.gameInfo.currentPlayer === this.props.gameState.clientState.name;
 
         return (
-            <span
-                style={{
-                    marginLeft: "3vw",
-                    marginRight: "3vw",
-                    height: "100vh",
-                    display: "flex",
-                    flexFlow: "column"
-                }}
-            >
-                <div >
-                    <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
-                        <div>
-                            <Button
-                                variant="light"
-                                onClick={this.props.fetchGameState}
-                            >
-                                <BsArrowClockwise />
-                                <span style={{ paddingLeft: ".2em" }}>
-                                    - Refresh game without disconnecting
-                                </span>
-                            </Button>
+            <Row>
+                <Col xs={12}>
+                    <Row style={{ paddingLeft: "1em" }}>
+                        <div >
+                            <Col style={{ paddingTop: ".4rem", paddingBottom: ".4rem" }}>
+                                <div>
+                                    <Button
+                                        variant="light"
+                                        onClick={this.props.fetchGameState}
+                                    >
+                                        <BsArrowClockwise />
+                                        <span style={{ paddingLeft: ".2em" }}>
+                                            - Refresh game without disconnecting
+                                        </span>
+                                    </Button>
+                                </div>
+                            </Col>
                         </div>
-                    </Col>
-                </div>
-                <span style={{ flexShrink: 1, flexGrow: 1 }}>
-                    <span style={{ display: "flex" }}>
-                        <Container
-                            fluid="md"
-                            style={{ maxWidth: "40%" }}
+                    </Row>
+                    <Row>
+                        <Col
+                            xs={5}
                         >
                             <PlayerList
                                 clientName={this.props.gameState.clientState.name}
@@ -81,8 +74,8 @@ export default class RoomRunning extends React.Component<Props, State> {
                                 selectOnlyPlaying={true}
                                 changeSelected={this.changeSelectedUser}
                             />
-                        </Container>
-                        <Container fluid="md">
+                        </Col>
+                        <Col xs={7}>
                             {isCurrentPlayer ? (
                                 <Guess
                                     clientName={this.props.gameState.clientState.name}
@@ -105,10 +98,10 @@ export default class RoomRunning extends React.Component<Props, State> {
                                     streamItems={streamInfo}
                                 />
                             ) : undefined}
-                        </Container>
-                    </span>
-                </span>
-            </span>
+                        </Col>
+                    </Row>
+                </Col>
+            </Row>
         );
     }
 }

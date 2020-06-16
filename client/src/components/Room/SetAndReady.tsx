@@ -17,9 +17,9 @@ export default function SetAndReady(props: Props): JSX.Element {
     return (
         <span>
             <Row>
-                <Col />
+                <Col xs={1} />
                 <Col
-                    xs={7}
+                    xs={9}
                 >
                     <SetWord
                         playerState={props.playerState}
@@ -38,9 +38,9 @@ export default function SetAndReady(props: Props): JSX.Element {
                 <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                <Col />
+                <Col xs={1} />
                 <Col
-                    xs={8}
+                    xs={9}
                 >
                     <hr />
                 </ Col>

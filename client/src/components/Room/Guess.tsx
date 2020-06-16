@@ -105,9 +105,9 @@ export default class Guess extends React.Component<Props, State> {
         return (
             <span>
                 <Row>
-                    <Col />
+                    <Col xs={1} />
                     <Col
-                        xs={8}
+                        xs={9}
                     >
                         <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                             <Row>
@@ -192,9 +192,9 @@ export default class Guess extends React.Component<Props, State> {
                     <Col />
                 </Row>
                 <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                    <Col />
+                    <Col xs={1} />
                     <Col
-                        xs={8}
+                        xs={9}
                     >
                         <hr />
                     </ Col>
