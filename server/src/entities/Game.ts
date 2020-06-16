@@ -293,7 +293,7 @@ export default class Game {
 
         // Game rule that you can't guess the same person 3 times in a row unless <= 3 remaining players
         let sameLastThree = 0;
-        for (const elem of actorItem.lastGuessedAgainst.slice(0, 3)) {
+        for (const elem of actorItem.lastGuessedAgainst) {
             if (elem === subject) {
                 sameLastThree++;
             }
@@ -306,10 +306,10 @@ export default class Game {
         }
 
         actorItem.lastGuessedAgainst.unshift(subject);
-        actorItem.lastGuessedAgainst = actorItem.lastGuessedAgainst.slice(0, 5);
+        actorItem.lastGuessedAgainst = actorItem.lastGuessedAgainst.slice(0, 3);
 
         subjectItem.lastGuessedBy.unshift(actor);
-        subjectItem.lastGuessedBy = subjectItem.lastGuessedBy.slice(0, 5);
+        subjectItem.lastGuessedBy = subjectItem.lastGuessedBy.slice(0, 3);
 
         let subjectEliminated = false;
         if (guessFixed.length === 1) {
