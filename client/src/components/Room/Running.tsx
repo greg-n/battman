@@ -6,6 +6,7 @@ import { CurrentGameState } from "../../utils/parseMessageData";
 import Guess from "./Guess";
 import PlayerList from "./PlayerList";
 import StreamInfo from "./StreamInfo";
+import PreviousGuesses from "./PreviousGuesses";
 
 interface Props {
     roomName: string;
@@ -38,6 +39,15 @@ export default class RoomRunning extends React.Component<Props, State> {
         const streamInfo = this.props.gameState.gameInfo.streamInfo;
         const isCurrentPlayer =
             this.props.gameState.gameInfo.currentPlayer === this.props.gameState.clientState.name;
+        const guessablePlayers = Object.entries(this.props.gameState.playerStates)
+            .map(([name, item]) => {
+                return item.state === PlayerState.playing
+                    ? name
+                    : undefined;
+            })
+            .filter((value) => typeof value === "string") as string[];
+        const lastGuessedAgainst = this.props.gameState.clientState.lastGuessedAgainst;
+        const lastGuessedBy = this.props.gameState.clientState.lastGuessedBy;
 
         return (
             <Row>
@@ -80,17 +90,18 @@ export default class RoomRunning extends React.Component<Props, State> {
                                 <Guess
                                     clientName={this.props.gameState.clientState.name}
                                     selected={this.state.selectedUser}
-                                    guessablePlayers={
-                                        Object.entries(this.props.gameState.playerStates)
-                                            .map(([name, item]) => {
-                                                return item.state === PlayerState.playing
-                                                    ? name
-                                                    : undefined;
-                                            })
-                                            .filter((value) => typeof value === "string") as string[]
-                                    }
+                                    guessablePlayers={guessablePlayers}
                                     changeSelected={this.changeSelectedUser}
                                     makeGuess={this.props.makeGuess}
+                                />
+                            ) : undefined}
+                            {lastGuessedAgainst.length > 0 || lastGuessedBy.length > 0 ? (
+                                <PreviousGuesses
+                                    guessablePlayers={guessablePlayers}
+                                    lastAgainst={lastGuessedAgainst}
+                                    lastBy={lastGuessedBy}
+                                    selected={this.state.selectedUser}
+                                    changeSelected={this.changeSelectedUser}
                                 />
                             ) : undefined}
                             {streamInfo.length > 0 ? (

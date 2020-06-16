@@ -5,8 +5,8 @@ import SimpleToolTip from "../SimpleToolTip";
 
 interface Props {
     clientName: string;
-    selected?: string; // for guessing this will highlight the to be guessed for the guesser
     guessablePlayers: string[];
+    selected?: string; // for guessing this will highlight the to be guessed for the guesser
     changeSelected: (name?: string) => void;
     makeGuess: (subject: string, guess: string) => void;
 }
