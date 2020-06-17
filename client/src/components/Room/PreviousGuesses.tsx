@@ -3,7 +3,7 @@ import { Card, Col, ListGroup, Row } from "react-bootstrap";
 import "../../styles/Sections.css";
 
 interface Props {
-    guessablePlayers: string[];
+    remainingPlayers: string[];
     lastAgainst: string[];
     lastBy: string[];
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
@@ -34,7 +34,7 @@ export default function PreviousGuesses(props: Props): JSX.Element {
                                 <ListGroup variant="flush" >
                                     {
                                         props.lastAgainst.map((name, i) => {
-                                            const guessable = props.guessablePlayers.includes(name);
+                                            const guessable = props.remainingPlayers.includes(name);
 
                                             return (
                                                 <ListGroup.Item
@@ -76,7 +76,7 @@ export default function PreviousGuesses(props: Props): JSX.Element {
                                 <ListGroup variant="flush" >
                                     {
                                         props.lastBy.map((name, i) => {
-                                            const guessable = props.guessablePlayers.includes(name);
+                                            const guessable = props.remainingPlayers.includes(name);
 
                                             return (
                                                 <ListGroup.Item

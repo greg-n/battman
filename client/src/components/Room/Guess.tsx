@@ -5,7 +5,8 @@ import SimpleToolTip from "../SimpleToolTip";
 
 interface Props {
     clientName: string;
-    guessablePlayers: string[];
+    remainingPlayers: string[];
+    lastGuessed: string[];
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     changeSelected: (name?: string) => void;
     makeGuess: (subject: string, guess: string) => void;
@@ -13,23 +14,57 @@ interface Props {
 
 interface State {
     guess: string | undefined;
+    guessFeedback: string | undefined;
     selected: string | undefined;
+    selectedFeedback: string | undefined;
     validated: boolean | undefined;
+}
+
+const lastThreeRuleFeedback = "You've guessed the selected user the past three times "
+    + "and the game has more than three remaining players.";
+
+function selectedSameAsLastGuesses(
+    selected: string | undefined,
+    lastGuessed: string[],
+    remainingPlayers: number
+): boolean {
+    let sameLastThree = 0;
+    for (const elem of lastGuessed) {
+        if (elem === selected) {
+            sameLastThree++;
+        }
+    }
+
+    return remainingPlayers > 3
+        && sameLastThree === 3;
 }
 
 export default class Guess extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
 
+        const lastThreeRuleBreak = selectedSameAsLastGuesses(
+            props.selected,
+            props.lastGuessed,
+            props.remainingPlayers.length
+        );
+
         this.state = {
             guess: undefined,
+            guessFeedback: undefined,
             selected: props.selected,
-            validated: undefined
+            selectedFeedback: lastThreeRuleBreak
+                ? lastThreeRuleFeedback
+                : undefined,
+            validated: lastThreeRuleBreak
+                ? false
+                : undefined
         };
 
         this.checkGuess = this.checkGuess.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onSelect = this.onSelect.bind(this);
+        this.renderSubmitButton = this.renderSubmitButton.bind(this);
     }
 
     componentDidUpdate(prevProps: Props): void {
@@ -38,7 +73,7 @@ export default class Guess extends React.Component<Props, State> {
                 let validated: boolean | undefined = prevState.validated;
                 if (this.props.selected == null) {
                     validated = undefined;
-                } else if (!this.props.guessablePlayers.includes(this.props.selected)) {
+                } else if (!this.props.remainingPlayers.includes(this.props.selected)) {
                     validated = false;
                 }
 
@@ -51,11 +86,20 @@ export default class Guess extends React.Component<Props, State> {
     }
 
     checkGuess(event: React.ChangeEvent<HTMLInputElement>): void {
-        const guess = event.target.value.trim();
+        const guess = event.target.value;
 
         if (guess === "") {
             this.setState({
-                guess: undefined,
+                guess,
+                guessFeedback: "Guess cannot be empty",
+                validated: false
+            });
+            return;
+        }
+        if (!/^[a-z]+$/gi.test(guess)) {
+            this.setState({
+                guess,
+                guessFeedback: "Guess must only be chars.",
                 validated: false
             });
             return;
@@ -64,6 +108,7 @@ export default class Guess extends React.Component<Props, State> {
         this.setState((prevState) => {
             return {
                 guess,
+                guessFeedback: undefined,
                 // validation depends on select now
                 validated: prevState.selected != null
             };
@@ -84,7 +129,7 @@ export default class Guess extends React.Component<Props, State> {
             return;
         }
 
-        this.props.makeGuess(this.state.selected, this.state.guess);
+        this.props.makeGuess(this.state.selected, this.state.guess.trim());
         this.props.changeSelected(undefined);
         this.setState({ selected: undefined, guess: undefined, validated: undefined });
     }
@@ -92,11 +137,79 @@ export default class Guess extends React.Component<Props, State> {
     onSelect(event: React.ChangeEvent<HTMLInputElement>): void {
         const selected = event.target.value;
         this.props.changeSelected(selected);
-        this.setState((prevState) => ({
-            selected,
-            // validation depends on guess now
-            validated: prevState.guess != null
-        }));
+        this.setState((prevState) => {
+            const lastThreeRuleBreak = selectedSameAsLastGuesses(
+                selected,
+                this.props.lastGuessed,
+                this.props.remainingPlayers.length
+            );
+
+            return ({
+                selected,
+                selectedFeedback: lastThreeRuleBreak
+                    ? lastThreeRuleFeedback
+                    : undefined,
+                // validation depends on guess now
+                validated: lastThreeRuleBreak
+                    ? false
+                    : prevState.guess != null
+            });
+        });
+    }
+
+    renderSubmitButton(): JSX.Element {
+        if (this.state.validated == null || this.state.validated === false) {
+            return (
+                <SimpleToolTip
+                    text="Must select a guessable user and valid guess."
+                >
+                    <span>
+                        <Button
+                            style={{ pointerEvents: "none" }}
+                            variant="secondary"
+                            disabled
+                        >
+                            Guess
+                        </Button>
+                    </span>
+                </SimpleToolTip>
+            );
+        }
+
+        let sameLastThree = 0;
+        for (const elem of this.props.lastGuessed) {
+            if (elem === this.state.selected) {
+                sameLastThree++;
+            }
+        }
+        if (this.props.remainingPlayers.length > 3
+            && sameLastThree === 3) {
+            return (
+                <SimpleToolTip
+                    text={"You've guessed the selected user the past three times "
+                        + "and the game has more than three remaining players."}
+                >
+                    <span>
+                        <Button
+                            style={{ pointerEvents: "none" }}
+                            variant="secondary"
+                            disabled
+                        >
+                            Guess
+                        </Button>
+                    </span>
+                </SimpleToolTip>
+            );
+        }
+
+        return (
+            <Button
+                type="submit"
+                variant="success"
+            >
+                Guess
+            </Button>
+        );
     }
 
     render(): JSX.Element {
@@ -119,17 +232,20 @@ export default class Guess extends React.Component<Props, State> {
                                         as="select"
                                         value={this.state.selected != null ? this.state.selected : ""}
                                         required
-                                        isInvalid={this.state.validated === false && this.state.selected == null}
+                                        isInvalid={this.state.validated === false && this.state.selectedFeedback != null}
                                         onChange={this.onSelect}
                                     >
                                         <option key={"hidden value"} hidden />
                                         {
-                                            this.props.guessablePlayers
+                                            this.props.remainingPlayers
                                                 .map((name) => (
                                                     <option key={name}>{name}</option>
                                                 ))
                                         }
                                     </Form.Control>
+                                    <Form.Control.Feedback type="invalid">
+                                        {this.state.selectedFeedback || "Selected player is not guessable."}
+                                    </Form.Control.Feedback>
                                 </Col>
                                 <Col
                                     xs={7}
@@ -139,9 +255,12 @@ export default class Guess extends React.Component<Props, State> {
                                         placeholder="Your guess"
                                         onChange={this.checkGuess}
                                         value={this.state.guess || ""}
-                                        isInvalid={this.state.validated === false && this.state.guess == null}
+                                        isInvalid={this.state.validated === false && this.state.guessFeedback != null}
                                         required
                                     />
+                                    <Form.Control.Feedback type="invalid">
+                                        {this.state.guessFeedback || "Guess value isn't valid."}
+                                    </Form.Control.Feedback>
                                 </Col>
                             </Row>
                             {selfGuess ? (
@@ -161,29 +280,7 @@ export default class Guess extends React.Component<Props, State> {
                                     xs={4}
                                     style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
                                 >
-                                    {this.state.validated != null
-                                        ? (
-                                            <Button
-                                                type="submit"
-                                                variant="success"
-                                            >
-                                                Guess
-                                            </Button>
-                                        ) : (
-                                            <SimpleToolTip
-                                                text="Must select a guessable user and insert guess."
-                                            >
-                                                <span>
-                                                    <Button
-                                                        style={{ pointerEvents: "none" }}
-                                                        variant="secondary"
-                                                        disabled
-                                                    >
-                                                        Guess
-                                                    </Button>
-                                                </span>
-                                            </SimpleToolTip>
-                                        )}
+                                    {this.renderSubmitButton()}
                                 </Col>
                                 <Col />
                             </Row>

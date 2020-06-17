@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
-import { PlayerState } from "../../types/Player";
 import { CurrentGameState } from "../../utils/parseMessageData";
 import Guess from "./Guess";
 import PlayerList from "./PlayerList";
@@ -39,13 +38,7 @@ export default class RoomRunning extends React.Component<Props, State> {
         const streamInfo = this.props.gameState.gameInfo.streamInfo;
         const isCurrentPlayer =
             this.props.gameState.gameInfo.currentPlayer === this.props.gameState.clientState.name;
-        const guessablePlayers = Object.entries(this.props.gameState.playerStates)
-            .map(([name, item]) => {
-                return item.state === PlayerState.playing
-                    ? name
-                    : undefined;
-            })
-            .filter((value) => typeof value === "string") as string[];
+        const remainingPlayers = this.props.gameState.gameInfo.remainingPlayers;
         const lastGuessedAgainst = this.props.gameState.clientState.lastGuessedAgainst;
         const lastGuessedBy = this.props.gameState.clientState.lastGuessedBy;
 
@@ -89,15 +82,16 @@ export default class RoomRunning extends React.Component<Props, State> {
                             {isCurrentPlayer ? (
                                 <Guess
                                     clientName={this.props.gameState.clientState.name}
+                                    remainingPlayers={remainingPlayers}
+                                    lastGuessed={lastGuessedAgainst}
                                     selected={this.state.selectedUser}
-                                    guessablePlayers={guessablePlayers}
                                     changeSelected={this.changeSelectedUser}
                                     makeGuess={this.props.makeGuess}
                                 />
                             ) : undefined}
                             {lastGuessedAgainst.length > 0 || lastGuessedBy.length > 0 ? (
                                 <PreviousGuesses
-                                    guessablePlayers={guessablePlayers}
+                                    remainingPlayers={remainingPlayers}
                                     lastAgainst={lastGuessedAgainst}
                                     lastBy={lastGuessedBy}
                                     selected={this.state.selectedUser}
