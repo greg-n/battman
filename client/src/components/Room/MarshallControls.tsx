@@ -40,24 +40,17 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                 Marshall Controls
             </span>
             <Row>
-                <Col xs={1} />
-                <Col
-                    xs={9}
-                >
+                <Col>
                     <ChangeWordConstraints
                         minChars={props.minChars}
                         maxChars={props.maxChars}
                         changeWordConstraints={props.changeWordConstraints}
                     />
                 </Col>
-                <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em" }} />
             <Row>
-                <Col xs={1} />
-                <Col
-                    xs={9}
-                >
+                <Col>
                     <TransferMarshalship
                         currentMarshall={props.currentMarshall}
                         playerNames={Object.keys(props.playerList)}
@@ -66,14 +59,9 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                         transferMarshalship={props.transferMarshalship}
                     />
                 </Col>
-                <Col />
             </Row>
             <Row style={{ paddingTop: "3.4em" }}>
-                <Col xs={1} />
-                <Col
-                    xs={9}
-                    style={{ textAlign: "center" }}
-                >
+                <Col style={{ textAlign: "center" }}>
                     {numNotReady === 0 && numPlayers > 1
                         ? (
                             <Button
@@ -98,16 +86,11 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
                             </SimpleToolTip>
                         )}
                 </ Col>
-                <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                <Col xs={1} />
-                <Col
-                    xs={9}
-                >
+                <Col>
                     <hr />
                 </ Col>
-                <Col />
             </Row>
         </span>
     );

@@ -213,9 +213,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
         <span>
             <Row>
                 <Col />
-                <Col
-                    xs={9}
-                >
+                <Col xs={10}>
                     <ListGroup
                         variant="flush"
                         style={{ padding: 0 }}
@@ -223,16 +221,12 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                         {playerItems}
                     </ListGroup>
                 </Col>
-                <Col xs={1} />
+                <Col />
             </Row>
             <Row style={{ paddingTop: "1em", paddingBottom: "1.3em" }}>
-                <Col />
-                <Col
-                    xs={9}
-                >
+                <Col>
                     <hr />
                 </ Col>
-                <Col xs={1} />
             </Row>
         </span>
     );

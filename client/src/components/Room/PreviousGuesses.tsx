@@ -21,8 +21,7 @@ export default function PreviousGuesses(props: Props): JSX.Element {
                 Previous Guesses
             </span>
             <Row>
-                <Col xs={1} />
-                <Col xs={9} style={{ paddingTop: ".8em" }}>
+                <Col style={{ paddingTop: ".8em" }}>
                     <Row>
                         <Col xs={1} />
                         <Col>
@@ -112,14 +111,11 @@ export default function PreviousGuesses(props: Props): JSX.Element {
                         <Col xs={1} />
                     </Row>
                 </Col>
-                <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                <Col xs={1} />
-                <Col xs={9}>
+                <Col>
                     <hr />
                 </ Col>
-                <Col />
             </Row>
         </span >
     );

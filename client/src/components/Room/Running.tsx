@@ -66,43 +66,59 @@ export default class RoomRunning extends React.Component<Props, State> {
                         <Col
                             xs={5}
                         >
-                            <PlayerList
-                                clientName={this.props.gameState.clientState.name}
-                                clientWord={this.props.gameState.clientState.word || undefined}
-                                currentPlayer={this.props.gameState.gameInfo.currentPlayer}
-                                playerList={this.props.gameState.playerStates}
-                                gameState={this.props.gameState.gameInfo.state}
-                                marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
-                                selected={this.state.selectedUser}
-                                selectOnlyPlaying={true}
-                                changeSelected={this.changeSelectedUser}
-                            />
+                            <Row>
+                                <Col />
+                                <Col
+                                    xs={9}
+                                >
+                                    <PlayerList
+                                        clientName={this.props.gameState.clientState.name}
+                                        clientWord={this.props.gameState.clientState.word || undefined}
+                                        currentPlayer={this.props.gameState.gameInfo.currentPlayer}
+                                        playerList={this.props.gameState.playerStates}
+                                        gameState={this.props.gameState.gameInfo.state}
+                                        marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                        selected={this.state.selectedUser}
+                                        selectOnlyPlaying={true}
+                                        changeSelected={this.changeSelectedUser}
+                                    />
+                                </Col>
+                                <Col xs={1} />
+                            </Row>
                         </Col>
                         <Col xs={7}>
-                            {isCurrentPlayer ? (
-                                <Guess
-                                    clientName={this.props.gameState.clientState.name}
-                                    remainingPlayers={remainingPlayers}
-                                    lastGuessed={lastGuessedAgainst}
-                                    selected={this.state.selectedUser}
-                                    changeSelected={this.changeSelectedUser}
-                                    makeGuess={this.props.makeGuess}
-                                />
-                            ) : undefined}
-                            {lastGuessedAgainst.length > 0 || lastGuessedBy.length > 0 ? (
-                                <PreviousGuesses
-                                    remainingPlayers={remainingPlayers}
-                                    lastAgainst={lastGuessedAgainst}
-                                    lastBy={lastGuessedBy}
-                                    selected={this.state.selectedUser}
-                                    changeSelected={this.changeSelectedUser}
-                                />
-                            ) : undefined}
-                            {streamInfo.length > 0 ? (
-                                <StreamInfo
-                                    streamItems={streamInfo}
-                                />
-                            ) : undefined}
+                            <Row>
+                                <Col xs={1} />
+                                <Col
+                                    xs={9}
+                                >
+                                    {isCurrentPlayer ? (
+                                        <Guess
+                                            clientName={this.props.gameState.clientState.name}
+                                            remainingPlayers={remainingPlayers}
+                                            lastGuessed={lastGuessedAgainst}
+                                            selected={this.state.selectedUser}
+                                            changeSelected={this.changeSelectedUser}
+                                            makeGuess={this.props.makeGuess}
+                                        />
+                                    ) : undefined}
+                                    {lastGuessedAgainst.length > 0 || lastGuessedBy.length > 0 ? (
+                                        <PreviousGuesses
+                                            remainingPlayers={remainingPlayers}
+                                            lastAgainst={lastGuessedAgainst}
+                                            lastBy={lastGuessedBy}
+                                            selected={this.state.selectedUser}
+                                            changeSelected={this.changeSelectedUser}
+                                        />
+                                    ) : undefined}
+                                    {streamInfo.length > 0 ? (
+                                        <StreamInfo
+                                            streamItems={streamInfo}
+                                        />
+                                    ) : undefined}
+                                </Col>
+                                <Col />
+                            </Row>
                         </Col>
                     </Row>
                 </Col>

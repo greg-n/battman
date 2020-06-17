@@ -178,17 +178,22 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
             <div>
                 <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                     <Row>
-                        <Form.Label>
-                            Set your word
+                        <Col xs={1} />
+                        <Col
+                        >
+                            <Form.Label>
+                                Set your word
                             {this.props.playerWord != null && this.state.playerWord !== this.props.playerWord
-                                ? `. Currently: ${this.props.playerWord}`
-                                : `. Min: ${this.props.minLength}. Max: ${this.props.maxLength}.`}
-                        </Form.Label>
+                                    ? `. Currently: ${this.props.playerWord}`
+                                    : `. Min: ${this.props.minLength}. Max: ${this.props.maxLength}.`}
+                            </Form.Label>
+                        </Col>
                     </Row>
                     <Row>
+                        <Col />
                         <Col
-                            xs={7}
-                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
+                            xs={4}
+                            style={{ paddingLeft: "0.1em", paddingRight: "0.4em", textAlign: "center" }}
                         >
                             <Form.Control
                                 placeholder="Your word"
@@ -203,13 +208,12 @@ export default class SetWord extends React.Component<SetWordProps, SetWordState>
                                 {this.state.invalidFeedback}
                             </Form.Control.Feedback>
                         </Col>
-                        <Col />
                         <Col
-                            xs={4}
-                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
+                            style={{ paddingLeft: "0.4em", paddingRight: "0.1em", textAlign: "center" }}
                         >
                             {this.renderSubmitButton()}
                         </Col>
+                        <Col />
                     </Row>
                 </Form>
             </div>

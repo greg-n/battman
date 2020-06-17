@@ -17,8 +17,8 @@ export default function StreamInfo(props: Props): JSX.Element {
                 Action Stream
             </span>
             <Row>
-                <Col xs={1} />
-                <Col xs={9} style={{ paddingTop: ".8em" }}>
+                <Col />
+                <Col xs={10} style={{ paddingTop: ".8em" }}>
                     <Card style={{ overflow: "scroll", height: "16em" }}>
                         <ListGroup variant="flush" >
                             {
@@ -37,11 +37,9 @@ export default function StreamInfo(props: Props): JSX.Element {
                 <Col />
             </Row>
             <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                <Col xs={1} />
-                <Col xs={9}>
+                <Col>
                     <hr />
                 </ Col>
-                <Col />
             </Row>
         </span >
     );

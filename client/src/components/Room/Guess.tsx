@@ -218,15 +218,13 @@ export default class Guess extends React.Component<Props, State> {
         return (
             <span>
                 <Row>
-                    <Col xs={1} />
-                    <Col
-                        xs={9}
-                    >
+                    <Col>
                         <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                             <Row>
+                                <Col />
                                 <Col
-                                    xs={5}
-                                    style={{ paddingLeft: "0.1em", paddingRight: "0.3em", textAlign: "center" }}
+                                    xs={4}
+                                    style={{ paddingLeft: "0.1em", paddingRight: "0.4em", textAlign: "center" }}
                                 >
                                     <Form.Control
                                         as="select"
@@ -248,8 +246,8 @@ export default class Guess extends React.Component<Props, State> {
                                     </Form.Control.Feedback>
                                 </Col>
                                 <Col
-                                    xs={7}
-                                    style={{ paddingLeft: "0.3em", paddingRight: "0.1em", textAlign: "center" }}
+                                    xs={5}
+                                    style={{ paddingLeft: "0.4em", paddingRight: "0.1em", textAlign: "center" }}
                                 >
                                     <Form.Control
                                         placeholder="Your guess"
@@ -262,9 +260,10 @@ export default class Guess extends React.Component<Props, State> {
                                         {this.state.guessFeedback || "Guess value isn't valid."}
                                     </Form.Control.Feedback>
                                 </Col>
+                                <Col />
                             </Row>
                             {selfGuess ? (
-                                <Row style={{ paddingTop: ".4em", paddingBottom: ".4em" }}>
+                                <Row style={{ paddingTop: ".5em", paddingBottom: ".5em" }}>
                                     <Col />
                                     <Col xs={9}>
                                         <Alert variant="warning" style={{ margin: 0 }}>
@@ -286,16 +285,11 @@ export default class Guess extends React.Component<Props, State> {
                             </Row>
                         </Form>
                     </ Col>
-                    <Col />
                 </Row>
                 <Row style={{ paddingTop: "1.3em", paddingBottom: "1.3em" }}>
-                    <Col xs={1} />
-                    <Col
-                        xs={9}
-                    >
+                    <Col>
                         <hr />
                     </ Col>
-                    <Col />
                 </Row>
             </span>
         );

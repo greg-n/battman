@@ -80,14 +80,19 @@ export default class TransferMarshalship extends React.Component<Props, State> {
             <span>
                 <Form noValidate validated={this.state.validated} onSubmit={this.handleSubmit}>
                     <Row>
-                        <Form.Label>
-                            Transfer Marshalship
-                        </Form.Label>
+                        <Col xs={1} />
+                        <Col
+                        >
+                            <Form.Label>
+                                Transfer Marshalship
+                            </Form.Label>
+                        </Col>
                     </Row>
                     <Row>
+                        <Col />
                         <Col
-                            xs={7}
-                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
+                            xs={5}
+                            style={{ paddingLeft: "0.1em", paddingRight: "0.4em", textAlign: "center" }}
                         >
                             <Form.Control
                                 as="select"
@@ -105,10 +110,8 @@ export default class TransferMarshalship extends React.Component<Props, State> {
                                 }
                             </Form.Control>
                         </Col>
-                        <Col />
                         <Col
-                            xs={4}
-                            style={{ paddingLeft: "0.1em", paddingRight: "0.1em", textAlign: "center" }}
+                            style={{ paddingLeft: "0.4em", paddingRight: "0.1em", textAlign: "center" }}
                         >
                             {this.state.selected != null && this.props.currentMarshall !== this.state.selected
                                 ? (
@@ -134,6 +137,7 @@ export default class TransferMarshalship extends React.Component<Props, State> {
                                     </SimpleToolTip>
                                 )}
                         </Col>
+                        <Col />
                     </Row>
                 </Form>
             </span>

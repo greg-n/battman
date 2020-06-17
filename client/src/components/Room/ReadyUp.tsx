@@ -25,7 +25,7 @@ export default function ReadyUp(props: ReadyUpProps): JSX.Element {
         <span>
             <Row>
                 <Col />
-                <Col xs={6} >
+                <Col>
                     {!disabled ? (
                         <Button
                             variant="success"

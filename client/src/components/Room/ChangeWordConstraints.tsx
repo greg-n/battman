@@ -64,6 +64,7 @@ export default class ChangeWordConstraints extends React.Component<Props, State>
             return (
                 <Button
                     onClick={this.onSubmit}
+                    variant="success"
                 >
                     Set
                 </Button>
@@ -91,12 +92,17 @@ export default class ChangeWordConstraints extends React.Component<Props, State>
         return (
             <span>
                 <Row>
-                    <Form.Label>
-                        Set word constraints. Current: Min: {this.props.minChars}, Max: {this.props.maxChars}.
-                    </Form.Label>
+                    <Col xs={1} />
+                    <Col
+                    >
+                        <Form.Label>
+                            Set word constraints. Current: Min: {this.props.minChars}, Max: {this.props.maxChars}.
+                        </Form.Label>
+                    </Col>
                 </Row>
                 <Row>
-                    <Col xs={12} style={{ textAlign: "center" }}>
+                    <Col />
+                    <Col xs={7} style={{ textAlign: "center" }}>
                         <DoubleEndedSlider
                             min={1}
                             max={24}
@@ -105,10 +111,11 @@ export default class ChangeWordConstraints extends React.Component<Props, State>
                             onChange={this.onChange}
                         />
                     </Col>
+                    <Col />
                 </Row>
                 <Row>
                     <Col />
-                    <Col xs={4} style={{ textAlign: "center" }}>
+                    <Col style={{ textAlign: "center" }}>
                         {this.renderButton()}
                     </Col>
                     <Col />
