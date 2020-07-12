@@ -1,11 +1,11 @@
-import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
-import helmet from "helmet";
 import * as http from "http";
-import path from "path";
+import express, { NextFunction, Request, Response } from "express";
 import WebSocket from "ws";
-import { router } from "./routes/index/http";
 import buildWsRouting from "./routes/index/ws";
+import cors from "cors";
+import helmet from "helmet";
+import path from "path";
+import { router } from "./routes/index/http";
 
 export interface ServerItems {
     app: express.Express;
@@ -17,7 +17,7 @@ function checkRequireENV(): void {
     if (process.env.JWT_SECRET == null)
         throw new Error("process.env.JWT_SECRET must be defined.");
     if (process.env.PORT == null || Number.isNaN(Number(process.env.PORT)))
-        throw new Error("process.env.PORT must be defined.")
+        throw new Error("process.env.PORT must be defined.");
 }
 
 export async function setUpServer(): Promise<ServerItems> {
@@ -27,7 +27,7 @@ export async function setUpServer(): Promise<ServerItems> {
 
     checkRequireENV();
 
-    app.use(cors({ origin: ["http://localhost:3000", "https://greg.noonan.be/battman"] }));
+    app.use(cors({ origin: ["http://localhost:3000"] }));
     app.use(helmet());
     app.use(router);
     app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
