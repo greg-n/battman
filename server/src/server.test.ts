@@ -24,7 +24,7 @@ describe("server", () => {
         });
     });
 
-    it("Can do the pings and the pongs", (done) => {
+    it.skip("Can do the pings and the pongs", (done) => {
         const wsClient = new WebSocket("ws://localhost:8080");
         wsClient.on("open", () => {
             wsClient.on("message", (msg: string) => {

@@ -34,6 +34,16 @@ describe("http rooms portion", () => {
                     roomCreated: true,
                     playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJTdGV2ZSJ9.KCMJ6uXNEpGAgv3-AIOUQyZQ_Wp682yB4nGm9udNzaQ",
                     playerUpdate: {
+                        forAll: {
+                            eliminatedPlayers: [],
+                            guessedLetters: [],
+                            guessedWordPortion: null,
+                            guessedWords: [],
+                            lastGuessedAgainst: [],
+                            lastGuessedBy: [],
+                            name: "Steve",
+                            state: 0
+                        },
                         forEffected: {
                             eliminatedPlayers: [],
                             guessedLetters: [],
@@ -86,6 +96,16 @@ describe("http rooms portion", () => {
                 .toStrictEqual({
                     playerToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb29tTmFtZSI6InRlc3RSb29tTmFtZSIsInBsYXllck5hbWUiOiJXaWxsIn0.fx7jStfvWyNglpn5du5mF5WRC0odKljYnIgU9Ctb5aQ",
                     playerUpdate: {
+                        forAll: {
+                            eliminatedPlayers: [],
+                            guessedLetters: [],
+                            guessedWordPortion: null,
+                            guessedWords: [],
+                            lastGuessedAgainst: [],
+                            lastGuessedBy: [],
+                            name: "Will",
+                            state: 0
+                        },
                         forEffected: {
                             eliminatedPlayers: [],
                             guessedLetters: [],
@@ -103,8 +123,8 @@ describe("http rooms portion", () => {
                             maxChars: 24,
                             minChars: 1,
                             streamInfo: [
-                                "Player Steve has been added.",
-                                "Player Will has been added."
+                                "Player Will has been added.",
+                                "Player Steve has been added."
                             ],
                             remainingPlayers: [],
                             waitingRoomMarshal: "Steve"

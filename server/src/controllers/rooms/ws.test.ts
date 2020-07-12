@@ -3,6 +3,7 @@ import { ServerItems, setUpServer, tearDownServerItems } from "../../server";
 import { PlayerState } from "../../entities/Player";
 import { PlayerTokenInfo } from "../../utils/playerToken";
 import WebSocket from "ws";
+import lastItem from "../../utils/lastItem";
 import request from "supertest";
 import { rooms } from "../../state/rooms";
 import { ws } from "./ws";
@@ -110,8 +111,8 @@ describe("ws rooms controller", () => {
                     waitingRoomMarshal: "Steve",
                     remainingPlayers: [],
                     streamInfo: [
-                        "Player Steve has been added.",
-                        "Player Will has been added."
+                        "Player Will has been added.",
+                        "Player Steve has been added."
                     ],
                     minChars: 1,
                     maxChars: 24
@@ -134,9 +135,9 @@ describe("ws rooms controller", () => {
                 waitingRoomMarshal: "Will",
                 remainingPlayers: [],
                 streamInfo: [
-                    "Player Steve has been added.",
+                    "Steve has transferred marshalship to Will.",
                     "Player Will has been added.",
-                    "Steve has transferred marshalship to Will."
+                    "Player Steve has been added."
                 ],
                 minChars: 1,
                 maxChars: 24
@@ -182,10 +183,10 @@ describe("ws rooms controller", () => {
                     waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
-                        "Player Steve has been added.",
-                        "Player Will has been added.",
+                        "Steve has set their word.",
                         "Steve has transferred marshalship to Will.",
-                        "Steve has set their word."
+                        "Player Will has been added.",
+                        "Player Steve has been added."
                     ],
                     minChars: 1,
                     maxChars: 24
@@ -209,10 +210,11 @@ describe("ws rooms controller", () => {
                     waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
-                        "Player Steve has been added.",
-                        "Player Will has been added.",
+                        "Steve has set their word.",
                         "Steve has transferred marshalship to Will.",
-                        "Steve has set their word."],
+                        "Player Will has been added.",
+                        "Player Steve has been added."
+                    ],
                     minChars: 1,
                     maxChars: 24
                 }
@@ -251,11 +253,11 @@ describe("ws rooms controller", () => {
                     waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
-                        "Player Steve has been added.",
-                        "Player Will has been added.",
-                        "Steve has transferred marshalship to Will.",
+                        "Steve has changed their ready state.",
                         "Steve has set their word.",
-                        "Steve has changed their ready state."
+                        "Steve has transferred marshalship to Will.",
+                        "Player Will has been added.",
+                        "Player Steve has been added."
                     ],
                     minChars: 1,
                     maxChars: 24
@@ -279,11 +281,11 @@ describe("ws rooms controller", () => {
                     waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
-                        "Player Steve has been added.",
-                        "Player Will has been added.",
-                        "Steve has transferred marshalship to Will.",
+                        "Steve has changed their ready state.",
                         "Steve has set their word.",
-                        "Steve has changed their ready state."
+                        "Steve has transferred marshalship to Will.",
+                        "Player Will has been added.",
+                        "Player Steve has been added."
                     ],
                     minChars: 1,
                     maxChars: 24
@@ -296,47 +298,75 @@ describe("ws rooms controller", () => {
             { action: GameAction.changeWordConstraints, minChars: 5, maxChars: 5 }
         );
         expected = {
-            players: {
-                Steve: {
-                    name: "Steve",
-                    guessedWordPortion: null,
-                    guessedLetters: [],
-                    guessedWords: [],
-                    eliminatedPlayers: [],
-                    state: PlayerState.joined,
-                    lastGuessedAgainst: [],
-                    lastGuessedBy: []
-                },
-                Will: {
-                    name: "Will",
-                    guessedWordPortion: null,
-                    guessedLetters: [],
-                    guessedWords: [],
-                    eliminatedPlayers: [],
-                    state: PlayerState.joined,
-                    lastGuessedAgainst: [],
-                    lastGuessedBy: []
-                }
+            forEffected: {
+                name: "Steve",
+                word: null,
+                guessedWordPortion: null,
+                guessedLetters: [],
+                guessedWords: [],
+                eliminatedPlayers: [],
+                state: 0,
+                lastGuessedAgainst: [],
+                lastGuessedBy: []
+            },
+            forAll: {
+                name: "Steve",
+                guessedWordPortion: null,
+                guessedLetters: [],
+                guessedWords: [],
+                eliminatedPlayers: [],
+                state: 0,
+                lastGuessedAgainst: [],
+                lastGuessedBy: []
             },
             gameInfo: {
-                action: GameAction.changeWordConstraints,
-                state: GameState.waitingRoom,
+                action: 2,
+                state: 0,
                 waitingRoomMarshal: "Will",
                 remainingPlayers: [],
-                streamInfo: [
-                    "Player Steve has been added.",
-                    "Player Will has been added.",
-                    "Steve has transferred marshalship to Will.",
-                    "Steve has set their word.",
-                    "Steve has changed their ready state.",
-                    "Word constraints have been changed to min: 5, max: 5."
-                ],
                 minChars: 5,
-                maxChars: 5
+                maxChars: 5,
+                streamInfo: [
+                    "Word constraints have been changed to min: 5, max: 5.",
+                    "Steve has changed their ready state.",
+                    "Steve has set their word.",
+                    "Steve has transferred marshalship to Will.",
+                    "Player Will has been added.",
+                    "Player Steve has been added."
+                ]
             }
         };
         expect(JSON.parse(players.Steve.sendMock.mock.calls[5][0]))
             .toStrictEqual(expected);
+
+        expected = {
+            forAll: {
+                name: "Steve",
+                guessedWordPortion: null,
+                guessedLetters: [],
+                guessedWords: [],
+                eliminatedPlayers: [],
+                state: 0,
+                lastGuessedAgainst: [],
+                lastGuessedBy: []
+            },
+            gameInfo: {
+                action: 2,
+                state: 0,
+                waitingRoomMarshal: "Will",
+                remainingPlayers: [],
+                minChars: 5,
+                maxChars: 5,
+                streamInfo: [
+                    "Word constraints have been changed to min: 5, max: 5.",
+                    "Steve has changed their ready state.",
+                    "Steve has set their word.",
+                    "Steve has transferred marshalship to Will.",
+                    "Player Will has been added.",
+                    "Player Steve has been added."
+                ]
+            }
+        };
         expect(JSON.parse(players.Will.sendMock.mock.calls[4][0]))
             .toStrictEqual(expected);
 
@@ -351,9 +381,9 @@ describe("ws rooms controller", () => {
             playerTokens.Will,
         );
         expected = { error: "Player must have set a word to ready up." };
-        expect(JSON.parse(players.Steve.sendMock.mock.calls[6][0]))
+        expect(JSON.parse(lastItem(players.Steve.sendMock.mock.calls)[0]))
             .toStrictEqual(expected);
-        expect(JSON.parse(players.Will.sendMock.mock.calls[5][0]))
+        expect(JSON.parse(lastItem(players.Will.sendMock.mock.calls)[0]))
             .toStrictEqual(expected);
 
         ws.startGame(
@@ -361,9 +391,9 @@ describe("ws rooms controller", () => {
             playerTokens.Will
         );
         expected = { error: "Players Steve,Will are not ready to play." };
-        expect(JSON.parse(players.Steve.sendMock.mock.calls[7][0]))
+        expect(JSON.parse(lastItem(players.Steve.sendMock.mock.calls)[0]))
             .toStrictEqual(expected);
-        expect(JSON.parse(players.Will.sendMock.mock.calls[6][0]))
+        expect(JSON.parse(lastItem(players.Will.sendMock.mock.calls)[0]))
             .toStrictEqual(expected);
 
         ws.setWord(
@@ -376,9 +406,9 @@ describe("ws rooms controller", () => {
             playerTokens.Will,
             { action: GameAction.setWord, word: "total" }
         );
-        expect(JSON.parse(players.Steve.sendMock.mock.calls[9][0]).gameInfo)
+        expect(JSON.parse(lastItem(players.Steve.sendMock.mock.calls)[0]).gameInfo)
             .toBeDefined();
-        expect(JSON.parse(players.Will.sendMock.mock.calls[8][0]).gameInfo)
+        expect(JSON.parse(lastItem(players.Will.sendMock.mock.calls)[0]).gameInfo)
             .toBeDefined();
 
         ws.readyToggle(
@@ -390,9 +420,9 @@ describe("ws rooms controller", () => {
             playerTokens.Will,
         );
         expect(players.Steve.sendMock)
-            .toHaveBeenCalledTimes(12);
+            .toHaveBeenCalledTimes(13);
         expect(players.Will.sendMock)
-            .toHaveBeenCalledTimes(11);
+            .toHaveBeenCalledTimes(12);
 
         ws.startGame(
             players.Will.mockImp,
@@ -431,14 +461,14 @@ describe("ws rooms controller", () => {
                 maxChars: 5
             }
         };
-        expect(JSON.parse(players.Steve.sendMock.mock.calls[12][0]))
+        expect(JSON.parse(lastItem(players.Steve.sendMock.mock.calls)[0]))
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .toMatchObject(expected as any);
-        expect(JSON.parse(players.Will.sendMock.mock.calls[11][0]))
+        expect(JSON.parse(lastItem(players.Will.sendMock.mock.calls)[0]))
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .toMatchObject(expected as any);
 
-        const gameInfo = JSON.parse(players.Steve.sendMock.mock.calls[12][0]).gameInfo;
+        const gameInfo = JSON.parse(lastItem(players.Steve.sendMock.mock.calls)[0]).gameInfo;
         const currIsS = gameInfo.currentPlayer === "Steve";
         ws.guess(
             currIsS ? players.Steve.mockImp : players.Will.mockImp,
@@ -451,7 +481,7 @@ describe("ws rooms controller", () => {
         );
 
         ws.disconnectFromGame(players.Steve.mockImp, playerTokens.Steve);
-        expect(JSON.parse(players.Will.sendMock.mock.calls[13][0]))
+        expect(JSON.parse(lastItem(players.Will.sendMock.mock.calls)[0]))
             .toMatchObject({
                 gameInfo: {
                     state: GameState.ended
