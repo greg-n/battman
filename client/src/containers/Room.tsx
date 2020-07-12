@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import React from "react";
 import { toast } from "react-toastify";
-import { api, baseURL } from "../api";
+import { api, baseURL, wsProtocol } from "../api";
 import { default as RoomComponent } from "../components/Room";
 import { GameAction, GameExternalInfo, GameState } from "../types/Game";
 import { AddPlayerOutput, RoomCreationOutput, RoomsMessageData } from "../types/Room";
@@ -135,7 +135,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
     }
 
     joinBuildWSClient(playerToken: string): WebSocket {
-        const ws = new WebSocket(`ws://${baseURL}/rooms?accessToken=${playerToken}`);
+        const ws = new WebSocket(`${wsProtocol}://${baseURL}/rooms?accessToken=${playerToken}`);
         let connected = false;
 
         // attempting not to use "this" within the on functions later as they have a "this" param in their d.ts

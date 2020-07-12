@@ -1,13 +1,17 @@
 import axios from "axios";
 
 export const baseURL = process.env.NODE_ENV === "production"
-    ? "greg.noonan.be"
+    ? "battman.herokuapp.com"
     : "localhost:8080";
 
-const protocol = process.env.NODE_ENV === "production"
+const httpProtocol = process.env.NODE_ENV === "production"
     ? "https"
     : "http";
 
+export const wsProtocol = process.env.NODE_ENV === "production"
+    ? "wss"
+    : "ws";
+
 export const api = axios.create({
-    baseURL: `${protocol}://${baseURL}`
+    baseURL: `${httpProtocol}://${baseURL}`
 });

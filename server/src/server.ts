@@ -1,11 +1,11 @@
-import * as http from "http";
-import express, { NextFunction, Request, Response } from "express";
-import WebSocket from "ws";
-import buildWsRouting from "./routes/index/ws";
 import cors from "cors";
+import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import * as http from "http";
 import path from "path";
+import WebSocket from "ws";
 import { router } from "./routes/index/http";
+import buildWsRouting from "./routes/index/ws";
 
 export interface ServerItems {
     app: express.Express;
@@ -16,6 +16,8 @@ export interface ServerItems {
 function checkRequireENV(): void {
     if (process.env.JWT_SECRET == null)
         throw new Error("process.env.JWT_SECRET must be defined.");
+    if (process.env.PORT == null || Number.isNaN(Number(process.env.PORT)))
+        throw new Error("process.env.PORT must be defined.")
 }
 
 export async function setUpServer(): Promise<ServerItems> {
@@ -50,9 +52,9 @@ export async function setUpServer(): Promise<ServerItems> {
     });
 
     await new Promise((resolve) => {
-        server.listen(8080, () => {
+        server.listen(Number(process.env.PORT), () => {
             if (process.env.NODE_ENV !== "test")
-                console.log("listening on *:8080");
+                console.log(`listening on *:${process.env.PORT}`);
             resolve();
         });
     });
