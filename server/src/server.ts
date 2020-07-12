@@ -4,6 +4,7 @@ import WebSocket from "ws";
 import buildWsRouting from "./routes/index/ws";
 import cors from "cors";
 import helmet from "helmet";
+import path from "path";
 import { router } from "./routes/index/http";
 
 export interface ServerItems {
@@ -24,7 +25,7 @@ export async function setUpServer(): Promise<ServerItems> {
 
     checkRequireENV();
 
-    app.use(cors({ origin: ["http://localhost:3000"] }));
+    app.use(cors({ origin: ["http://localhost:3000", "https://greg.noonan.be/battman"] }));
     app.use(helmet());
     app.use(router);
     app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -38,6 +39,14 @@ export async function setUpServer(): Promise<ServerItems> {
     buildWsRouting(wss);
     wss.on("error", (error) => {
         console.error("WebSocket error:", error);
+    });
+
+    // serve build
+    const sep = path.sep;
+    const appBuildPath = path.join(__dirname, `..${sep}..${sep}client${sep}build${sep}`);
+    app.use(express.static(appBuildPath));
+    app.get("*", (req, res) => {
+        res.sendFile(path.join(appBuildPath), "index.html");
     });
 
     await new Promise((resolve) => {
