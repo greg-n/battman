@@ -12,7 +12,7 @@ interface PlayerListProps {
     currentPlayer?: string;
     playerList: { [key: string]: Player };
     gameState: GameState;
-    marshall?: string;
+    marshal?: string;
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     selectOnlyPlaying?: boolean; // will make only playing players selectable
     changeSelected: (name?: string) => void;
@@ -49,10 +49,10 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
         }
 
         if (props.gameState === GameState.waitingRoom) {
-            if (player.name === props.marshall)
+            if (player.name === props.marshal)
                 playerBadges.push(
                     <SimpleToolTip
-                        text="Waiting room marshall."
+                        text="Waiting room marshal."
                     >
                         <span style={badgeStyle}>
                             <GiLawStar />

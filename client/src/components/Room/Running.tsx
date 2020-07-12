@@ -77,7 +77,7 @@ export default class RoomRunning extends React.Component<Props, State> {
                                         currentPlayer={this.props.gameState.gameInfo.currentPlayer}
                                         playerList={this.props.gameState.playerStates}
                                         gameState={this.props.gameState.gameInfo.state}
-                                        marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                        marshal={this.props.gameState.gameInfo.waitingRoomMarshal}
                                         selected={this.state.selectedUser}
                                         selectOnlyPlaying={true}
                                         changeSelected={this.changeSelectedUser}

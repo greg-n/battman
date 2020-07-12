@@ -187,7 +187,7 @@ export namespace ws {
     ): void {
         const room = rooms.get(token.roomName) as Room;
         try {
-            const result = room.game.transferMarshallShip(
+            const result = room.game.transferMarshalShip(
                 token.playerName,
                 message.subject || "", // Is string but will fail to get a valid player
             );

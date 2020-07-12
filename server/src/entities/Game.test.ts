@@ -157,7 +157,7 @@ describe("Game", () => {
         expect(markItem.state === PlayerState.disconnected).toBeTruthy();
     });
 
-    it("Allows marshall change constraints/transfer, requiring ready", () => {
+    it("Allows marshal change constraints/transfer, requiring ready", () => {
         expect.assertions(8);
 
         const game = new Game();
@@ -173,7 +173,7 @@ describe("Game", () => {
         game.setWord("Will", "tests");
         game.readyUpToggle("Will");
 
-        game.transferMarshallShip("Steve", "Will");
+        game.transferMarshalShip("Steve", "Will");
         game.changeWordConstraints("Will", 1, 4);
 
         const willItem = game.players.get("Will") as Player;
@@ -184,7 +184,7 @@ describe("Game", () => {
         try {
             game.start("Steve");
         } catch (error) {
-            expect(error.message).toBe("Must be waiting room marshall to begin the game.");
+            expect(error.message).toBe("Must be waiting room marshal to begin the game.");
         }
         try {
             game.start("Will");

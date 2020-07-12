@@ -34,7 +34,7 @@ interface GameUpdate {
     action: GameAction;
     state: GameState;
     currentPlayer?: string;
-    waitingRoomMarshall?: string;
+    waitingRoomMarshal?: string;
     remainingPlayers: string[];
     minChars: number;
     maxChars: number;
@@ -74,7 +74,7 @@ export default class Game {
     state = GameState.waitingRoom;
     players: Map<string, Player> = new Map();
     currentPlayer: string | undefined;
-    waitingRoomMarshall: string | undefined;
+    waitingRoomMarshal: string | undefined;
     createdAt: number;
     lastModifiedAt: number;
     endedAt: number | undefined;
@@ -82,7 +82,7 @@ export default class Game {
 
     /**
      * Word constraints should exist upon creation.
-     * Creator becomes the waitingRoomMarshall
+     * Creator becomes the waitingRoomMarshal
      */
     constructor(minChars = 1, maxChars = 24) {
         Game.checkWordConstraints(minChars, maxChars);
@@ -99,7 +99,7 @@ export default class Game {
             action: action,
             state: this.state,
             currentPlayer: this.currentPlayer,
-            waitingRoomMarshall: this.waitingRoomMarshall,
+            waitingRoomMarshal: this.waitingRoomMarshal,
             remainingPlayers: this.getRemainingPlayers(),
             minChars: this.minChars,
             maxChars: this.maxChars,
@@ -125,8 +125,8 @@ export default class Game {
         this.players.set(name, player);
 
         if (this.players.size === 1) {
-            // if first player they are assigned as marshall (or joining empty lobby)
-            this.waitingRoomMarshall = name;
+            // if first player they are assigned as marshal (or joining empty lobby)
+            this.waitingRoomMarshal = name;
         }
 
         this.streamInfo.unshift(`Player ${name} has been added.`);
@@ -147,8 +147,8 @@ export default class Game {
     }
 
     changeWordConstraints(actor: string, minChars = 1, maxChars = 24): { [key: string]: PlayerUpdateOutput } {
-        if (actor !== this.waitingRoomMarshall) {
-            throw new Error("Only the waiting room marshall can modify word constraints.");
+        if (actor !== this.waitingRoomMarshal) {
+            throw new Error("Only the waiting room marshal can modify word constraints.");
         }
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game must be in waiting room to change word constraints.");
@@ -203,9 +203,9 @@ export default class Game {
 
         if (this.state === GameState.waitingRoom) {
             this.players.delete(name); // Don't track reason or player existence
-            if (this.waitingRoomMarshall === name) {
-                // try to set new marshall if old marshall is being removed
-                this.waitingRoomMarshall = this.players.size > 0 ? [...this.players.keys()][0] : undefined;
+            if (this.waitingRoomMarshal === name) {
+                // try to set new marshal if old marshal is being removed
+                this.waitingRoomMarshal = this.players.size > 0 ? [...this.players.keys()][0] : undefined;
             }
         } else if (this.state === GameState.running) {
             player.state = PlayerState.disconnected;
@@ -475,8 +475,8 @@ export default class Game {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state doesn't allow for game start. Must be 'waitingRoom'.");
         }
-        if (actor !== this.waitingRoomMarshall) {
-            throw new Error("Must be waiting room marshall to begin the game.");
+        if (actor !== this.waitingRoomMarshal) {
+            throw new Error("Must be waiting room marshal to begin the game.");
         }
         if (this.players.size < 2) {
             throw new Error("Game requires more than one player.");
@@ -511,18 +511,18 @@ export default class Game {
         return this.getGameState(GameAction.startGame);
     }
 
-    transferMarshallShip(actor: string, subject: string): GameOutput {
+    transferMarshalShip(actor: string, subject: string): GameOutput {
         if (this.state !== GameState.waitingRoom) {
             throw new Error("Game state prevents the transfer marshalship.");
         }
-        if (actor !== this.waitingRoomMarshall) {
-            throw new Error("Only the current marshall can transfer the marshalship.");
+        if (actor !== this.waitingRoomMarshal) {
+            throw new Error("Only the current marshal can transfer the marshalship.");
         }
         if (!this.players.has(subject)) {
             throw new Error("Can only transfer marshalship to current player.");
         }
 
-        this.waitingRoomMarshall = subject;
+        this.waitingRoomMarshal = subject;
 
         this.streamInfo.unshift(`${actor} has transferred marshalship to ${subject}.`);
 

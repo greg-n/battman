@@ -107,7 +107,7 @@ describe("ws rooms controller", () => {
                 gameInfo: {
                     action: GameAction.join,
                     state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Steve",
+                    waitingRoomMarshal: "Steve",
                     remainingPlayers: [],
                     streamInfo: [
                         "Player Steve has been added.",
@@ -131,7 +131,7 @@ describe("ws rooms controller", () => {
             gameInfo: {
                 action: GameAction.transferMarshalship,
                 state: GameState.waitingRoom,
-                waitingRoomMarshall: "Will",
+                waitingRoomMarshal: "Will",
                 remainingPlayers: [],
                 streamInfo: [
                     "Player Steve has been added.",
@@ -179,7 +179,7 @@ describe("ws rooms controller", () => {
                 gameInfo: {
                     action: GameAction.setWord,
                     state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Will",
+                    waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
                         "Player Steve has been added.",
@@ -206,7 +206,7 @@ describe("ws rooms controller", () => {
                 gameInfo: {
                     action: GameAction.setWord,
                     state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Will",
+                    waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
                         "Player Steve has been added.",
@@ -248,7 +248,7 @@ describe("ws rooms controller", () => {
                 gameInfo: {
                     action: GameAction.readyToggle,
                     state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Will",
+                    waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
                         "Player Steve has been added.",
@@ -276,7 +276,7 @@ describe("ws rooms controller", () => {
                 gameInfo: {
                     action: GameAction.readyToggle,
                     state: GameState.waitingRoom,
-                    waitingRoomMarshall: "Will",
+                    waitingRoomMarshal: "Will",
                     remainingPlayers: [],
                     streamInfo: [
                         "Player Steve has been added.",
@@ -321,7 +321,7 @@ describe("ws rooms controller", () => {
             gameInfo: {
                 action: GameAction.changeWordConstraints,
                 state: GameState.waitingRoom,
-                waitingRoomMarshall: "Will",
+                waitingRoomMarshal: "Will",
                 remainingPlayers: [],
                 streamInfo: [
                     "Player Steve has been added.",
@@ -425,7 +425,7 @@ describe("ws rooms controller", () => {
                 action: GameAction.startGame,
                 state: GameState.running,
                 // omitting current player because it is randomly selected
-                waitingRoomMarshall: "Will",
+                waitingRoomMarshal: "Will",
                 // omitting current remainingPlayers because it is randomly selected
                 minChars: 5,
                 maxChars: 5

@@ -6,8 +6,8 @@ import ChangeWordConstraints from "./ChangeWordConstraints";
 import TransferMarshalship from "./TransferMarshalship";
 import "../../styles/Sections.css";
 
-interface MarshallControlsProp {
-    currentMarshall: string;
+interface MarshalControlsProp {
+    currentMarshal: string;
     playerList: { [key: string]: Player };
     minChars: number;
     maxChars: number;
@@ -18,7 +18,7 @@ interface MarshallControlsProp {
     transferMarshalship: (subject: string) => void;
 }
 
-export default function MarshallControls(props: MarshallControlsProp): JSX.Element {
+export default function MarshalControls(props: MarshalControlsProp): JSX.Element {
     let numNotReady = 0;
     for (const player of Object.values(props.playerList)) {
         if (player.state !== PlayerState.ready) {
@@ -37,7 +37,7 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
     return (
         <span>
             <span className="section-header">
-                Marshall Controls
+                Marshal Controls
             </span>
             <Row>
                 <Col>
@@ -52,7 +52,7 @@ export default function MarshallControls(props: MarshallControlsProp): JSX.Eleme
             <Row>
                 <Col>
                     <TransferMarshalship
-                        currentMarshall={props.currentMarshall}
+                        currentMarshal={props.currentMarshal}
                         playerNames={Object.keys(props.playerList)}
                         selected={props.selected}
                         changeSelected={props.changeSelected}

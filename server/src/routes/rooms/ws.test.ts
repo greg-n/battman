@@ -35,7 +35,7 @@ describe("ws rooms routing", () => {
                 gameInfo: {
                     action: 0,
                     state: 0,
-                    waitingRoomMarshall: "Steve",
+                    waitingRoomMarshal: "Steve",
                     remainingPlayers: [],
                     minChars: 1,
                     maxChars: 24
@@ -55,7 +55,7 @@ describe("ws rooms routing", () => {
                 gameInfo: {
                     action: 0,
                     state: 0,
-                    waitingRoomMarshall: "Steve",
+                    waitingRoomMarshal: "Steve",
                     remainingPlayers: [],
                     minChars: 1,
                     maxChars: 24

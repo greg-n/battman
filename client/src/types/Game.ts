@@ -31,7 +31,7 @@ export interface GameUpdate {
     action: GameAction;
     state: GameState;
     currentPlayer?: string;
-    waitingRoomMarshall?: string;
+    waitingRoomMarshal?: string;
     remainingPlayers: string[];
     minChars: number;
     maxChars: number;

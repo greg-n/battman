@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
 import { CurrentGameState } from "../../utils/parseMessageData";
-import MarshallControls from "./MarshallControls";
+import MarshalControls from "./MarshalControls";
 import PlayerList from "./PlayerList";
 import SetAndReady from "./SetAndReady";
 import StreamInfo from "./StreamInfo";
@@ -39,8 +39,8 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
     }
 
     render(): JSX.Element {
-        // marshall ought to exist
-        const marshall = this.props.gameState.gameInfo.waitingRoomMarshall as string;
+        // marshal ought to exist
+        const marshal = this.props.gameState.gameInfo.waitingRoomMarshal as string;
         const streamInfo = this.props.gameState.gameInfo.streamInfo;
 
         return (
@@ -76,7 +76,7 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                         clientName={this.props.gameState.clientState.name}
                                         playerList={this.props.gameState.playerStates}
                                         gameState={this.props.gameState.gameInfo.state}
-                                        marshall={this.props.gameState.gameInfo.waitingRoomMarshall}
+                                        marshal={this.props.gameState.gameInfo.waitingRoomMarshal}
                                         selected={this.state.selectedUser}
                                         changeSelected={this.changeSelectedUser}
                                     />
@@ -98,10 +98,10 @@ export default class RoomWaiting extends React.Component<RoomWaitingProps, RoomW
                                         readyUp={this.props.readyUp}
                                         setWord={this.props.setWord}
                                     />
-                                    {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshall
+                                    {this.props.gameState.clientState.name === this.props.gameState.gameInfo.waitingRoomMarshal
                                         ? (
-                                            <MarshallControls
-                                                currentMarshall={marshall}
+                                            <MarshalControls
+                                                currentMarshal={marshal}
                                                 playerList={this.props.gameState.playerStates}
                                                 minChars={this.props.gameState.gameInfo.minChars}
                                                 maxChars={this.props.gameState.gameInfo.maxChars}

@@ -54,7 +54,7 @@ describe("http rooms portion", () => {
                             maxChars: 24,
                             minChars: 1,
                             remainingPlayers: [],
-                            waitingRoomMarshall: "Steve"
+                            waitingRoomMarshal: "Steve"
                         }
                     }
                 });
@@ -107,7 +107,7 @@ describe("http rooms portion", () => {
                                 "Player Will has been added."
                             ],
                             remainingPlayers: [],
-                            waitingRoomMarshall: "Steve"
+                            waitingRoomMarshal: "Steve"
                         }
                     }
                 });

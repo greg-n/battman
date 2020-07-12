@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import SimpleToolTip from "../SimpleToolTip";
 
 interface Props {
-    currentMarshall: string; // should be client
+    currentMarshal: string; // should be client
     playerNames: string[];
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     changeSelected: (name?: string) => void;
@@ -34,7 +34,7 @@ export default class TransferMarshalship extends React.Component<Props, State> {
             let validated: boolean | undefined = false;
             if (this.props.selected == null) {
                 validated = undefined;
-            } else if (this.props.selected !== this.props.currentMarshall) {
+            } else if (this.props.selected !== this.props.currentMarshal) {
                 validated = true;
             }
             this.setState({
@@ -73,7 +73,7 @@ export default class TransferMarshalship extends React.Component<Props, State> {
 
     render(): JSX.Element {
         const filteredNames: (string | undefined)[] = this.props.playerNames
-            .filter((name) => (name !== this.props.currentMarshall));
+            .filter((name) => (name !== this.props.currentMarshal));
         filteredNames.unshift(undefined);
 
         return (
@@ -113,7 +113,7 @@ export default class TransferMarshalship extends React.Component<Props, State> {
                         <Col
                             style={{ paddingLeft: "0.4em", paddingRight: "0.1em", textAlign: "center" }}
                         >
-                            {this.state.selected != null && this.props.currentMarshall !== this.state.selected
+                            {this.state.selected != null && this.props.currentMarshal !== this.state.selected
                                 ? (
                                     <Button
                                         type="submit"

@@ -57,8 +57,8 @@ function ensureNecessaryFields(data: any): void {
         throw new Error("Game info field state is not valid.");
     if (data.gameInfo.currentPlayer != null && typeof data.gameInfo.currentPlayer !== "string")
         throw new Error("Game info field currentPlayer is not valid.");
-    if (data.gameInfo.waitingRoomMarshall != null && typeof data.gameInfo.waitingRoomMarshall !== "string")
-        throw new Error("Game info field waitingRoomMarshall is not valid.");
+    if (data.gameInfo.waitingRoomMarshal != null && typeof data.gameInfo.waitingRoomMarshal !== "string")
+        throw new Error("Game info field waitingRoomMarshal is not valid.");
     if (!Array.isArray(data.gameInfo.remainingPlayers))
         throw new Error("Game info field remainingPlayers is not valid.");
     if (typeof data.gameInfo.minChars !== "number")
@@ -159,7 +159,7 @@ function parsePlayerUpdateOutput(data: SomeGameUpdate, oldState: CurrentGameStat
     "gameInfo": {
         "action": 0,
         "state": 0,
-        "waitingRoomMarshall": "greg",
+        "waitingRoomMarshal": "greg",
         "remainingPlayers": [],
         "minChars": 1,
         "maxChars": 24
