@@ -6,6 +6,7 @@ import Guess from "./Guess";
 import PlayerList from "./PlayerList";
 import StreamInfo from "./StreamInfo";
 import PreviousGuesses from "./PreviousGuesses";
+import beforeUnload from "../../utils/beforeUnload";
 
 interface Props {
     roomName: string;
@@ -27,6 +28,10 @@ export default class RoomRunning extends React.Component<Props, State> {
         };
 
         this.changeSelectedUser = this.changeSelectedUser.bind(this);
+    }
+
+    componentDidMount(): void {
+        window.addEventListener("beforeunload", beforeUnload);
     }
 
     // unset by passing undefined
@@ -77,7 +82,6 @@ export default class RoomRunning extends React.Component<Props, State> {
                                         currentPlayer={this.props.gameState.gameInfo.currentPlayer}
                                         playerList={this.props.gameState.playerStates}
                                         gameState={this.props.gameState.gameInfo.state}
-                                        marshal={this.props.gameState.gameInfo.waitingRoomMarshal}
                                         selected={this.state.selectedUser}
                                         selectOnlyPlaying={true}
                                         changeSelected={this.changeSelectedUser}

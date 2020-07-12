@@ -4,6 +4,7 @@ import { CurrentGameState } from "../../utils/parseMessageData";
 import RoomLanding from "./Landing";
 import RoomRunning from "./Running";
 import RoomWaiting from "./Waiting";
+import End from "./End";
 
 interface RoomProps {
     roomName: string;
@@ -64,9 +65,11 @@ export default function Room(props: RoomProps): JSX.Element {
         );
     else if (gameState?.gameInfo.state === GameState.ended)
         return (
-            <div>
-                TODO game ended screen
-            </div>
+            <End
+                roomName={props.roomName}
+                gameState={gameState}
+                fetchGameState={props.fetchGameState}
+            />
         );
     else
         return (

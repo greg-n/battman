@@ -1,12 +1,12 @@
 import React from "react";
 import { Card, Col, ListGroup, Row } from "react-bootstrap";
 import { BsCheck, BsCheckAll, BsPersonFill } from "react-icons/bs";
-import { GiDeadHead, GiLawStar, GiLostLimb, GiPawn } from "react-icons/gi";
+import { GiDeadHead, GiLawStar, GiLostLimb, GiPawn, GiPodiumWinner } from "react-icons/gi";
 import { GameState } from "../../types/Game";
 import { Player, PlayerState } from "../../types/Player";
 import SimpleToolTip from "../SimpleToolTip";
 
-interface PlayerListProps {
+interface Props {
     clientName: string;
     clientWord?: string;
     currentPlayer?: string;
@@ -15,20 +15,24 @@ interface PlayerListProps {
     marshal?: string;
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     selectOnlyPlaying?: boolean; // will make only playing players selectable
-    changeSelected: (name?: string) => void;
+    changeSelected?: (name?: string) => void;
 }
 
-export default function PlayerList(props: PlayerListProps): JSX.Element {
+export default function PlayerList(props: Props): JSX.Element {
     const playerList = props.playerList;
     const playerItems: JSX.Element[] = [];
     for (const [name, player] of Object.entries(playerList)) {
-        let bgColor: "secondary" | "light" = "light";
+        let bgColor: "secondary" | "light" | "warning" = "light";
         let textColor: "white" | undefined;
         if (
             [PlayerState.eliminated, PlayerState.disconnected]
                 .includes(player.state)
         ) {
             bgColor = "secondary";
+            textColor = "white";
+        }
+        if (player.state === PlayerState.victor) {
+            bgColor = "warning";
             textColor = "white";
         }
 
@@ -39,6 +43,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
         if (player.name === props.clientName) {
             playerBadges.push(
                 <SimpleToolTip
+                    key={`${name}-you`}
                     text="This is you."
                 >
                     <span style={badgeStyle}>
@@ -52,6 +57,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             if (player.name === props.marshal)
                 playerBadges.push(
                     <SimpleToolTip
+                        key={`${name}-marshal`}
                         text="Waiting room marshal."
                     >
                         <span style={badgeStyle}>
@@ -63,6 +69,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             if (typeof player.guessedWordPortion === "string" && player.state === PlayerState.ready) {
                 playerBadges.push(
                     <SimpleToolTip
+                        key={`${name}-checkall`}
                         text="Word set. Ready to play."
                     >
                         <span style={badgeStyle}>
@@ -73,6 +80,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             } else if (typeof player.guessedWordPortion === "string") {
                 playerBadges.push(
                     <SimpleToolTip
+                        key={`${name}-check`}
                         text="Word set. Not yet readied up."
                     >
                         <span style={badgeStyle}>
@@ -86,6 +94,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                 && props.gameState === GameState.running)
                 playerBadges.push(
                     <SimpleToolTip
+                        key={`${name}-current`}
                         text="Current player."
                     >
                         <span style={badgeStyle}>
@@ -96,6 +105,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             if (player.state === PlayerState.eliminated)
                 playerBadges.push(
                     <SimpleToolTip
+                        key={`${name}-eliminated`}
                         text="Eliminated."
                     >
                         <span style={badgeStyle}>
@@ -106,10 +116,22 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             if (player.state === PlayerState.disconnected)
                 playerBadges.push(
                     <SimpleToolTip
+                        key={`${name}-disconnected`}
                         text="Disconnected."
                     >
                         <span style={badgeStyle}>
                             <GiLostLimb />
+                        </span>
+                    </SimpleToolTip>
+                );
+            if (player.state === PlayerState.victor)
+                playerBadges.push(
+                    <SimpleToolTip
+                        key={`${name}-victor`}
+                        text="Victor."
+                    >
+                        <span style={badgeStyle}>
+                            <GiPodiumWinner />
                         </span>
                     </SimpleToolTip>
                 );
@@ -123,6 +145,16 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
             || displayGuessedLetters
             || displayGuessedWords
             || displayEliminatedBy;
+
+        let wordPortion: string | undefined;
+        if (displayWordPortion) {
+            wordPortion = player.guessedWordPortion as string; // asserted by displayWordPortion
+            if (player.name === props.clientName && props.clientWord != null) {
+                wordPortion += `/${props.clientWord}`;
+            } else if (props.gameState === GameState.ended && player.word != null) {
+                wordPortion += `/${player.word}`;
+            }
+        }
 
         playerItems.push(
             <ListGroup.Item
@@ -141,7 +173,8 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                         if (props.selectOnlyPlaying === true && player.state !== PlayerState.playing)
                             return;
 
-                        props.changeSelected(name !== props.selected ? name : undefined);
+                        if (props.changeSelected != null)
+                            props.changeSelected(name !== props.selected ? name : undefined);
                     }}
                 >
                     <Card.Header
@@ -165,11 +198,7 @@ export default function PlayerList(props: PlayerListProps): JSX.Element {
                                 {displayWordPortion
                                     ? (
                                         <ListGroup.Item style={{ letterSpacing: ".3em", backgroundColor: "transparent", color: textColor }}>
-                                            {player.guessedWordPortion}{
-                                                player.name === props.clientName && props.clientWord != null
-                                                    ? `/${props.clientWord}`
-                                                    : undefined
-                                            }
+                                            {wordPortion}
                                         </ListGroup.Item>
                                     ) : undefined}
                                 {displayGuessedLetters
