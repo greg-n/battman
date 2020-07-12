@@ -71,7 +71,8 @@ export default function Room(props: RoomProps): JSX.Element {
     else
         return (
             <div>
-                Ummm... this is embarrassing
+                Ummm... this is embarrassing. Game state is unexpected. Current state: {gameState.gameInfo.state}.
+                <a rel="noopener noreferrer" target="_blank" href="https://github.com/greg-n/battman/issues/new">Make an issue on the github repo.</a>
             </div>
         );
 }
