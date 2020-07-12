@@ -17,14 +17,13 @@ export default function End(props: Props): JSX.Element {
     window.removeEventListener("beforeunload", beforeUnload);
 
     const streamInfo = props.gameState.gameInfo.streamInfo;
-    const clientIsVictor = props.gameState.clientState.state === PlayerState.victor;
+    let clientIsVictor = false;
     let victorName: string | undefined;
-    if (!clientIsVictor) {
-        for (const [name, player] of Object.entries(props.gameState.playerStates)) {
-            if (player.state === PlayerState.victor) {
-                victorName = name;
-                break;
-            }
+    for (const [name, player] of Object.entries(props.gameState.playerStates)) {
+        if (player.state === PlayerState.victor) {
+            clientIsVictor = name === props.gameState.clientState.name; // has to be set here since self guessing won't update victor's client item
+            victorName = name;
+            break;
         }
     }
 

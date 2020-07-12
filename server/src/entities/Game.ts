@@ -44,6 +44,7 @@ interface GameUpdate {
 interface GuessOutput extends GameOutput {
     actorUpdate: Omit<PlayerUpdateOutput, "gameInfo">;
     subjectUpdate: Omit<PlayerUpdateOutput, "gameInfo">;
+    players: { [key: string]: PlayerSerializable };
 }
 
 interface GameOutput {
@@ -240,9 +241,12 @@ export default class Game {
         const players: { [key: string]: PlayerSerializable } = {};
         for (const [name, val] of this.players.entries()) {
             if (
-                val.state === PlayerState.playing
-                || val.state === PlayerState.joined // This should not be possible currently
-                || val.state === PlayerState.ready // This should not be possible currently
+                this.state !== GameState.ended
+                && (
+                    val.state === PlayerState.playing
+                    || val.state === PlayerState.joined // This should not be possible currently
+                    || val.state === PlayerState.ready // This should not be possible currently
+                )
             )
                 players[name] = val.getSanitizedCopy().getSafeToSerialize();
             else
@@ -385,6 +389,7 @@ export default class Game {
                     ? subjectItem.getSafeToSerialize() // Reveal all on elimination
                     : subjectItem.getSanitizedCopy().getSafeToSerialize()
             },
+            players: this.getGameState().players,
             gameInfo: this.buildGameUpdateOutput(GameAction.guess)
         };
     }

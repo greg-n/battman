@@ -120,7 +120,7 @@ function parseGuess(data: SomeGameUpdate, oldState: CurrentGameState): CurrentGa
     if (data.subjectUpdate.forEffected != null) {
         newState.clientState = data.subjectUpdate.forEffected;
     }
-    const newPlayerStates = oldState.playerStates;
+    const newPlayerStates = (data as GameStateOutput).players;
     newPlayerStates[data.actorUpdate.forAll.name] = data.actorUpdate.forAll;
     newPlayerStates[data.subjectUpdate.forAll.name] = data.subjectUpdate.forAll;
     newState.playerStates = newPlayerStates;

@@ -86,6 +86,7 @@ export namespace ws {
                 {
                     actorUpdate: { forAll: guessOutput.actorUpdate.forAll },
                     subjectUpdate: { forAll: guessOutput.subjectUpdate.forAll },
+                    players: guessOutput.players,
                     gameInfo: guessOutput.gameInfo
                 },
                 [token.playerName, message.subject || ""]
@@ -93,11 +94,13 @@ export namespace ws {
             ws.send(JSON.stringify({
                 actorUpdate: guessOutput.actorUpdate,
                 subjectUpdate: { forAll: guessOutput.subjectUpdate.forAll },
+                players: guessOutput.players,
                 gameInfo: guessOutput.gameInfo
             }));
             subjectClient?.send(JSON.stringify({
                 actorUpdate: { forAll: guessOutput.actorUpdate.forAll },
                 subjectUpdate: guessOutput.subjectUpdate,
+                players: guessOutput.players,
                 gameInfo: guessOutput.gameInfo
             }));
         } catch (error) {
