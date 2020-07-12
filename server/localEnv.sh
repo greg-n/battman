@@ -1,1 +1,2 @@
 export JWT_SECRET=c8589464-0b84-4b6a-a849-4e8572324dc4
+export PORT=8080

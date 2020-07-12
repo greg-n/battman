@@ -75,6 +75,11 @@ export default class Guess extends React.Component<Props, State> {
                     validated = undefined;
                 } else if (!this.props.remainingPlayers.includes(this.props.selected)) {
                     validated = false;
+                } else if (
+                    this.props.remainingPlayers.includes(this.props.selected)
+                    && this.state.guess != null && this.state.guessFeedback == null
+                ) {
+                    validated = true;
                 }
 
                 return {
