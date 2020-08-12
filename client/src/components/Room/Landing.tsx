@@ -1,7 +1,7 @@
 import React from "react";
-import { GameExternalInfo, GameState } from "../../types/Game";
-import { Container, Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import RoomFinder from "../../containers/RoomFinder";
+import { GameExternalInfo, GameState } from "../../types/Game";
 import JoinCreate from "./JoinCreate";
 
 interface RoomLandingProps {
@@ -24,10 +24,16 @@ export default class RoomLanding extends React.Component<RoomLandingProps, {}> {
                 <div style={{ margin: 0, padding: 0, paddingTop: "33vh" }}>
                     <Row>
                         <Col />
-                        <Col md="6" style={{ textAlign: "center", padding: "1rem" }}>
+                        <Col
+                            md="6"
+                            style={{ textAlign: "center", padding: "1rem" }}
+                        >
                             <h2>
                                 Vacancy!
                             </h2>
+                            <p>
+                                Sure there&apos;s a game here? Try refreshing.
+                            </p>
                         </Col>
                         <Col />
                     </Row>

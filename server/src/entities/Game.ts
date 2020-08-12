@@ -209,7 +209,9 @@ export default class Game {
                 this.waitingRoomMarshal = this.players.size > 0 ? [...this.players.keys()][0] : undefined;
             }
         } else if (this.state === GameState.running) {
-            player.state = PlayerState.disconnected;
+            player.state = player.state !== PlayerState.eliminated
+                ? PlayerState.disconnected
+                : PlayerState.eliminatedDisconnected;
             player.guessedWordPortion = player.word;
             player.disconnectionReason = reason;
             this.players.set(name, player);

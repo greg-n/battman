@@ -25,7 +25,11 @@ export default function PlayerList(props: Props): JSX.Element {
         let bgColor: "secondary" | "light" | "warning" = "light";
         let textColor: "white" | undefined;
         if (
-            [PlayerState.eliminated, PlayerState.disconnected]
+            [
+                PlayerState.eliminated,
+                PlayerState.disconnected,
+                PlayerState.eliminatedDisconnected
+            ]
                 .includes(player.state)
         ) {
             bgColor = "secondary";
@@ -102,7 +106,10 @@ export default function PlayerList(props: Props): JSX.Element {
                         </span>
                     </SimpleToolTip>
                 );
-            if (player.state === PlayerState.eliminated)
+            if (
+                player.state === PlayerState.eliminated ||
+                player.state === PlayerState.eliminatedDisconnected
+            )
                 playerBadges.push(
                     <SimpleToolTip
                         key={`${name}-eliminated`}
@@ -113,7 +120,10 @@ export default function PlayerList(props: Props): JSX.Element {
                         </span>
                     </SimpleToolTip>
                 );
-            if (player.state === PlayerState.disconnected)
+            if (
+                player.state === PlayerState.disconnected ||
+                player.state === PlayerState.eliminatedDisconnected
+            )
                 playerBadges.push(
                     <SimpleToolTip
                         key={`${name}-disconnected`}
@@ -140,7 +150,10 @@ export default function PlayerList(props: Props): JSX.Element {
         const displayWordPortion = player.guessedWordPortion != null;
         const displayGuessedLetters = !!player.guessedLetters.length;
         const displayGuessedWords = !!player.guessedWords.length;
-        const displayEliminatedBy = player.state === PlayerState.eliminated && player.lastGuessedBy[0] != null;
+        const displayEliminatedBy = (
+            player.state === PlayerState.eliminated ||
+            player.state === PlayerState.eliminatedDisconnected
+        ) && player.lastGuessedBy[0] != null;
         const displaySubItems = displayWordPortion
             || displayGuessedLetters
             || displayGuessedWords

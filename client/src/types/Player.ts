@@ -16,5 +16,6 @@ export enum PlayerState {
     playing,
     eliminated,
     disconnected,
+    eliminatedDisconnected,
     victor
 }
