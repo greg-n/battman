@@ -297,7 +297,7 @@ export default class Game {
         const actorItem = this.players.get(actor) as Player;
         const subjectItem = this.players.get(subject) as Player;
 
-        // Game rule that you can't guess the same person 3 times in a row unless <= 3 remaining players
+        // Game rule that you can't guess the same person more than 3 times in a row unless <= 3 remaining players
         let sameLastThree = 0;
         for (const elem of actorItem.lastGuessedAgainst) {
             if (elem === subject) {
