@@ -1,16 +1,17 @@
 import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap for whole app
-import "react-toastify/dist/ReactToastify.css";
-
 import React from "react";
 import {
     BrowserRouter as Router,
-    Switch,
-    Route
+
+    Route, Switch
 } from "react-router-dom";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import InfoFooter from "./components/InfoFooter";
 import Landing from "./routes/Landing";
-import { ToastContainer, Slide } from "react-toastify";
 import Room from "./routes/Room";
+
 
 function App(): JSX.Element {
     return (
@@ -32,6 +33,7 @@ function App(): JSX.Element {
                     </Route>
                 </Switch>
             </Router>
+            <InfoFooter />
         </span>
     );
 }
