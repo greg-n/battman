@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import { BsArrowClockwise } from "react-icons/bs";
-import { api } from "../../api";
 import beforeUnload from "../../utils/beforeUnload";
 import { CurrentGameState } from "../../utils/parseMessageData";
 import Guess from "./Guess";
@@ -21,12 +20,6 @@ interface State {
     selectedUser?: string;
 }
 
-let herokuKeepAliveInterval: NodeJS.Timeout | undefined;
-const herokuKeepAlive = (): void => {
-    api.get("/healthCheck")
-        .catch();
-};
-
 export default class RoomRunning extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -41,16 +34,10 @@ export default class RoomRunning extends React.Component<Props, State> {
 
     componentDidMount(): void {
         window.addEventListener("beforeunload", beforeUnload);
-        // Dirty method to keep the free heroku dyno up when ws are the only communication
-        const minute = 60000; // ms to min
-        const intervalAmount = Math.random() * ((29 - 15) * minute) + (15 * minute); // min 15, max 30 (hopefully to spread out calls)
-        herokuKeepAliveInterval = setInterval(herokuKeepAlive, intervalAmount); // 5 minute interval
     }
 
     componentWillUnmount(): void {
-        if (herokuKeepAliveInterval != null) {
-            clearInterval(herokuKeepAliveInterval);
-        }
+        window.removeEventListener("beforeunload", beforeUnload);
     }
 
     // unset by passing undefined

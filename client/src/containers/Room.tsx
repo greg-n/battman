@@ -19,6 +19,12 @@ interface RoomState {
     currentGameState: undefined | CurrentGameState;
 }
 
+let herokuKeepAliveInterval: NodeJS.Timeout | undefined;
+const herokuKeepAlive = (): void => {
+    api.get("/healthCheck")
+        .catch();
+};
+
 export default class Room extends React.Component<RoomProps, RoomState> {
     constructor(props: RoomProps) {
         super(props);
@@ -50,6 +56,17 @@ export default class Room extends React.Component<RoomProps, RoomState> {
         } catch (error) {
             console.error(error);
             toast.error(error.message);
+        }
+
+        // Dirty method to keep the free heroku dyno up when ws are the only communication
+        const minute = 60000; // ms to min
+        const intervalAmount = Math.random() * ((29 - 15) * minute) + (15 * minute); // min 15, max 29 (hopefully to spread out calls)
+        herokuKeepAliveInterval = setInterval(herokuKeepAlive, intervalAmount);
+    }
+
+    componentWillUnmount(): void {
+        if (herokuKeepAliveInterval != null) {
+            clearInterval(herokuKeepAliveInterval);
         }
     }
 
