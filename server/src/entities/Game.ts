@@ -113,7 +113,7 @@ export default class Game {
             throw new Error("Players cannot be added given game state.");
         }
         if (this.players.has(name)) {
-            throw new Error("Player " + name + " already in game.");
+            throw new Error("Player name \"" + name + "\" already in game.");
         }
         if (name.length > 16) {
             throw new Error("Name is over allowed length of 16 chars.");

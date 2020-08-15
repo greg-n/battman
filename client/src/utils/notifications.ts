@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { CurrentGameState } from "../utils/parseMessageData";
 
 const openToast = Date.now(); // Same toast id for all notification toasts
 let openNotification: Notification | undefined;
@@ -11,6 +12,19 @@ function checkNotificationPromise(): boolean {
     }
 
     return true;
+}
+
+export function fromGameChange(o: CurrentGameState, n: CurrentGameState): void {
+    // Check if now user's turn
+    const nCurrent = n.gameInfo.currentPlayer?.toLowerCase().trim();
+    const oCurrent = o.gameInfo.currentPlayer?.toLowerCase().trim();
+    const clientName = n.clientState.name?.toLowerCase().trim();
+    if (
+        nCurrent === clientName &&
+        oCurrent !== clientName
+    ) {
+        send("It's your turn!");
+    }
 }
 
 export function requestPermissions(): void {
@@ -53,7 +67,7 @@ export function requestPermissions(): void {
     }
 }
 
-export function send(title: string, body?: string): void {
+function send(title: string, body?: string): void {
     if ("Notification" in window && !document.hasFocus()) {
         if (Notification.permission !== "granted") {
             return;
@@ -62,7 +76,10 @@ export function send(title: string, body?: string): void {
             openNotification.close();
             openNotification = undefined;
         }
-        openNotification = new Notification(title, { body, icon: "/public/favicon.ico" });
+        openNotification = new Notification(
+            title,
+            { body, icon: "/public/favicon.ico" }
+        );
         openNotification.addEventListener("close", () => {
             openNotification?.close();
             openNotification = undefined;

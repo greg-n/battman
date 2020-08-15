@@ -3,8 +3,9 @@ import React from "react";
 import { toast } from "react-toastify";
 import { api, baseURL, wsProtocol } from "../api";
 import { default as RoomComponent } from "../components/Room";
-import { GameAction, GameExternalInfo, GameState } from "../types/Game";
+import { GameAction, GameExternalInfo } from "../types/Game";
 import { AddPlayerOutput, RoomCreationOutput, RoomsMessageData } from "../types/Room";
+import { fromGameChange } from "../utils/notifications";
 import parseMessageData, { buildInitCurrentGameState, CurrentGameState, ErrorMessage } from "../utils/parseMessageData";
 import roomMessageStringify from "../utils/roomMessageStringify";
 
@@ -123,7 +124,10 @@ export default class Room extends React.Component<RoomProps, RoomState> {
             resp = await api.put(`/rooms/${this.props.roomName}/players?playerName=${playerName}`);
         } catch (error) {
             if (error.response != null) {
-                toast.error("Join was blocked by server. Try again");
+                toast.error(
+                    error.response.data?.error ||
+                    "Join was blocked by server. Name may be taken. Try again."
+                );
             } else if (error.request != null) {
                 console.error(error.request);
                 toast.error("No response from server");
@@ -131,7 +135,6 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                 console.error(error.message);
                 toast.error("Something failed while trying to join a room");
             }
-
             return;
         }
         if (resp == null) {
@@ -173,12 +176,17 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                         toast.error((newState as ErrorMessage).error);
                         return state;
                     } else {
+                        const newStateAs = (newState as CurrentGameState);
                         const gameState = (newState as CurrentGameState).gameInfo.state;
+
+                        if (state.currentGameState != null) {
+                            fromGameChange(state.currentGameState, newStateAs);
+                        }
 
                         return {
                             ...state,
-                            gameState: gameState as GameState,
-                            currentGameState: newState as CurrentGameState
+                            gameState,
+                            currentGameState: newStateAs
                         };
                     }
                 } catch (error) {
