@@ -1,0 +1,4 @@
+.clickableText:hover {
+    text-decoration: underline;
+    cursor: default;
+}

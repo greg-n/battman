@@ -1,10 +1,10 @@
 import React from "react";
 import { GameExternalInfo, GameState } from "../../types/Game";
 import { CurrentGameState } from "../../utils/parseMessageData";
+import End from "./End";
 import RoomLanding from "./Landing";
 import RoomRunning from "./Running";
 import RoomWaiting from "./Waiting";
-import End from "./End";
 
 interface RoomProps {
     roomName: string;
@@ -73,9 +73,6 @@ export default function Room(props: RoomProps): JSX.Element {
         );
     else
         return (
-            <div>
-                Ummm... this is embarrassing. Game state is unexpected. Current state: {gameState.gameInfo.state}.
-                <a rel="noopener noreferrer" target="_blank" href="https://github.com/greg-n/battman/issues/new">Make an issue on the github repo.</a>
-            </div>
+            <div />
         );
 }
