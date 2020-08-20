@@ -170,7 +170,7 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                 try {
                     const newState = parseMessageData(
                         event.data,
-                        state.currentGameState as CurrentGameState // connect shows that this should exist
+                        clonedeep(state.currentGameState) as CurrentGameState // connect shows that this should exist
                     );
 
                     if ((newState as ErrorMessage).error != null) {

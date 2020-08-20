@@ -16,8 +16,8 @@ function checkNotificationPromise(): boolean {
 
 export function fromGameChange(o: CurrentGameState, n: CurrentGameState): void {
     // Check if now user's turn
-    const nCurrent = n.gameInfo.currentPlayer?.toLowerCase().trim();
     const oCurrent = o.gameInfo.currentPlayer?.toLowerCase().trim();
+    const nCurrent = n.gameInfo.currentPlayer?.toLowerCase().trim();
     const clientName = n.clientState.name?.toLowerCase().trim();
     if (
         nCurrent === clientName &&
