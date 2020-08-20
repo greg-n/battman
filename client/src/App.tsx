@@ -2,7 +2,6 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Import bootstrap for whole app
 import React from "react";
 import {
     BrowserRouter as Router,
-
     Route, Switch
 } from "react-router-dom";
 import { Slide, ToastContainer } from "react-toastify";
@@ -12,8 +11,7 @@ import InfoFooter from "./components/InfoFooter";
 import Landing from "./routes/Landing";
 import Room from "./routes/Room";
 
-
-function App(): JSX.Element {
+export default function App(): JSX.Element {
     return (
         <span>
             <ToastContainer
@@ -23,19 +21,29 @@ function App(): JSX.Element {
                 draggable={false}
                 transition={Slide}
             />
-            <Router>
-                <Switch>
-                    <Route exact path="/">
-                        <Landing />
-                    </Route>
-                    <Route path="/:roomName">
-                        <Room />
-                    </Route>
-                </Switch>
-            </Router>
-            <InfoFooter />
+            <div
+                style={{
+                    minHeight: "100vh",
+                    display: "flex",
+                    flexDirection: "column"
+                }}
+            >
+                <div style={{ flexGrow: 1 }}>
+                    <Router>
+                        <Switch>
+                            <Route exact path="/">
+                                <Landing />
+                            </Route>
+                            <Route path="/:roomName">
+                                <Room />
+                            </Route>
+                        </Switch>
+                    </Router>
+                </div>
+                <div style={{ flexShrink: 0 }}>
+                    <InfoFooter />
+                </div>
+            </div>
         </span>
     );
 }
-
-export default App;

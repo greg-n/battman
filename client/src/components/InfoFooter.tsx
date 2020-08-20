@@ -6,23 +6,19 @@ import { requestPermissions } from "../utils/notifications";
 
 export default function InfoFooter(): JSX.Element {
     const colStyle: React.CSSProperties = {
-        padding: 0
+        padding: ".2rem"
     };
 
     return (
         <div
             style={{
-                minWidth: "20vw",
-                maxWidth: "80vw",
-                position: "fixed",
-                bottom: 0,
-                right: 0,
-                padding: ".6rem"
+                textAlign: "center",
+                paddingBottom: ".2rem"
             }}
         >
-            <Row>
-                <Col style={colStyle} />
-                <Col xs={7} style={colStyle}>
+            <Row className="justify-content-md-center">
+                <Col xs="auto" />
+                <Col md={3} style={colStyle}>
                     <div
                         className="clickableText"
                         style={{ paddingTop: ".2em" }}
@@ -31,7 +27,7 @@ export default function InfoFooter(): JSX.Element {
                         Enable notifications
                     </div>
                 </Col>
-                <Col xs={2} style={colStyle}>
+                <Col md={1} style={colStyle}>
                     <a
                         href="https://github.com/greg-n/battman"
                         rel="noopener noreferrer"
@@ -41,6 +37,7 @@ export default function InfoFooter(): JSX.Element {
                         <AiFillGithub size="1.6rem" />
                     </a>
                 </Col>
+                <Col xs="auto" />
             </Row>
         </div>
     );
