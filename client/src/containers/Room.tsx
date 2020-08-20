@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import clonedeep from "lodash.clonedeep";
 import React from "react";
 import { toast } from "react-toastify";
 import { api, baseURL, wsProtocol } from "../api";
@@ -180,7 +181,10 @@ export default class Room extends React.Component<RoomProps, RoomState> {
                         const gameState = (newState as CurrentGameState).gameInfo.state;
 
                         if (state.currentGameState != null) {
-                            fromGameChange(state.currentGameState, newStateAs);
+                            fromGameChange(
+                                clonedeep(state.currentGameState),
+                                newStateAs
+                            );
                         }
 
                         return {
