@@ -17,7 +17,8 @@ interface Props {
 }
 
 interface State {
-    selectedUser: string | undefined;
+    outAtBottom?: boolean;
+    selectedUser?: string;
 }
 
 let herokuKeepAliveInterval: NodeJS.Timeout | undefined;
@@ -31,6 +32,7 @@ export default class RoomRunning extends React.Component<Props, State> {
         super(props);
 
         this.state = {
+            outAtBottom: true,
             selectedUser: undefined
         };
 
@@ -93,12 +95,22 @@ export default class RoomRunning extends React.Component<Props, State> {
                                 <Col
                                     xs={9}
                                 >
+                                    <input
+                                        type="checkbox"
+                                        name="outAtBottom"
+                                        checked={this.state.outAtBottom ?? false}
+                                        onChange={(v): void => this.setState({ outAtBottom: v.target.checked })}
+                                    />
+                                    {" "}
+                                    <label htmlFor="outAtBottom">Push out players to bottom</label>
+
                                     <PlayerList
                                         clientName={this.props.gameState.clientState.name}
                                         clientWord={this.props.gameState.clientState.word || undefined}
                                         currentPlayer={this.props.gameState.gameInfo.currentPlayer}
                                         playerList={this.props.gameState.playerStates}
                                         gameState={this.props.gameState.gameInfo.state}
+                                        outAtBottom={this.state.outAtBottom}
                                         selected={this.state.selectedUser}
                                         selectOnlyPlaying={true}
                                         changeSelected={this.changeSelectedUser}

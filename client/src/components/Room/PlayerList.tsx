@@ -13,6 +13,7 @@ interface Props {
     playerList: { [key: string]: Player };
     gameState: GameState;
     marshal?: string;
+    outAtBottom?: boolean;
     selected?: string; // for guessing this will highlight the to be guessed for the guesser
     selectOnlyPlaying?: boolean; // will make only playing players selectable
     changeSelected?: (name?: string) => void;
@@ -20,8 +21,10 @@ interface Props {
 
 export default function PlayerList(props: Props): JSX.Element {
     const playerList = props.playerList;
-    const playerItems: JSX.Element[] = [];
+    let playerItems: JSX.Element[] = [];
+    const outPlayerItems: JSX.Element[] = [];
     for (const [name, player] of Object.entries(playerList)) {
+        let playerIsOut = false;
         let bgColor: "secondary" | "light" | "warning" = "light";
         let textColor: "white" | undefined;
         if (
@@ -32,6 +35,7 @@ export default function PlayerList(props: Props): JSX.Element {
             ]
                 .includes(player.state)
         ) {
+            playerIsOut = true;
             bgColor = "secondary";
             textColor = "white";
         }
@@ -169,7 +173,7 @@ export default function PlayerList(props: Props): JSX.Element {
             }
         }
 
-        playerItems.push(
+        const playerJSX = (
             <ListGroup.Item
                 key={name}
                 style={{ paddingLeft: 0, paddingRight: 0 }}
@@ -249,7 +253,14 @@ export default function PlayerList(props: Props): JSX.Element {
                 </Card>
             </ListGroup.Item>
         );
+
+        if (props.outAtBottom && playerIsOut) {
+            outPlayerItems.push(playerJSX);
+        } else {
+            playerItems.push(playerJSX);
+        }
     }
+    playerItems = playerItems.concat(outPlayerItems);
 
     return (
         <span>
